@@ -27,7 +27,9 @@ Three points support a local capacity trend, but the tested range ends at 3.93M 
 - The existing one-A10 instance recovered from the recorded inventory block and reached `Running`.
 - A six-hour shutdown timer is due at 2026-07-29 12:45:44 Asia/Shanghai.
 - The parameter probe completed before training and recorded 12,902,784 parameters.
-- The single extension pipeline entered `TRAINING_LARGE` at 06:49:24; no terminal checkpoint comparison or held-out metric exists yet.
+- The single extension pipeline entered `TRAINING_LARGE` at 06:49:24.
+- At 07:40, training was at approximately 10,344/20,000 steps and the configured step-10,000 checkpoint existed under `runs/large/checkpoints/10000`.
+- No terminal checkpoint comparison or held-out metric exists yet.
 
 ### Interpretation
 
