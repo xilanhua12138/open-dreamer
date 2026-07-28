@@ -18,7 +18,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 
 ## Important reading of the chain
 
-`CR-DYN-0002` is intentionally not deleted. Its medium model received only 474 steps, never reached shortcut training, and scored below the small model. The corrected `CR-DYN-0003` fixed every model at 20,000 optimizer steps and found monotonic improvement with capacity. The first run is evidence about an extremely small compute budget, not evidence that larger models are worse.
+`CR-DYN-0002` is intentionally not deleted. Its medium model received only 474 total steps, with bootstrap beginning at step 237, and its PSNR scored below the small model while SSIM scored above it. The corrected `CR-DYN-0003` fixed every model at 20,000 optimizer steps and found monotonic improvement with capacity. The first run is evidence about an extremely small compute budget, not evidence that larger models are worse.
 
 `CR-DYN-0004`, `CR-DYN-0005`, and `CR-DEMO-0001` remain blocked because the existing A10 instance could not restart while the resource sale was temporarily suspended. No large checkpoint, context-ablation metric, or working live demo has been produced yet.
 
