@@ -28,7 +28,7 @@ from dreamer.configs import DynamicsConfig, OptimalTransportConfig
 from dreamer.data import build_dual_iterator
 from dreamer.logging import build_logger
 from dreamer.models import Dynamics, Tokenizer
-from dreamer.actions import Actions, shift_actions, NUM_BINARY_ACTIONS, NUM_CAMERA_CLASSES
+from dreamer.actions import Actions, shift_actions
 from dreamer.parallel import build_parallel, MeshRules
 from dreamer.scaling import ScalingContext
 from dreamer.training import (
@@ -191,8 +191,13 @@ def run(cfg: DynamicsConfig):
 
         # Check if using latent data (pre-tokenized)
         use_latent_data = cfg.dataset.data_type == "latent"
-        assert cfg.dataset.num_binary_actions == NUM_BINARY_ACTIONS
-        assert cfg.dataset.categorical_action_dim == NUM_CAMERA_CLASSES
+        action_dims = (
+            cfg.dataset.num_binary_actions,
+            cfg.dataset.categorical_action_dim,
+            cfg.dataset.continuous_action_dim,
+        )
+        if any(dim < 0 for dim in action_dims):
+            raise ValueError(f"Action dimensions must be non-negative, got {action_dims}.")
 
         # Load pretrained tokenizer (required for video data, optional for latent data checkpoints)
         tokenizer_bundle = TokenizerCheckpointBundle.from_pretrained(cfg.tokenizer_ckpt, mesh_rules=mesh_rules)
