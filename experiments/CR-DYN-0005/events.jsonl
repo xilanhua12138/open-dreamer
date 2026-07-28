@@ -1,0 +1,3 @@
+{"at":"2026-07-28T16:00:26+08:00","type":"planned","message":"Planned strict 4/16/32 context ablation after the capacity extension.","evidence":["CR-DYN-0003 decision"]}
+{"at":"2026-07-28T16:17:00+08:00","type":"blocked","message":"Checkpoint selection and evaluation blocked after the existing DSW instance stopped.","evidence":["CR-DYN-0004 blocked"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"protocol_frozen","message":"Recorded byte-identical future/action/PRNG requirement; differing future hashes will invalidate the experiment.","evidence":["manifest.json evaluation.future_identity"]}

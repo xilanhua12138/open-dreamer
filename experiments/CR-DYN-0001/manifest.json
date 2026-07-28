@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0001",
+  "retrospective": true,
+  "created_at": "2026-07-28T01:57:31+08:00",
+  "owner": "xilanhua12138",
+  "title": "Minimal complete action-conditioned CoinRun world model",
+  "kind": "exploratory",
+  "question": "Can a small OpenDreamer tokenizer and action-conditioned dynamics model complete data collection, training, and held-out multi-frame rollout on CoinRun?",
+  "reason": "Frame reconstruction alone does not demonstrate a world model; the action-conditioned latent dynamics and rollout path needed an end-to-end test.",
+  "hypothesis": "A 545,920-parameter dynamics model trained for 15,000 steps will produce finite, temporally continuous 16-frame held-out rollouts.",
+  "falsification": "Trainer failure on CoinRun actions, rollout failure, non-finite metrics, or visually collapsed/static predictions.",
+  "baseline_id": null,
+  "depends_on": [],
+  "controlled_variable": {
+    "name": "pipeline_stage",
+    "values": [
+      "data",
+      "tokenizer",
+      "latent_statistics",
+      "action_conditioned_dynamics",
+      "heldout_rollout"
+    ]
+  },
+  "constants": {
+    "resolution": [
+      64,
+      64
+    ],
+    "action_space": "16-way categorical Procgen actions",
+    "rollout_context_frames": 4,
+    "rollout_horizon": 16
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "base_upstream_commit": "797e41f052b5996740938fd2fe8161f1866de3a2",
+    "commit": "969eb33d89155a3884d3c9158eba8ed6bf3c1e96",
+    "branch": "feat/small-scale-experiments",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_minimal_complete.sh",
+    "runner_sha256": "b674ab19c0d50c6e9063a14630424c5cfc61396b50cbeb3f2ab11706cffd8260"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "collection_policy": "uniform random over 16 discrete actions",
+    "train_trajectories": 2048,
+    "eval_trajectories": 256,
+    "frames_per_trajectory": 64,
+    "train_frames": 131072,
+    "eval_frames": 16384,
+    "train_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/train",
+    "eval_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval"
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 24,
+    "estimated_budget": "minimal full-pipeline run",
+    "shutdown_policy": "instance auto-stop after pipeline"
+  },
+  "protocol": {
+    "model": {
+      "dynamics_parameters": 545920,
+      "d_bottleneck": 16,
+      "depth": 2,
+      "d_model": 128,
+      "n_heads": 2,
+      "n_kv_heads": 1,
+      "packing_factor": 2,
+      "n_register": 16,
+      "qk_norm_type": "qknorm",
+      "time_every": 2,
+      "time_layer_offset": 1,
+      "k_max": 8,
+      "context_length": 64,
+      "categorical_action_dim": 16
+    },
+    "training": {
+      "batch_size": 32,
+      "sequence_length": 64,
+      "max_steps": 15000,
+      "bootstrap_start": 5000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "Muon",
+      "learning_rate": 0.0003,
+      "lr_schedule": "WSD",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "ema_decay": 0.999,
+      "optimal_transport": false,
+      "loss_weighting": "v_space",
+      "seed": 0
+    },
+    "evaluation": {
+      "heldout_trajectories": 4,
+      "context_frames": 4,
+      "horizon": 16,
+      "rollout_type": "ema_shortcut",
+      "metric_target": "tokenizer_decoded_ground_truth"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Complete data generation, tokenizer training, latent-stat computation, dynamics training, and held-out rollout."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Produce finite per-horizon training rollout PSNR for diffusion and shortcut samplers."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Retain original, tokenizer-decoded ground truth, and predicted videos for at least four held-out trajectories."
+    }
+  ],
+  "planned_outputs": [
+    "tokenizer checkpoint",
+    "latent statistics",
+    "dynamics checkpoint",
+    "held-out original/target/prediction videos",
+    "per-horizon and per-trajectory metrics"
+  ]
+}

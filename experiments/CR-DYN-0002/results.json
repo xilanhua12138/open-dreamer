@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0002",
+  "record_revision": 1,
+  "execution_status": "aborted",
+  "scientific_status": "inconclusive",
+  "claim_level": "internal_result",
+  "started_at": "2026-07-28T14:22:13+08:00",
+  "ended_at": "2026-07-28T14:36:56+08:00",
+  "summary": "Medium and small completed, but tiny stopped at about step 4,452 and was not evaluated; the planned three-arm fixed-FLOPs comparison is incomplete.",
+  "observations": [
+    {
+      "candidate": "medium",
+      "parameters": 3931392,
+      "allocated_steps": 474,
+      "completed_steps": 474,
+      "bootstrap_start": 237,
+      "mean_video_psnr_db": 9.644005740352512,
+      "mean_frame_psnr_db": 9.856570243153799,
+      "mean_ssim": 0.36657091112201606,
+      "psnr_by_horizon_db": {
+        "1": 9.320339734930098,
+        "3": 9.297934674609284,
+        "8": 9.574262099061954,
+        "16": 9.856570243153799
+      }
+    },
+    {
+      "candidate": "small",
+      "parameters": 545920,
+      "allocated_steps": 4768,
+      "completed_steps": 4768,
+      "bootstrap_start": 2384,
+      "mean_video_psnr_db": 9.987850188701511,
+      "mean_frame_psnr_db": 10.127210603229143,
+      "mean_ssim": 0.16470576267823603,
+      "psnr_by_horizon_db": {
+        "1": 10.238614581130792,
+        "3": 10.38374940273638,
+        "8": 10.12095214097626,
+        "16": 10.127210603229143
+      }
+    },
+    {
+      "candidate": "tiny",
+      "parameters": 155840,
+      "allocated_steps": 15217,
+      "last_observed_progress_step": 4452,
+      "bootstrap_start": 7608,
+      "evaluation": "missing"
+    }
+  ],
+  "comparisons": [
+    {
+      "left": "small",
+      "right": "medium",
+      "mean_frame_psnr_difference_right_minus_left_db": -0.27064036007534486,
+      "mean_ssim_difference_right_minus_left": 0.20186514844378003,
+      "interpretation": "Metrics disagree and optimizer-step counts differ by roughly 10x."
+    }
+  ],
+  "deviations": [
+    "Tiny stopped around step 4,452 of 15,217 and has no held-out metric.",
+    "The wrapper's EXIT trap wrote COMPLETE even though the final run arm and result-writing stage were missing.",
+    "The retrospective manifest was reconstructed after the run.",
+    "The design intentionally changes optimizer-step counts as a consequence of fixed estimated FLOPs."
+  ],
+  "failures": [
+    {
+      "stage": "TRAINING_TINY",
+      "type": "operator_or_process_interruption",
+      "message": "The retained log ends at progress 4452/15217 and immediately writes COMPLETE; no structured termination reason was retained."
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "Medium and small completed held-out evaluation; tiny did not.",
+      "Small had 0.2706 dB higher mean-frame PSNR, while medium had 0.2019 higher SSIM.",
+      "Medium did receive bootstrap training after step 237; late boot_mse was non-zero."
+    ],
+    "interpretation": [
+      "The very low fixed-compute budget creates severe optimization imbalance and does not isolate capacity."
+    ],
+    "not_established": [
+      "An optimal capacity.",
+      "A monotonic scaling trend.",
+      "That larger models hurt rollout quality.",
+      "A complete fixed-FLOPs sweep."
+    ],
+    "decision": [
+      "Run tiny, small, and medium for the same 20,000-step compressed curriculum."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "fixed-FLOPs archive",
+      "kind": "tar.gz",
+      "uri": "local-task://coinrun-dynamics-scaling-20260728.tar.gz",
+      "retention": "external",
+      "sha256": "7ec0af91306600c49bb04afce07cb9bb20c6c51bea79f592ee761950a3efd662"
+    },
+    {
+      "name": "medium held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0002/raw/medium-metrics.json",
+      "retention": "git",
+      "sha256": "05ed35be2950be43f33484452b0e5c5bd15ab474ffa074b35e0248fce6791a73"
+    },
+    {
+      "name": "small held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0002/raw/small-metrics.json",
+      "retention": "git",
+      "sha256": "ac2ce8111c4ccefab0afa4544a7de3da26ed797a3c874b15ad0fafb9640b14fa"
+    },
+    {
+      "name": "candidate probe",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0002/raw/probe.json",
+      "retention": "git",
+      "sha256": "69fa2a96b55fd12bdc0f507cbd55a2ffda4e2e6e3afaf53512cf2086ddae5bab"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Retrospective backfill; corrected wrapper COMPLETE to experiment-level aborted and corrected the shortcut-training interpretation."
+    }
+  ]
+}

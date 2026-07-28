@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0005",
+  "retrospective": true,
+  "created_at": "2026-07-28",
+  "owner": "xilanhua12138",
+  "title": "CoinRun 4/16/32 history-context ablation",
+  "kind": "confirmatory",
+  "question": "On one checkpoint and identical futures, how do 4, 16, and 32 history frames affect 16-frame rollout quality?",
+  "reason": "All completed local evaluations used four context frames, so the value of longer available history remains unknown.",
+  "hypothesis": "Longer history improves or preserves controlled rollout PSNR and SSIM by better identifying velocity and recent action effects.",
+  "falsification": "The controlled 16/32-frame arms reduce both metrics or the future identity contract cannot be satisfied.",
+  "baseline_id": "CR-DYN-0004",
+  "depends_on": [
+    "CR-DYN-0004"
+  ],
+  "controlled_variable": {
+    "name": "history_context_frames",
+    "values": [
+      4,
+      16,
+      32
+    ]
+  },
+  "constants": {
+    "checkpoint": "selected once after CR-DYN-0004",
+    "selection_rule": "highest held-out mean_frame_psnr_db; mean_ssim tiebreaker",
+    "future_frames": "identical byte content across all arms",
+    "future_actions": "identical across all arms",
+    "horizon": 16,
+    "videos": 8,
+    "seed": 4242,
+    "metric_target": "tokenizer_decoded_ground_truth"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "base_upstream_commit": "797e41f052b5996740938fd2fe8161f1866de3a2",
+    "commit": "969eb33d89155a3884d3c9158eba8ed6bf3c1e96",
+    "branch": "feat/small-scale-experiments",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_context_ablation.sh",
+    "runner_sha256": "52c11c27d86712dc48f1f1921dbeb6806069149d1e47ab3d9980cbd13933ad18"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "eval_trajectories": 256,
+    "frames_per_trajectory": 64,
+    "window_frames": 48,
+    "eval_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval"
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 24,
+    "estimated_budget": "three evaluations on one selected checkpoint",
+    "shutdown_policy": "included in extension-pipeline timer"
+  },
+  "protocol": {
+    "model": {
+      "checkpoint": "pending CR-DYN-0004 selection"
+    },
+    "training": {
+      "performed": false
+    },
+    "evaluation": {
+      "contexts": [
+        4,
+        16,
+        32
+      ],
+      "horizon": 16,
+      "videos": 8,
+      "seed": 4242,
+      "future_identity": "same episode, start, frame bytes, actions and PRNG stream",
+      "raw_metric_before_video_encoding": true,
+      "required_manifest_hashes": [
+        "episode identity",
+        "future frame bytes",
+        "future action sequence"
+      ]
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All arms use one checkpoint and byte-identical target futures/actions."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Generate finite PSNR@1/@3/@8/@16 and SSIM for every context."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Invalidate rather than interpret the run if any future identity hash differs."
+    }
+  ],
+  "planned_outputs": [
+    "checkpoint selection JSON",
+    "future identity manifest",
+    "metrics for contexts 4/16/32",
+    "qualitative side-by-side videos"
+  ]
+}

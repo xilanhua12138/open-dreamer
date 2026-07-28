@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0001",
+  "retrospective": true,
+  "created_at": "2026-07-28T12:30:44+08:00",
+  "owner": "xilanhua12138",
+  "title": "Smallest published CoinRun tokenizer scaling point",
+  "kind": "confirmatory",
+  "question": "Can the approximately 0.17M CoinRun tokenizer point and native 1e16 FLOPs schedule complete on one A10, and what held-out reconstruction quality does it achieve locally?",
+  "reason": "Replace an arbitrary short smoke run with the smallest public scaling point before spending compute on larger models.",
+  "hypothesis": "The 0.17M point fits on an A10 24 GB, completes its native FLOPs allocation, and produces finite non-collapsed held-out reconstructions.",
+  "falsification": "Failure to instantiate or complete the schedule, non-finite metrics, or visually collapsed held-out reconstructions.",
+  "baseline_id": null,
+  "depends_on": [],
+  "controlled_variable": {
+    "name": "published_scaling_point",
+    "values": [
+      {
+        "approximate_parameters": 170000,
+        "flops_budget": 1e+16
+      }
+    ]
+  },
+  "constants": {
+    "dataset": "locally collected random-action Procgen CoinRun",
+    "resolution": [
+      64,
+      64
+    ],
+    "training_seed": 0,
+    "heldout_seed": 4242
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "base_upstream_commit": "797e41f052b5996740938fd2fe8161f1866de3a2",
+    "commit": "969eb33d89155a3884d3c9158eba8ed6bf3c1e96",
+    "branch": "feat/small-scale-experiments",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_official_min_scaling.sh",
+    "runner_sha256": "a6ce5d28874d45432e102e085928e0c70d200dca03580f536df71a8a3863c59d"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "collection_policy": "uniform random over 16 discrete actions",
+    "train_trajectories": 2048,
+    "train_frames_per_trajectory": 64,
+    "train_frames": 131072,
+    "eval_clips": 256,
+    "eval_frames_per_clip": 16,
+    "eval_split": "held-out trajectories",
+    "train_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/train",
+    "eval_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval"
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 24,
+    "estimated_budget": "native scaling_flops_budget=1e16",
+    "shutdown_policy": "instance auto-stop after experiment chain"
+  },
+  "protocol": {
+    "model": {
+      "parameters": 163392,
+      "patch_size": 8,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "encoder_depth": 1,
+      "decoder_depth": 1,
+      "encoder_d_model": 64,
+      "decoder_d_model": 64,
+      "encoder_heads": 1,
+      "decoder_heads": 1,
+      "context_length": 16,
+      "dtype": "bfloat16",
+      "parameter_dtype": "float32"
+    },
+    "training": {
+      "batch_size": 128,
+      "frames_per_sample": 16,
+      "scaling_flops_budget": 1e+16,
+      "allocated_steps": 56928,
+      "loss": "mse + 0.2*LPIPS on 0.5 of samples",
+      "mae_p_min": 0.0,
+      "mae_p_max": 0.9,
+      "optimizer": "Muon",
+      "optimizer_lr": 0.003,
+      "optimizer_mup_scaling": true,
+      "lr_schedule": "WSD",
+      "warmup_ratio": 0.01,
+      "decay_ratio": 0.8,
+      "ema_decay": 0.999,
+      "seed": 0
+    },
+    "evaluation": {
+      "batch_size": 32,
+      "frames": 16,
+      "batches": 8,
+      "num_clips": 256,
+      "seed": 4242,
+      "variants": [
+        "online_clean",
+        "online_masked",
+        "ema_clean",
+        "ema_masked"
+      ]
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Complete the native 1e16 FLOPs allocation on one A10 without OOM or non-finite loss."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Produce finite held-out online and EMA PSNR for both clean and masked inputs."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Retain the exact Hydra config, final checkpoint path, held-out JSON, and qualitative reconstruction grid."
+    }
+  ],
+  "planned_outputs": [
+    "checkpoint",
+    "Hydra config",
+    "native results.csv row",
+    "held-out metrics JSON",
+    "held-out reconstruction grid"
+  ]
+}

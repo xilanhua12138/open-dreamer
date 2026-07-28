@@ -1,0 +1,44 @@
+name: Experiment ledger
+
+on:
+  pull_request:
+    paths:
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "experiments/**"
+      - "operations/**"
+      - "scripts/experiments/**"
+      - "scripts/train_dynamics.py"
+      - "scripts/validate_experiments.py"
+      - "tests/test_validate_experiments.py"
+      - "tests/test_coinrun_records.py"
+      - ".github/workflows/experiment-ledger.yml"
+  push:
+    paths:
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "experiments/**"
+      - "operations/**"
+      - "scripts/experiments/**"
+      - "scripts/train_dynamics.py"
+      - "scripts/validate_experiments.py"
+      - "tests/test_validate_experiments.py"
+      - "tests/test_coinrun_records.py"
+      - ".github/workflows/experiment-ledger.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate machine-readable records and hashes
+        run: python scripts/validate_experiments.py
+      - name: Test validator happy, edge, and failure paths
+        run: python -m unittest discover -s tests
+      - name: Parse retained Python runners
+        run: python -m py_compile scripts/validate_experiments.py scripts/train_dynamics.py scripts/experiments/coinrun/*.py
+      - name: Parse retained shell runners
+        run: bash -n scripts/experiments/coinrun/*.sh

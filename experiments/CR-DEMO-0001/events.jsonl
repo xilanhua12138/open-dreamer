@@ -1,0 +1,3 @@
+{"at":"2026-07-28","type":"planned","message":"Planned a browser action-conditioning demo after capacity selection and context ablation.","evidence":["live_coinrun_demo.py","run_coinrun_live_demo.sh"]}
+{"at":"2026-07-28T16:17:00+08:00","type":"blocked","message":"Demo launch blocked after the existing DSW A10 stopped and could not restart.","evidence":["CR-DYN-0004 blocked"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"protocol_frozen","message":"Defined readiness as both a passing health call and one real model-inference step.","evidence":["manifest.json success criteria"]}

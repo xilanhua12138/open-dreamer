@@ -1,0 +1,8 @@
+{"at":"2026-07-28T14:41:10+08:00","type":"started","message":"Started medium candidate under the fixed-20k protocol.","evidence":["pipeline.log stage TRAINING_MEDIUM"]}
+{"at":"2026-07-28T15:26:54+08:00","type":"stage","message":"Medium completed 20,000 steps; started held-out evaluation.","evidence":["medium-metrics.json"]}
+{"at":"2026-07-28T15:27:05+08:00","type":"stage","message":"Started small candidate under the identical protocol.","evidence":["pipeline.log stage TRAINING_SMALL"]}
+{"at":"2026-07-28T15:43:43+08:00","type":"stage","message":"Small completed 20,000 steps; started held-out evaluation.","evidence":["small-metrics.json"]}
+{"at":"2026-07-28T15:43:52+08:00","type":"stage","message":"Started tiny candidate under the identical protocol.","evidence":["pipeline.log stage TRAINING_TINY"]}
+{"at":"2026-07-28T16:00:05+08:00","type":"stage","message":"Tiny completed 20,000 steps; started held-out evaluation.","evidence":["tiny-metrics.json"]}
+{"at":"2026-07-28T16:00:26+08:00","type":"completed","message":"All three training and evaluation arms completed with monotonic PSNR and SSIM.","evidence":["RESULTS.md","three metrics JSON files"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"backfilled","message":"Added the controlled capacity result to the repository ledger.","evidence":["SHA256 436b3a392ebfec7bffa02d1681659830770142106d229416e6b5e96212afe46a"]}

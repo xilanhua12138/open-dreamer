@@ -1,0 +1,19 @@
+{
+  "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-official-min-n0.17m-c1e16-20260728/checkpoints",
+  "dataset": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval",
+  "seed": 4242,
+  "batch_size": 32,
+  "frames": 16,
+  "batches": 8,
+  "num_clips": 256,
+  "metrics": {
+    "online_clean_mse": 0.005267838394502178,
+    "online_clean_psnr": 24.248812437057495,
+    "online_masked_mse": 0.015471977763809264,
+    "online_masked_psnr": 20.286422729492188,
+    "ema_clean_mse": 0.005268916953355074,
+    "ema_clean_psnr": 24.24467635154724,
+    "ema_masked_mse": 0.01527207053732127,
+    "ema_masked_psnr": 20.335304975509644
+  }
+}

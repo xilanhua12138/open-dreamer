@@ -1,0 +1,4 @@
+{"at":"2026-07-28T16:00:26+08:00","type":"planned","message":"Planned one larger candidate after the fixed-20k three-point trend completed.","evidence":["CR-DYN-0003"]}
+{"at":"2026-07-28T16:17:00+08:00","type":"blocked","message":"The existing DSW instance reached its old shutdown timer before the extension could start.","evidence":["InstanceShutdownTimer due 2026-07-28T08:17:00Z"]}
+{"at":"2026-07-29T02:49:57+08:00","type":"blocked","message":"Provider state remained Failed after restart attempts; resource sale was temporarily suspended.","evidence":["PAI-DSW instance modified time","provider event message"]}
+{"at":"2026-07-29T03:21:51+08:00","type":"observed","message":"Read-only CLI refresh confirmed status Failed and the requested GPU remained NVIDIA A10.","evidence":["aliyun pai-dsw get-instance"]}

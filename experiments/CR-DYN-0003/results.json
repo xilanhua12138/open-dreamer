@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0003",
+  "record_revision": 1,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "internal_result",
+  "started_at": "2026-07-28T14:41:10+08:00",
+  "ended_at": "2026-07-28T16:00:26+08:00",
+  "summary": "All three candidates completed the same 20,000-step curriculum; held-out mean-frame PSNR and SSIM improved monotonically with capacity.",
+  "observations": [
+    {
+      "candidate": "tiny",
+      "parameters": 155840,
+      "optimizer_steps": 20000,
+      "mean_video_psnr_db": 12.41051826305082,
+      "mean_frame_psnr_db": 12.767064547742384,
+      "mean_ssim": 0.33728771524399326,
+      "psnr_by_horizon_db": {
+        "1": 14.967431204960615,
+        "3": 14.808152906133337,
+        "8": 13.15097015539608,
+        "16": 12.767064547742384
+      },
+      "ssim_by_horizon": {
+        "1": 0.46019736742942985,
+        "3": 0.4402988278850448,
+        "8": 0.3615371890894902,
+        "16": 0.33728771524399326
+      }
+    },
+    {
+      "candidate": "small",
+      "parameters": 545920,
+      "optimizer_steps": 20000,
+      "mean_video_psnr_db": 13.6615232470526,
+      "mean_frame_psnr_db": 14.167381343650332,
+      "mean_ssim": 0.4650682084675207,
+      "psnr_by_horizon_db": {
+        "1": 18.67994923357503,
+        "3": 16.395290937291332,
+        "8": 14.409460618395528,
+        "16": 14.167381343650332
+      },
+      "ssim_by_horizon": {
+        "1": 0.622806068764294,
+        "3": 0.5455146997933888,
+        "8": 0.4810711167506291,
+        "16": 0.4650682084675207
+      }
+    },
+    {
+      "candidate": "medium",
+      "parameters": 3931392,
+      "optimizer_steps": 20000,
+      "mean_video_psnr_db": 15.424019773677324,
+      "mean_frame_psnr_db": 16.016930541728687,
+      "mean_ssim": 0.5419038439903843,
+      "psnr_by_horizon_db": {
+        "1": 20.731323724448515,
+        "3": 19.2251257516112,
+        "8": 16.894707143222238,
+        "16": 16.016930541728687
+      },
+      "ssim_by_horizon": {
+        "1": 0.6917824933563215,
+        "3": 0.6408491732809966,
+        "8": 0.5699086279266052,
+        "16": 0.5419038439903843
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "left": "tiny",
+      "right": "small",
+      "mean_frame_psnr_difference_right_minus_left_db": 1.400316795907948,
+      "mean_ssim_difference_right_minus_left": 0.12778049322352747
+    },
+    {
+      "left": "small",
+      "right": "medium",
+      "mean_frame_psnr_difference_right_minus_left_db": 1.849549198078355,
+      "mean_ssim_difference_right_minus_left": 0.0768356355228636
+    },
+    {
+      "left": "CR-DYN-0002 medium at 474 steps",
+      "right": "CR-DYN-0003 medium at 20,000 steps",
+      "mean_frame_psnr_difference_right_minus_left_db": 6.160360298574888,
+      "mean_ssim_difference_right_minus_left": 0.17533293286836823
+    }
+  ],
+  "deviations": [
+    "This is fixed optimizer steps, not fixed FLOPs; larger candidates consumed more total compute.",
+    "Only one evaluation seed was used.",
+    "The same small training split is revisited many times.",
+    "The retrospective manifest was reconstructed after the run."
+  ],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "All candidates completed the same 20,000-step curriculum.",
+      "Mean-frame PSNR increased 12.7671 -> 14.1674 -> 16.0169 dB.",
+      "Mean SSIM increased 0.3373 -> 0.4651 -> 0.5419."
+    ],
+    "interpretation": [
+      "Within this local protocol, additional dynamics capacity improves held-out 16-frame rollout quality when optimization steps are held constant.",
+      "The low medium score in CR-DYN-0002 primarily reflected its much shorter schedule."
+    ],
+    "not_established": [
+      "Compute-optimal capacity.",
+      "Multi-seed statistical significance.",
+      "Official reproduction.",
+      "Playable or policy-controlled performance."
+    ],
+    "decision": [
+      "Test one larger candidate at the same 20,000-step protocol.",
+      "After the large run, select the best checkpoint by mean-frame PSNR with SSIM as tiebreaker."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "fixed-20k archive",
+      "kind": "tar.gz",
+      "uri": "local-task://coinrun-dynamics-fixed20k-20260728.tar.gz",
+      "retention": "external",
+      "sha256": "436b3a392ebfec7bffa02d1681659830770142106d229416e6b5e96212afe46a"
+    },
+    {
+      "name": "tiny held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0003/raw/tiny-metrics.json",
+      "retention": "git",
+      "sha256": "df59152e46c90dda5a217d69f732d873f665d368df50df2b49ae51714fc7c868"
+    },
+    {
+      "name": "small held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0003/raw/small-metrics.json",
+      "retention": "git",
+      "sha256": "66ba400d862fa787c545c721d2b7a4506093b852ce3c15df770f1d1b6289416c"
+    },
+    {
+      "name": "medium held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0003/raw/medium-metrics.json",
+      "retention": "git",
+      "sha256": "0782e51e9defbcad727435654fbceb50b729b6b2e56407996c231163b5c70057"
+    },
+    {
+      "name": "four-way visual comparison",
+      "kind": "mp4",
+      "uri": "local-task://coinrun-dynamics-fixed20k-20260728/comparisons/scale_000000.mp4",
+      "retention": "archive_member",
+      "sha256": null
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Retrospective backfill from exact metrics, runner, pipeline timestamps, and hashed archive."
+    }
+  ]
+}

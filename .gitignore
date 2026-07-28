@@ -255,7 +255,7 @@ datasets
 datasets/
 migration/
 .claude/
-CLAUDE.md
+!CLAUDE.md
 .hydra/
 
 jelly

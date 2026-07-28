@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-07-29T00:00:00+08:00",
+  "entries": [
+    {
+      "experiment_id": "CR-TOK-0001",
+      "title": "Smallest published CoinRun tokenizer scaling point",
+      "path": "experiments/CR-TOK-0001",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "partial_reproduction",
+      "depends_on": []
+    },
+    {
+      "experiment_id": "CR-DYN-0001",
+      "title": "Minimal complete action-conditioned CoinRun world model",
+      "path": "experiments/CR-DYN-0001",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "pipeline_closure",
+      "depends_on": []
+    },
+    {
+      "experiment_id": "CR-DYN-0002",
+      "title": "CoinRun dynamics fixed-FLOPs capacity pilot",
+      "path": "experiments/CR-DYN-0002",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-DYN-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0003",
+      "title": "CoinRun dynamics fixed-20k capacity ablation",
+      "path": "experiments/CR-DYN-0003",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0004",
+      "title": "CoinRun large fixed-20k capacity extension",
+      "path": "experiments/CR-DYN-0004",
+      "execution_status": "blocked",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0003"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0005",
+      "title": "CoinRun 4/16/32 history-context ablation",
+      "path": "experiments/CR-DYN-0005",
+      "execution_status": "blocked",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0004"
+      ]
+    },
+    {
+      "experiment_id": "CR-DEMO-0001",
+      "title": "Action-conditioned CoinRun browser demo",
+      "path": "experiments/CR-DEMO-0001",
+      "execution_status": "blocked",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0004",
+        "CR-DYN-0005"
+      ]
+    }
+  ]
+}

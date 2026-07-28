@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0005",
+  "record_revision": 1,
+  "execution_status": "blocked",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Not run. Checkpoint selection is intentionally deferred until the large extension completes.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [
+    {
+      "stage": "dependency",
+      "type": "blocked_dependency",
+      "message": "CR-DYN-0004 has no large metric or selected checkpoint because the DSW A10 instance is unavailable."
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "No context-ablation metrics or future manifest exists."
+    ],
+    "interpretation": [
+      "The experiment is dependency-blocked rather than scientifically negative."
+    ],
+    "not_established": [
+      "Whether 4, 16, or 32 context frames is best.",
+      "Whether longer history improves action-conditioned rollout quality."
+    ],
+    "decision": [
+      "Run only after CR-DYN-0004 and checkpoint selection complete.",
+      "Reject the run if future identity hashes differ."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "context evaluator",
+      "kind": "python",
+      "uri": "scripts/experiments/coinrun/eval_coinrun_context_ablation.py",
+      "retention": "git",
+      "sha256": "324af668dc72df2cd1648092ff6312483958e2c78abc8a769d8bc51a7968296f"
+    },
+    {
+      "name": "context runner",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/run_coinrun_context_ablation.sh",
+      "retention": "git",
+      "sha256": "52c11c27d86712dc48f1f1921dbeb6806069149d1e47ab3d9980cbd13933ad18"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Backfilled frozen planned protocol and dependency block."
+    }
+  ]
+}

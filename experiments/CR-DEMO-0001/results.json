@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0001",
+  "record_revision": 1,
+  "execution_status": "blocked",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Not run. No live server, port forward, health response, or model step has been verified.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [
+    {
+      "stage": "dependency",
+      "type": "blocked_dependency",
+      "message": "Model selection and DSW availability are unresolved."
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "Only the demo source and launcher are prepared."
+    ],
+    "interpretation": [
+      "No interactive-performance conclusion is possible."
+    ],
+    "not_established": [
+      "A working live URL.",
+      "Successful model inference through /api/step.",
+      "Real-time latency or action controllability.",
+      "A trained policy or agent."
+    ],
+    "decision": [
+      "Start and verify the demo only after checkpoint selection.",
+      "Do not tell the user a URL is ready until both /health and a real /api/step pass."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "live demo server",
+      "kind": "python",
+      "uri": "scripts/experiments/coinrun/live_coinrun_demo.py",
+      "retention": "git",
+      "sha256": "c4ccc434709f4b4ab3b3189979e3654c37e3f6a70376cff6f813c397b67b976f"
+    },
+    {
+      "name": "live demo launcher",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/run_coinrun_live_demo.sh",
+      "retention": "git",
+      "sha256": "5e831d5836bc29849e080bde2dfc58cd3a6c44289fa91bd292eecee62cf729fa"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Backfilled planned demo protocol and dependency block."
+    }
+  ]
+}

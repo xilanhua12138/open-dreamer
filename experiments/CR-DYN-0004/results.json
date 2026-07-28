@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0004",
+  "record_revision": 1,
+  "execution_status": "blocked",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Not run. The existing A10 instance is Failed after restart attempts reported temporary suspension of resource sales.",
+  "observations": [
+    {
+      "name": "existing_instance_status",
+      "value": "Failed",
+      "observed_at": "2026-07-29T03:21:51+08:00"
+    },
+    {
+      "name": "last_provider_modified_time",
+      "value": "2026-07-29T02:49:57+08:00"
+    },
+    {
+      "name": "large_parameters",
+      "value": null,
+      "reason": "probe has not run on the DSW environment"
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [
+    {
+      "stage": "instance_start",
+      "type": "blocked_inventory",
+      "message": "Sales of this resource are temporarily suspended."
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "The existing requested resource remains one NVIDIA A10 and status Failed.",
+      "No large training or evaluation artifact exists."
+    ],
+    "interpretation": [
+      "The experiment is blocked by provider inventory, not rejected by model evidence."
+    ],
+    "not_established": [
+      "Exact parameter count.",
+      "Memory fit.",
+      "Large-vs-medium rollout quality."
+    ],
+    "decision": [
+      "Retry only the existing instance on the monitor cadence.",
+      "Do not change accelerator specification or create a new paid instance without user authorization."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "large runner",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/run_coinrun_large_fixed20k.sh",
+      "retention": "git",
+      "sha256": "d12edc641baa6aacf4beec42a57ca0b0f7edf33ec44669e53fa48629fc880225"
+    },
+    {
+      "name": "capacity probe",
+      "kind": "python",
+      "uri": "scripts/experiments/coinrun/probe_coinrun_dynamics_scaling.py",
+      "retention": "git",
+      "sha256": "b263d210094bbaae299cd18dfecbac217038aa1c0104e3bc58cc8ca76c48172e"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T03:21:51+08:00",
+      "reason": "Backfilled planned protocol and current infrastructure block."
+    }
+  ]
+}

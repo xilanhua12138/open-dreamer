@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0004",
+  "retrospective": true,
+  "created_at": "2026-07-28",
+  "owner": "xilanhua12138",
+  "title": "CoinRun large fixed-20k capacity extension",
+  "kind": "confirmatory",
+  "question": "Does the fixed-20k capacity trend extend beyond the 3.93M-parameter medium model?",
+  "reason": "CR-DYN-0003 produced three monotonic points; a fourth point distinguishes continued capacity limitation from saturation or instability.",
+  "hypothesis": "The large candidate will exceed medium held-out mean-frame PSNR under the identical 20,000-step protocol.",
+  "falsification": "Large completes but does not exceed medium mean-frame PSNR, is unstable, or cannot fit A10 24 GB.",
+  "baseline_id": "CR-DYN-0003",
+  "depends_on": [
+    "CR-DYN-0003"
+  ],
+  "controlled_variable": {
+    "name": "dynamics_capacity_at_fixed_optimizer_steps",
+    "values": [
+      {
+        "name": "medium_baseline",
+        "parameters": 3931392
+      },
+      {
+        "name": "large",
+        "parameters": null
+      }
+    ]
+  },
+  "constants": {
+    "tokenizer_parameters": 163392,
+    "batch_size": 32,
+    "sequence_length": 64,
+    "max_steps": 20000,
+    "bootstrap_start": 10000,
+    "bootstrap_fraction": 0.25,
+    "evaluation_context_frames": 4,
+    "evaluation_horizon": 16,
+    "evaluation_videos": 8,
+    "evaluation_seed": 4242
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "base_upstream_commit": "797e41f052b5996740938fd2fe8161f1866de3a2",
+    "commit": "969eb33d89155a3884d3c9158eba8ed6bf3c1e96",
+    "branch": "feat/small-scale-experiments",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_large_fixed20k.sh",
+    "runner_sha256": "d12edc641baa6aacf4beec42a57ca0b0f7edf33ec44669e53fa48629fc880225"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "collection_policy": "uniform random over 16 discrete actions",
+    "train_trajectories": 2048,
+    "eval_trajectories": 256,
+    "frames_per_trajectory": 64,
+    "train_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/train",
+    "eval_uri": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval"
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 24,
+    "estimated_budget": "one 20,000-step large run plus held-out evaluation",
+    "shutdown_policy": "6-hour timer during pipeline; 3-hour demo window after completion"
+  },
+  "protocol": {
+    "model": {
+      "name": "large",
+      "parameters": "must be probed before run",
+      "d_bottleneck": 16,
+      "depth": 6,
+      "d_model": 384,
+      "n_heads": 6,
+      "n_kv_heads": 1,
+      "packing_factor": 2,
+      "n_register": 32,
+      "qk_norm_type": "qknorm",
+      "time_every": 2,
+      "time_layer_offset": 1,
+      "k_max": 8,
+      "context_length": 64
+    },
+    "training": {
+      "batch_size": 32,
+      "sequence_length": 64,
+      "max_steps": 20000,
+      "bootstrap_start": 10000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "Muon",
+      "learning_rate": 0.0003,
+      "lr_schedule": "WSD",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "optimal_transport": true,
+      "ot_pairing": "barycentric",
+      "loss_weighting": "v_space"
+    },
+    "evaluation": {
+      "rollout_type": "ema_shortcut",
+      "heldout_videos": 8,
+      "context_frames": 4,
+      "horizon": 16,
+      "seed": 4242,
+      "metric_target": "tokenizer_decoded_ground_truth",
+      "selection_rule": "highest mean_frame_psnr_db; mean_ssim tiebreaker"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Probe and record the exact large parameter count before training."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Complete 20,000 steps and identical eight-video held-out evaluation on the existing A10."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Large mean-frame PSNR exceeds the medium baseline 16.016930541728687 dB."
+    }
+  ],
+  "planned_outputs": [
+    "parameter probe JSON",
+    "checkpoints at 10,000 and 19,999",
+    "held-out metrics JSON",
+    "prediction/target videos",
+    "scored comparison with CR-DYN-0003"
+  ]
+}

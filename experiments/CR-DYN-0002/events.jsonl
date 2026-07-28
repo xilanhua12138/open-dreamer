@@ -1,0 +1,8 @@
+{"at":"2026-07-28T14:22:13+08:00","type":"started","message":"Started fixed-FLOPs sweep with medium, then small, then tiny.","evidence":["pipeline.log stage TRAINING_MEDIUM"]}
+{"at":"2026-07-28T14:26:08+08:00","type":"stage","message":"Medium completed 474 allocated steps; started evaluation.","evidence":["pipeline.log stage EVALUATING_MEDIUM","medium-metrics.json"]}
+{"at":"2026-07-28T14:26:52+08:00","type":"stage","message":"Started small candidate.","evidence":["pipeline.log stage TRAINING_SMALL"]}
+{"at":"2026-07-28T14:32:34+08:00","type":"stage","message":"Small completed 4,768 allocated steps; started evaluation.","evidence":["pipeline.log stage EVALUATING_SMALL","small-metrics.json"]}
+{"at":"2026-07-28T14:32:59+08:00","type":"stage","message":"Started tiny candidate with 15,217 allocated steps.","evidence":["pipeline.log stage TRAINING_TINY"]}
+{"at":"2026-07-28T14:36:56+08:00","type":"aborted","message":"Tiny ended around progress 4,452/15,217 with no evaluation; wrapper nevertheless wrote COMPLETE.","evidence":["pipeline.log final progress line","missing eval/tiny/metrics.json"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"correction","message":"Corrected old claim that medium never reached shortcut training; bootstrap began at step 237 and boot_mse was non-zero.","evidence":["runner bootstrap_start=237","late pipeline log boot_mse=0.3594"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"backfilled","message":"Added the incomplete pilot to the repository ledger without deleting its negative evidence.","evidence":["SHA256 7ec0af91306600c49bb04afce07cb9bb20c6c51bea79f592ee761950a3efd662"]}
