@@ -12,7 +12,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
-| `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | blocked | not evaluated | none |
+| `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | running | not evaluated | none |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | blocked | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | blocked | not evaluated | none |
 
@@ -20,7 +20,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 
 `CR-DYN-0002` is intentionally not deleted. Its medium model received only 474 total steps, with bootstrap beginning at step 237, and its PSNR scored below the small model while SSIM scored above it. The corrected `CR-DYN-0003` fixed every model at 20,000 optimizer steps and found monotonic improvement with capacity. The first run is evidence about an extremely small compute budget, not evidence that larger models are worse.
 
-`CR-DYN-0004`, `CR-DYN-0005`, and `CR-DEMO-0001` remain blocked because the existing A10 instance could not restart while the resource sale was temporarily suspended. No large checkpoint, context-ablation metric, or working live demo has been produced yet.
+`CR-DYN-0004` resumed at 2026-07-29 06:49 Asia/Shanghai after the existing A10 became available. Its exact large parameter count is 12,902,784 and training is running. `CR-DYN-0005` and `CR-DEMO-0001` remain blocked on that terminal result; no context-ablation metric or verified live demo exists yet.
 
 ## Creating or closing an experiment
 

@@ -23,7 +23,7 @@
       },
       {
         "name": "large",
-        "parameters": null
+        "parameters": 12902784
       }
     ]
   },
@@ -47,7 +47,13 @@
     "dirty": false,
     "patch_sha256": null,
     "runner": "scripts/experiments/coinrun/run_coinrun_large_fixed20k.sh",
-    "runner_sha256": "d12edc641baa6aacf4beec42a57ca0b0f7edf33ec44669e53fa48629fc880225"
+    "runner_sha256": "d12edc641baa6aacf4beec42a57ca0b0f7edf33ec44669e53fa48629fc880225",
+    "parameter_probe": {
+      "uri": "experiments/CR-DYN-0004/raw/dynamics_scaling_candidates_with_large.json",
+      "remote_uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/dynamics_scaling_candidates_with_large.json",
+      "sha256": "3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f",
+      "observed_at": "2026-07-29T06:48:42+08:00"
+    }
   },
   "data": {
     "environment": "Procgen CoinRun",
@@ -70,7 +76,7 @@
   "protocol": {
     "model": {
       "name": "large",
-      "parameters": "must be probed before run",
+      "parameters": 12902784,
       "d_bottleneck": 16,
       "depth": 6,
       "d_model": 384,

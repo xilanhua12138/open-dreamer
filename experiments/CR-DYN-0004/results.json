@@ -1,27 +1,36 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0004",
-  "record_revision": 1,
-  "execution_status": "blocked",
+  "record_revision": 2,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-29T06:49:24+08:00",
   "ended_at": null,
-  "summary": "Not run. The existing A10 instance is Failed after restart attempts reported temporary suspension of resource sales.",
+  "summary": "The existing A10 restarted, the exact 12,902,784-parameter large candidate was probed, and the fixed-20k training pipeline is running.",
   "observations": [
     {
       "name": "existing_instance_status",
-      "value": "Failed",
-      "observed_at": "2026-07-29T03:21:51+08:00"
+      "value": "Running",
+      "observed_at": "2026-07-29T06:44:08+08:00"
     },
     {
       "name": "last_provider_modified_time",
-      "value": "2026-07-29T02:49:57+08:00"
+      "value": "2026-07-29T06:44:08+08:00"
     },
     {
       "name": "large_parameters",
-      "value": null,
-      "reason": "probe has not run on the DSW environment"
+      "value": 12902784,
+      "observed_at": "2026-07-29T06:48:42+08:00"
+    },
+    {
+      "name": "parameter_probe_sha256",
+      "value": "3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f"
+    },
+    {
+      "name": "pipeline_stage",
+      "value": "TRAINING_LARGE",
+      "observed_at": "2026-07-29T06:49:24+08:00"
     }
   ],
   "comparisons": [],
@@ -35,20 +44,20 @@
   ],
   "conclusion": {
     "observed": [
-      "The existing requested resource remains one NVIDIA A10 and status Failed.",
-      "No large training or evaluation artifact exists."
+      "The existing requested resource is one NVIDIA A10 and reached Running.",
+      "The environment probe instantiated the large architecture at exactly 12,902,784 parameters.",
+      "The extension pipeline entered TRAINING_LARGE under the six-hour shutdown timer."
     ],
     "interpretation": [
-      "The experiment is blocked by provider inventory, not rejected by model evidence."
+      "The prior infrastructure block is resolved for this run, but no scientific result exists until held-out evaluation completes."
     ],
     "not_established": [
-      "Exact parameter count.",
       "Memory fit.",
       "Large-vs-medium rollout quality."
     ],
     "decision": [
-      "Retry only the existing instance on the monitor cadence.",
-      "Do not change accelerator specification or create a new paid instance without user authorization."
+      "Monitor the single PID without restarting a healthy pipeline.",
+      "Preserve checkpoints and record terminal metrics whether the run succeeds or fails."
     ]
   },
   "artifacts": [
@@ -65,6 +74,14 @@
       "uri": "scripts/experiments/coinrun/probe_coinrun_dynamics_scaling.py",
       "retention": "git",
       "sha256": "b263d210094bbaae299cd18dfecbac217038aa1c0104e3bc58cc8ca76c48172e"
+    },
+    {
+      "name": "large parameter probe output",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0004/raw/dynamics_scaling_candidates_with_large.json",
+      "remote_uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/dynamics_scaling_candidates_with_large.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f"
     }
   ],
   "revision_history": [
@@ -72,6 +89,11 @@
       "revision": 1,
       "at": "2026-07-29T03:21:51+08:00",
       "reason": "Backfilled planned protocol and current infrastructure block."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T06:49:24+08:00",
+      "reason": "Recorded successful A10 restart, exact parameter probe, and pipeline start."
     }
   ]
 }

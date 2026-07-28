@@ -18,26 +18,26 @@ Three points support a local capacity trend, but the tested range ends at 3.93M 
 - Baseline: medium from `CR-DYN-0003`.
 - Changed: dynamics architecture to depth 6, `d_model=384`, six query heads, one KV head, 32 registers.
 - Fixed: tokenizer, data, batch 32 × 64, 20,000 steps, bootstrap at 10,000, optimizer and schedule, eight held-out videos, context 4, horizon 16, seed 4242, EMA shortcut evaluation.
-- Exact parameter count must be written by the probe before training starts.
+- The DSW probe instantiated the frozen architecture at exactly **12,902,784 parameters**. Its retained JSON has SHA256 `3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f`.
 
 ## Current result
 
-### Observed
+### Observed at 2026-07-29 06:49 Asia/Shanghai
 
-- The runner and parameter-probe code are prepared.
-- The existing A10 instance stopped at its timer and subsequent starts returned `Failed`; the event reported that sales of the resource were temporarily suspended.
-- No large parameter probe output, checkpoint, metric, or rollout exists.
+- The existing one-A10 instance recovered from the recorded inventory block and reached `Running`.
+- A six-hour shutdown timer is due at 2026-07-29 12:45:44 Asia/Shanghai.
+- The parameter probe completed before training and recorded 12,902,784 parameters.
+- The single extension pipeline entered `TRAINING_LARGE` at 06:49:24; no terminal checkpoint comparison or held-out metric exists yet.
 
 ### Interpretation
 
-This is an infrastructure inventory block, not a negative model result.
+The infrastructure block is resolved for this attempt. The experiment remains scientifically unevaluated while training is running.
 
 ### Not established
 
-- Exact large parameter count.
 - Whether the model fits A10 24 GB.
 - Any large-vs-medium quality comparison.
 
 ### Decision
 
-Keep retrying only the existing A10 instance. Do not switch to V100/A100 or create another paid instance without explicit authorization. Once it runs, probe parameters first, then execute the frozen protocol once.
+Monitor the recorded PID and do not restart a healthy pipeline. On terminal completion or failure, retain the checkpoint/config/metrics evidence and update this record before interpreting the result.
