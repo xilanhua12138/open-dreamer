@@ -16,6 +16,25 @@ Before reuse:
 3. Confirm the current source commit and a clean/hashed dirty state.
 4. Confirm dataset/checkpoint paths and the existing authorized accelerator.
 5. Never reuse an old `STATUS=COMPLETE` marker as scientific evidence; check all expected arms and artifacts.
+6. For new runs, enable the structured recorder and fixed held-out validation
+   described in `experiments/OBSERVABILITY.md`. W&B is a mirror; local JSONL and
+   hashed media remain mandatory.
+7. Launch new formal arms through `scripts/experiments/run_recorded.py`, so a
+   successful or failed process exit materializes machine-owned ledger evidence
+   without an agent copying metric values.
+
+Do not edit a frozen historical runner merely to add W&B. Create a new
+experiment ID/runner or use the observability options before its source commit
+is frozen. A future tokenizer runner should normally include:
+
+```text
+use_wandb=true
+logger.wandb_project=open-dreamer
+logger.wandb_group=<experiment-id>
+validation.enabled=true
+validation.dataset_path=<disjoint-eval-path>
+validation.every_steps=<preregistered-interval>
+```
 
 ## Scripts by experiment
 

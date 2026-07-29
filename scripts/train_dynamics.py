@@ -319,6 +319,8 @@ def run(cfg: DynamicsConfig):
 
                 # EMA update
                 ema_update_step(bundle.dynamics, bundle.dynamics_ema, ema_decay=cfg.ema_decay)
+                if is_main_process:
+                    logger.observe_step(step)
 
                 # Logging — device_get on all hosts to stay in sync, only host 0 logs
                 if logger.should_log(step):

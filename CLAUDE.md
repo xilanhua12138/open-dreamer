@@ -102,6 +102,23 @@
 - 库存不足是 `blocked`，不是模型实验 `failed`。
 - 账号余额、AccessKey、SSH 私钥、代理订阅和 token 永远不能进 Git。
 
+### 3.4 运行身份和可观测性
+
+- 正式训练必须使用仓库 logger 生成稳定 `run-id.json`、每次进程尝试的
+  `runtime-identities/*.json`、原子 `run-state.json`、`metrics.jsonl`、
+  `telemetry.jsonl` 和 `artifacts.jsonl`。
+- 新 runner 必须通过 `scripts/experiments/run_recorded.py` 启动训练，确保成功和
+  失败退出都会自动物化账本 evidence；成功但没有结构化 runtime evidence
+  必须视为 runner 错误。
+- `runtime-identity.json` 必须记录 source/dirty patch、依赖文件 hash、
+  Python/JAX/CUDA/GPU 身份和脱敏后的启动命令。禁止记录代理 URL、API key、
+  token 或完整环境变量。
+- PID 存活不是训练健康证据。监控必须同时检查结构化 state、最近 completed
+  update、最近 telemetry 时间、GPU/磁盘状态和预期产物。
+- W&B 是可选的在线镜像，不是唯一真相源。未获得非空在线 run URL 时不得声称
+  已上传；W&B 不可用也不能导致本地 metrics、telemetry 或 media 丢失。
+- 完整字段、认证方式和恢复语义见 `experiments/OBSERVABILITY.md`。
+
 ## 4. 评估：比较对象必须一致
 
 ### 4.1 Tokenizer
@@ -114,6 +131,11 @@
 - online 权重与 EMA 权重
 
 它们不是同一个指标，不能互换。官方图中估读的数字必须标记为 `plot_estimate`，不能作为精确 ground truth。
+
+正式 tokenizer run 若启用周期验证，必须使用与训练 split 分离的固定 held-out
+dataset、seed、batch/clip shape 和内容 SHA256。验证图片和视频必须来自该固定
+validation set，不得用当前 training batch 冒充验证集。每个 milestone 的本地
+JSON/PNG/MP4 先落盘并记录 hash，再镜像到 W&B。
 
 ### 4.2 Dynamics
 
@@ -191,6 +213,10 @@ README 的结论必须分成：
 1. 更新 `results.json` 和 `events.jsonl`。
 2. 保留所有 deviations、失败原因和缺失比较臂。
 3. 将足够小的原始指标复制到 `raw/`，并校验哈希。
+   对支持结构化 recorder 的 run，优先使用
+   `scripts/experiments/run_recorded.py` 自动生成 run evidence、README 表格和
+   results artifact 引用；仅在导入历史 run 时手动调用
+   `materialize_run_evidence.py`。禁止由 agent 在多个文件中重复手抄数字。
 4. 更新 `experiments/index.json` 和 `experiments/README.md`。
 5. 运行：
 

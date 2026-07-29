@@ -245,10 +245,33 @@ class LoggerConfig:
     use_wandb: bool = False
     wandb_entity: str | None = None
     wandb_project: str | None = None
+    wandb_group: str | None = None
+    wandb_tags: list[str] = field(default_factory=list)
+    wandb_mode: str = "online"
 
     log_every: int = 100
     max_steps: int = 1_000_000_000
-    log_gradients:  bool = False
+    log_gradients: bool = False
+    telemetry_progress_every_seconds: float = 30.0
+    telemetry_system_every_seconds: float = 60.0
+
+
+@dataclass(frozen=True)
+class TokenizerValidationConfig:
+    """Fixed held-out validation used for metrics and W&B media."""
+
+    enabled: bool = False
+    dataset_path: str = ""
+    every_steps: int = 2_500
+    batch_size: int = 8
+    batches: int = 2
+    frames: int = 16
+    seed: int = 4_242
+    max_visual_samples: int = 4
+    fps: int = 8
+    num_workers: int = 2
+    prefetch_buffer_size: int = 2
+    device_prefetch_buffer_size: int = 1
 
 
 @dataclass(frozen=False)
@@ -292,6 +315,9 @@ class TokenizerConfig(BaseExperimentConfig):
     lpips_frac: float = 0.5
     visualize_every: int = 10_000
     tokenizer_loss_type: str = "mae" # "mse" | "mae"
+    validation: TokenizerValidationConfig = field(
+        default_factory=TokenizerValidationConfig
+    )
 
     # Finetuning: gradually reduce MAE masking while freezing encoder
     mae_finetune: bool = False
