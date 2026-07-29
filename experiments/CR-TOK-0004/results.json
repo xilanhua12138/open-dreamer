@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0004",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered but not started. The new n28.7m-label arm will run only after CR-TOK-0003 reaches terminal state, using the same A10 and fixed-20k protocol.",
+  "observations": [
+    {
+      "name": "pretraining_architecture_probe",
+      "label": "n28.7m",
+      "depth": 6,
+      "d_model": 384,
+      "parameters": 25564032,
+      "flops_per_step": 25728028508160,
+      "estimated_training_flops": 514560570163200000,
+      "device": "CPU parameter/FLOPs construction only",
+      "scientific_outcome_observed": false
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label."
+    ],
+    "interpretation": [],
+    "not_established": [
+      "Any training, held-out reconstruction or visual-quality result for n28.7m.",
+      "Whether n28.7m improves over the n16.6m baseline.",
+      "Whether the tokenizer is suitable for dynamics."
+    ],
+    "decision": [
+      "Freeze the source commit and queue this arm behind CR-TOK-0003 on the same A10.",
+      "Do not start dynamics."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T20:38:34+08:00",
+      "reason": "Preregistered the missing 28.7M-label fixed-20k extension before any candidate training or held-out evaluation."
+    }
+  ]
+}

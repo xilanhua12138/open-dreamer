@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0004",
+  "retrospective": false,
+  "created_at": "2026-07-29T20:38:34+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun tokenizer 28.7M-label fixed-20k extension",
+  "kind": "confirmatory",
+  "question": "At the same fixed 20,000-update recipe and latent interface as CR-TOK-0003, does the local 28.7M-label tokenizer improve held-out reconstruction over the 16.6M-label baseline?",
+  "reason": "CR-TOK-0003 intentionally stopped at the 16.6M label, while the published CoinRun tokenizer scaling plot also includes a 28.7M label. The missing endpoint prevents the local capacity curve from covering the full published label range.",
+  "hypothesis": "Increasing the symmetric encoder/decoder backbone from depth 5 and d_model 320 to depth 6 and d_model 384 will improve at least one final EMA clean, edge or temporal-change PSNR metric at the shared 20,000-update horizon because the 8.6M arm was still improving at 20,000 updates.",
+  "falsification": "The hypothesis is rejected if the 28.7M-label arm completes the aligned protocol but improves none of final EMA clean, edge or temporal-change PSNR over the 16.6M-label baseline.",
+  "baseline_id": "CR-TOK-0003",
+  "depends_on": [
+    "CR-TOK-0003"
+  ],
+  "controlled_variable": {
+    "name": "tokenizer_backbone_scale",
+    "values": [
+      {
+        "name": "n16.6m",
+        "role": "retained_baseline",
+        "depth": 5,
+        "d_model": 320,
+        "exact_parameters": 14912320
+      },
+      {
+        "name": "n28.7m",
+        "role": "new_extension_arm",
+        "depth": 6,
+        "d_model": 384,
+        "exact_parameters": 25564032
+      }
+    ]
+  },
+  "constants": {
+    "training_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "heldout_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "seed": 0,
+    "batch_size": 128,
+    "clip_frames": 16,
+    "optimizer_updates": 20000,
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "patch_size": 8,
+    "optimizer": "muon with mup_scaling=true",
+    "loss": "mse plus 0.2 LPIPS",
+    "ema_decay": 0.999,
+    "heldout_seed": 4242,
+    "heldout_batch_size": 32,
+    "heldout_batches": 16,
+    "heldout_num_clips": 512
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/experiment-ledger",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_28p7_fixed20k.sh",
+    "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "policy": "Reuse the immutable CR-TOK-0003 structured train/eval records; no data is regenerated for this extension.",
+    "train_level_range": [
+      7000,
+      11095
+    ],
+    "eval_level_range": [
+      20000,
+      20511
+    ],
+    "split_overlap": 0,
+    "tree_sha256": {
+      "train": "276af79200604d65bd357ffbc3a4e591fa6aa3f75962719e7c3273bbf18f386f",
+      "eval": "2e7c5db0cabda7645ba10dc41974eb164066864d62e9d7ae40f1cd7e242bbb3f"
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "20,000 optimizer updates; exact probe estimates 25,728,028,508,160 FLOPs/update and 5.145605701632e17 total training FLOPs. Expected wall time is approximately 6-9 A10 hours and must be measured.",
+    "shutdown_policy": "Use only the existing A10 after CR-TOK-0003 reaches terminal state. Keep a bounded shutdown timer beyond remaining ETA, then stop the instance after artifacts and ledger evidence are synchronized."
+  },
+  "protocol": {
+    "model": {
+      "label": "n28.7m",
+      "exact_parameters": 25564032,
+      "encoder_depth": 6,
+      "decoder_depth": 6,
+      "encoder_d_model": 384,
+      "decoder_d_model": 384,
+      "n_heads": 6,
+      "n_kv_heads": 1,
+      "time_every": 6,
+      "time_layer_offset": 5,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "dtype": "bfloat16",
+      "param_dtype": "float32"
+    },
+    "training": {
+      "from_scratch": true,
+      "resume_only_after_fault": true,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0,
+      "checkpoint_steps_zero_based": [
+        2499,
+        4999,
+        9999,
+        14999,
+        19999
+      ],
+      "runtime_recorder": "scripts/experiments/run_recorded.py",
+      "wandb": {
+        "enabled": true,
+        "project": "open-dreamer",
+        "group": "CR-TOK-0004",
+        "mode": "online when the DSW host is authenticated; otherwise offline with later wandb sync",
+        "local_evidence_required": true
+      }
+    },
+    "evaluation": {
+      "full_heldout_completed_updates": [
+        2500,
+        5000,
+        10000,
+        20000
+      ],
+      "full_heldout_num_clips": 512,
+      "full_heldout_conditions": [
+        "online clean",
+        "online masked",
+        "EMA clean",
+        "EMA masked",
+        "online/EMA edge",
+        "online/EMA temporal-change"
+      ],
+      "periodic_validation": {
+        "every_completed_updates": 2500,
+        "num_clips": 16,
+        "seed": 4242,
+        "frames": 16,
+        "outputs": [
+          "metrics.json",
+          "target-online-EMA PNG",
+          "target-online-EMA GIF",
+          "W&B media mirror when authenticated"
+        ]
+      },
+      "comparison": "Require exact equality of dataset path, seed, batch size, frames, batches, clip count and completed updates before computing n28.7m minus n16.6m deltas.",
+      "selection_rule": "Descriptive sum of final EMA clean, edge and temporal-change PSNR; no quality gate or eligibility filter."
+    },
+    "downstream_guard": {
+      "dynamics_authorized": false,
+      "release_condition": "Explicit user visual acceptance of the aligned n16.6m versus n28.7m grid, followed by a tokenizer-plus-dynamics interface smoke test."
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "The exact 25,564,032-parameter n28.7m-label tokenizer trains from scratch for exactly 20,000 optimizer updates with scaling helpers disabled."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The run emits structured runtime identity, run state, metrics, telemetry and artifact ledgers, plus eight fixed-set periodic validation milestones with one stable validation-set SHA256."
+    },
+    {
+      "id": "SC-3",
+      "rule": "All four 512-clip held-out evaluations at 2,500 / 5,000 / 10,000 / 20,000 completed updates finish with finite online and EMA global, edge and temporal-change metrics."
+    },
+    {
+      "id": "SC-4",
+      "rule": "The n16.6m versus n28.7m comparison refuses mismatched evaluation identities and retains the aligned final reconstruction grid."
+    },
+    {
+      "id": "SC-5",
+      "rule": "W&B mode and URL are reported truthfully; offline mode is never described as uploaded, and all evidence exists locally regardless of W&B availability."
+    },
+    {
+      "id": "SC-6",
+      "rule": "Dynamics remains blocked until explicit visual acceptance."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/plan.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/tokenizer-28p7-probe.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/runtime-identity.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/run-state.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/validation/updates-*",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/checkpoints/{2499,4999,9999,14999,19999}",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/milestones/*/heldout_eval.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/tokenizer-16p6m-vs-28p7m-comparison.json",
+    "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/tokenizer-16p6m-vs-28p7m.png"
+  ]
+}

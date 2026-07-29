@@ -43,6 +43,7 @@ validation.every_steps=<preregistered-interval>
 | `CR-TOK-0001` | `run_coinrun_official_min_scaling.sh`, `eval_coinrun_tokenizer_psnr.py` |
 | `CR-TOK-0002` | `probe_coinrun_tokenizer_scale_v2.py`, `run_coinrun_tokenizer_scale_v2.sh`, `select_coinrun_tokenizer_scale.py` |
 | `CR-TOK-0003` | `tokenizer_quality_first_protocol.py`, `probe_coinrun_tokenizer_quality_first.py`, `run_coinrun_tokenizer_quality_first_20k.sh`, `summarize_tokenizer_quality_first.py` |
+| `CR-TOK-0004` | `tokenizer_28p7_protocol.py`, `probe_coinrun_tokenizer_28p7.py`, `compare_tokenizer_extension.py`, `run_coinrun_tokenizer_28p7_fixed20k.sh` |
 | `CR-DYN-0001` | `generate_coinrun_records.py`, `compute_coinrun_latent_stats.py`, `run_coinrun_minimal_complete.sh`, `evaluate_coinrun_minimal.sh` |
 | `CR-DYN-0002` | `probe_coinrun_dynamics_scaling.py`, `run_coinrun_dynamics_scaling.sh`, `score_coinrun_rollouts.py` |
 | `CR-DYN-0003` | `run_coinrun_dynamics_fixed20k.sh`, `score_coinrun_rollouts.py` |

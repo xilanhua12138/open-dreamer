@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T17:31:45+08:00",
+  "updated_at": "2026-07-29T20:38:34+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -34,6 +34,17 @@
         "CR-TOK-0001",
         "CR-TOK-0002",
         "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-TOK-0004",
+      "title": "CoinRun tokenizer 28.7M-label fixed-20k extension",
+      "path": "experiments/CR-TOK-0004",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003"
       ]
     },
     {
