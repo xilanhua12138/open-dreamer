@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0004",
-  "record_revision": 3,
-  "execution_status": "failed",
+  "record_revision": 4,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-30T01:01:06+08:00",
-  "ended_at": "2026-07-30T01:01:11+08:00",
-  "summary": "The first n28.7m launch failed before any optimizer update because validation dataset materialization required the DatasetConfig.mouse_repr key even though the CoinRun Hydra config legitimately omitted it and relied on the dataclass default. The failed attempt is retained; a red regression test and source fix were committed without changing model scale or training protocol.",
+  "ended_at": null,
+  "summary": "The first zero-update failure is retained. After a red-test-first validation-config fix, the same n28.7m protocol restarted from scratch on execution commit b3eb2af and is running on the same A10 with W&B offline and a 12-hour shutdown guard.",
   "observations": [
     {
       "name": "pretraining_architecture_probe",
@@ -38,6 +38,16 @@
       "wandb_mode": "offline",
       "failure": "omegaconf.errors.ConfigAttributeError: Key 'mouse_repr' is not in struct",
       "scientific_outcome_observed": false
+    },
+    {
+      "name": "attempt_02_recovery_launch",
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "pipeline_pid": 68104,
+      "started_at": "2026-07-30T01:07:25+08:00",
+      "wandb_mode": "offline",
+      "checkpoint_reused": false,
+      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
+      "shutdown_due_at": "2026-07-30T13:01:15+08:00"
     }
   ],
   "comparisons": [],
@@ -114,6 +124,11 @@
       "revision": 3,
       "at": "2026-07-30T01:04:32+08:00",
       "reason": "Preserved the zero-update failed launch, exact runtime evidence and ConfigAttributeError; recorded the red-test-first default-materialization fix and the resulting execution-source deviation without changing the scientific protocol."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-30T01:07:25+08:00",
+      "reason": "Restarted the unchanged n28.7m protocol from zero on execution commit b3eb2af after the regression fix; recorded PID, offline W&B mode and shutdown guard while retaining attempt-01 failure evidence."
     }
   ]
 }

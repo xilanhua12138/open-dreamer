@@ -30,7 +30,9 @@ A CPU-only construction probe measured 25,564,032 parameters and 25,728,028,508,
 
 The first launch from source commit `3833b34b46358b0443bb3571a5745c013eb7a7e7` failed before any optimizer update. `build_validation_dataset_config` directly read every dataclass field from the CoinRun Hydra node; that node legitimately omitted `mouse_repr` and relied on the `DatasetConfig` default, producing `ConfigAttributeError`.
 
-The exact missing-default case was added as a regression test and observed failing before the implementation was fixed. Local fix commit `c565f0b` was applied to the detached execution source as `b3eb2af`. The architecture, data, optimizer, update budget and evaluation protocol did not change, and no checkpoint can be reused because the failed attempt completed zero updates.
+The exact missing-default case was added as a regression test and observed failing before the implementation was fixed. Local fix commit `c565f0b` was applied to the detached execution source as `b3eb2af`. The architecture, data, optimizer, update budget and evaluation protocol did not change, and no checkpoint was reused because the failed attempt completed zero updates.
+
+Attempt 02 started from scratch at `2026-07-30T01:07:25+08:00` under PID `68104`. W&B is truthfully offline, and the local structured evidence remains authoritative. The same A10 has a shutdown guard due at `2026-07-30T13:01:15+08:00`.
 
 ### Interpretation
 
@@ -44,4 +46,4 @@ This is an infrastructure failure before a scientific observation, not evidence 
 
 ### Decision
 
-Restart from zero using execution commit `b3eb2af`, preserve the failed attempt, and do not start dynamics.
+Continue the single attempt-02 PID, preserve attempt-01 failure evidence, and do not start dynamics.
