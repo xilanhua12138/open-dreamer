@@ -206,6 +206,7 @@ class CheckpointConfig:
     """Configuration for checkpointing."""
     max_to_keep: int = 5  # Maximum number of checkpoints to keep
     save_interval_steps: int = 10_000  # Save checkpoint every N steps
+    save_on_steps: list[int] = field(default_factory=list)
     max_steps: int = 1_000_000_000  # Maximum number of training steps
 
 

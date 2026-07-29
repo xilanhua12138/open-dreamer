@@ -36,6 +36,10 @@ ckpt:
   # preempted jobs cheaper to resume.
   save_interval_steps: 10_000
 
+  # Optional exact zero-based training steps to retain. The final step is
+  # always added by the checkpoint manager even when omitted here.
+  save_on_steps: []
+
   # Used by Orbax to force a final checkpoint near the end of training. Keep
   # this tied to top-level `max_steps`.
   max_steps: ${max_steps}

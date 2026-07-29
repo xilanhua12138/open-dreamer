@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0002",
-  "record_revision": 5,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
+  "record_revision": 6,
+  "execution_status": "aborted",
+  "scientific_status": "inconclusive",
   "claim_level": "internal_result",
   "started_at": "2026-07-29T12:49:27+08:00",
-  "ended_at": null,
-  "summary": "The experiment is running on the existing A10. Isolated structured train/eval datasets passed audit and fresh n0.17m training started first. Before any held-out arm result existed, the user amended the protocol to train all five scales unconditionally and rank them only after the full sweep.",
+  "ended_at": "2026-07-29T14:38:09+08:00",
+  "summary": "The original runner completed only the n0.17m, n1.1m and n3.7m arms before its obsolete quality-gate branch exited. The three retained observations use radically different optimizer-step budgets, so they are useful optimization-budget diagnostics but cannot answer the intended five-scale quality question. The missing n8.6m and n16.6m arms were not started under this experiment; CR-TOK-0003 supersedes it with 20,000 updates for every scale.",
   "observations": [
     {
       "name": "source_identity",
@@ -82,9 +82,52 @@
       "checkpoint_remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n0p17m/checkpoints",
       "checkpoint_bytes": 1768563,
       "checkpoint_tree_sha256": "a8e068fc8c4bd3a8e80da381373ac10a53ed103ef97c874688335724d9bb26e6"
+    },
+    {
+      "name": "n1p1m_heldout",
+      "parameters": 1048192,
+      "completed_steps": 9358,
+      "training_flops_budget": 1e16,
+      "num_clips": 512,
+      "ema_clean_psnr_db": 27.256295084953308,
+      "ema_masked_psnr_db": 24.63123333454132,
+      "ema_clean_edge_psnr_db": 20.602582698349742,
+      "ema_clean_temporal_change_psnr_db": 20.822592084040355,
+      "checkpoint_remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n1p1m/checkpoints",
+      "checkpoint_bytes": 12056808,
+      "checkpoint_tree_sha256": "635118894ecee882830a216f21032a801c9caaec8bc07407e98b7e8d287a7293"
+    },
+    {
+      "name": "n3p7m_heldout",
+      "parameters": 3342528,
+      "completed_steps": 2938,
+      "training_flops_budget": 1e16,
+      "num_clips": 512,
+      "online_clean_psnr_db": 29.30452823638916,
+      "ema_clean_psnr_db": 26.207462906837463,
+      "online_masked_psnr_db": 26.42827534675598,
+      "ema_masked_psnr_db": 24.659922242164612,
+      "online_clean_edge_psnr_db": 22.15021569125033,
+      "ema_clean_edge_psnr_db": 20.241949942478072,
+      "online_clean_temporal_change_psnr_db": 22.770309761165926,
+      "ema_clean_temporal_change_psnr_db": 21.02331753337458,
+      "checkpoint_remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n3p7m/checkpoints",
+      "checkpoint_bytes": 37659190,
+      "checkpoint_tree_sha256": "c9d402da2d187f005565a66e7545b0d1828f122c08bb45fc6b0d2d19ea225c36"
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "name": "n1p1m_minus_n0p17m_ema_clean_psnr_db",
+      "value": 15.19419527053833,
+      "interpretation_limit": "Capacity and optimizer-step allocation both differ, so this is not a controlled capacity effect."
+    },
+    {
+      "name": "n3p7m_online_minus_ema_clean_psnr_db",
+      "value": 3.097065329551697,
+      "interpretation_limit": "The large online-versus-EMA gap after only 2,938 updates is evidence of an immature endpoint, not proof that more updates must improve every held-out metric."
+    }
+  ],
   "deviations": [
     {
       "at": "2026-07-29T12:58:48+08:00",
@@ -92,20 +135,35 @@
       "before": "Train n8.6m and n16.6m only when smaller candidates miss an absolute quality gate.",
       "after": "Train n0.17m, n1.1m, n3.7m, n8.6m and n16.6m unconditionally; use metrics only for post-hoc comparison and ranking.",
       "bias_control": "The amendment occurred during fresh n0.17m training before any held-out evaluation existed, so no observed scale result selected the new rule."
+    },
+    {
+      "at": "2026-07-29T14:38:09+08:00",
+      "type": "user_directed_supersession",
+      "before": "Use per-scale FLOPs budgets, which produced 62,675 / 9,358 / 2,938 / 2,550 / 2,656 allocated optimizer steps.",
+      "after": "Preserve this run as an incomplete optimization-budget diagnostic and start a new five-scale experiment with exactly 20,000 optimizer updates per arm.",
+      "bias_control": "The new experiment receives a new ID because training budget is a comparison-defining variable. Existing checkpoints and metrics remain immutable."
     }
   ],
   "failures": [],
   "conclusion": {
     "observed": [
-      "The fresh 163,392-parameter arm completed all 62,675 allocated steps and scored 12.0621 dB EMA clean PSNR, 11.9360 dB edge PSNR and 11.4601 dB temporal-change PSNR on 512 held-out clips."
+      "Fresh n0.17m, n1.1m and n3.7m arms completed 62,675, 9,358 and 2,938 updates respectively; n8.6m and n16.6m did not run under this experiment.",
+      "On the identical 512 held-out clips, EMA clean PSNR was 12.0621 dB for n0.17m, 27.2563 dB for n1.1m and 26.2075 dB for n3.7m.",
+      "At n3.7m, online clean PSNR was 29.3045 dB while EMA clean PSNR was 26.2075 dB after only 2,938 updates."
     ],
-    "interpretation": [],
+    "interpretation": [
+      "The run demonstrates that the representation is no longer universally collapsed at n1.1m, but the unequal update budgets confound capacity with optimization maturity.",
+      "The n3.7m online-versus-EMA gap makes its short endpoint especially unsuitable for selecting the best attainable tokenizer."
+    ],
     "not_established": [
       "Which tokenizer scale is visually acceptable.",
+      "Whether quality improves monotonically with capacity at a comparable optimization horizon.",
       "Whether any tokenizer candidate can support a controllable dynamics model."
     ],
     "decision": [
-      "Complete all five tokenizer arms before choosing a candidate, and do not start dynamics until the aligned five-scale grid passes explicit visual review."
+      "Do not run the missing two arms under this mixed-budget protocol.",
+      "Run CR-TOK-0003 with 20,000 updates for all five scales and evaluate 2,500, 5,000, 10,000 and 20,000-update milestones.",
+      "Keep dynamics blocked until the fixed-20k comparison receives explicit visual acceptance."
     ]
   },
   "artifacts": [
@@ -153,6 +211,61 @@
       "retention": "DSW persistent storage",
       "bytes": 1768563,
       "sha256": "a8e068fc8c4bd3a8e80da381373ac10a53ed103ef97c874688335724d9bb26e6"
+    },
+    {
+      "name": "n1.1m held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/n1p1m-heldout-eval.json",
+      "retention": "git",
+      "sha256": "fa60a06dcb3cb86cac8a107ab5fe97a86d340fdb6d11a149a8124c90cce62470"
+    },
+    {
+      "name": "n3.7m held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/n3p7m-heldout-eval.json",
+      "retention": "git",
+      "sha256": "18cb021f8c64dd1e5d1ec07df5e9c547740a0ca1569adfa1a557e859a2f8d84d"
+    },
+    {
+      "name": "completed-arm config summary",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/completed-arm-config-summary.json",
+      "retention": "git",
+      "sha256": "827c497ecb52177836c2d76c69f99cf78d32f758d2f2c16799a113f61f42581f"
+    },
+    {
+      "name": "n1.1m held-out reconstruction grid",
+      "kind": "png",
+      "uri": "local-task://v2-sync/n1p1m/heldout_reconstruction.png",
+      "remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n1p1m/heldout_reconstruction.png",
+      "retention": "local task and DSW persistent storage",
+      "bytes": 133920,
+      "sha256": "19d533088b86164468d4a1b5f6b32fe9730b7a4cebb536fcc58a9fc590200455"
+    },
+    {
+      "name": "n3.7m held-out reconstruction grid",
+      "kind": "png",
+      "uri": "local-task://v2-sync/n3p7m/heldout_reconstruction.png",
+      "remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n3p7m/heldout_reconstruction.png",
+      "retention": "local task and DSW persistent storage",
+      "bytes": 131072,
+      "sha256": "340e71cda81670a2d093989f11616c1b516e6b4da843f7fac78f9c8d6e4beed4"
+    },
+    {
+      "name": "n1.1m checkpoint tree",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n1p1m/checkpoints",
+      "retention": "DSW persistent storage",
+      "bytes": 12056808,
+      "sha256": "635118894ecee882830a216f21032a801c9caaec8bc07407e98b7e8d287a7293"
+    },
+    {
+      "name": "n3.7m checkpoint tree",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n3p7m/checkpoints",
+      "retention": "DSW persistent storage",
+      "bytes": 37659190,
+      "sha256": "c9d402da2d187f005565a66e7545b0d1828f122c08bb45fc6b0d2d19ea225c36"
     }
   ],
   "revision_history": [
@@ -180,6 +293,11 @@
       "revision": 5,
       "at": "2026-07-29T13:49:50+08:00",
       "reason": "Recorded the completed fresh n0.17m arm with exact held-out regional metrics, retained config/reconstruction evidence and checkpoint tree identity."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-29T14:38:09+08:00",
+      "reason": "Closed the incomplete unequal-step run as aborted, retained n1.1m and n3.7m evidence, and moved the quality question to fixed-20k CR-TOK-0003."
     }
   ]
 }

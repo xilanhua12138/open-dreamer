@@ -29,6 +29,11 @@ from dreamer.training import compute_psnr
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument(
+        "--checkpoint-step",
+        type=int,
+        help="Exact zero-based checkpoint step. Defaults to the latest checkpoint.",
+    )
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--visualization", type=Path, required=True)
@@ -122,6 +127,7 @@ def main() -> None:
         bundle = TokenizerCheckpointBundle.from_pretrained(
             str(args.checkpoint),
             mesh_rules=mesh_rules,
+            step=args.checkpoint_step,
         )
         iterator = iter(
             build_iterator(
@@ -222,6 +228,10 @@ def main() -> None:
 
     payload = {
         "checkpoint": str(args.checkpoint),
+        "checkpoint_step": args.checkpoint_step,
+        "completed_updates": (
+            None if args.checkpoint_step is None else args.checkpoint_step + 1
+        ),
         "dataset": str(args.dataset),
         "seed": args.seed,
         "batch_size": args.batch_size,

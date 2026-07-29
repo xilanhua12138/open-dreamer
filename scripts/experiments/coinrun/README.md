@@ -22,6 +22,8 @@ Before reuse:
 | Experiment | Primary scripts |
 |---|---|
 | `CR-TOK-0001` | `run_coinrun_official_min_scaling.sh`, `eval_coinrun_tokenizer_psnr.py` |
+| `CR-TOK-0002` | `probe_coinrun_tokenizer_scale_v2.py`, `run_coinrun_tokenizer_scale_v2.sh`, `select_coinrun_tokenizer_scale.py` |
+| `CR-TOK-0003` | `tokenizer_quality_first_protocol.py`, `probe_coinrun_tokenizer_quality_first.py`, `run_coinrun_tokenizer_quality_first_20k.sh`, `summarize_tokenizer_quality_first.py` |
 | `CR-DYN-0001` | `generate_coinrun_records.py`, `compute_coinrun_latent_stats.py`, `run_coinrun_minimal_complete.sh`, `evaluate_coinrun_minimal.sh` |
 | `CR-DYN-0002` | `probe_coinrun_dynamics_scaling.py`, `run_coinrun_dynamics_scaling.sh`, `score_coinrun_rollouts.py` |
 | `CR-DYN-0003` | `run_coinrun_dynamics_fixed20k.sh`, `score_coinrun_rollouts.py` |
@@ -31,7 +33,7 @@ Before reuse:
 
 `run_coinrun_extension_pipeline.sh` orders the large run, checkpoint selection, context ablation, and demo startup. It must remain idempotent through its PID/status/ready files.
 
-The repository-level `scripts/train_dynamics.py` accepts dataset-declared non-negative action dimensions instead of hard-coding Minecraft action counts. This is required for CoinRun's 16-way categorical action space.
+The repository-level `scripts/train_dynamics.py` accepts dataset-declared non-negative action dimensions instead of hard-coding Minecraft action counts. This is required for CoinRun's 15-way categorical action space.
 
 The live-demo smoke test deliberately executes two consecutive generated steps.
 A single successful step does not exercise the dtype of the autoregressively

@@ -9,7 +9,8 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | ID | Question | Execution | Scientific result | Claim |
 |---|---|---|---|---|
 | `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
-| `CR-TOK-0002` | What is the smallest tokenizer scale that clears global, edge, motion and visual gates? | running | not evaluated | internal result |
+| `CR-TOK-0002` | What did the unequal-step tokenizer pilot establish before the obsolete runner exited? | aborted | inconclusive | internal result |
+| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | planned | not evaluated | none |
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
@@ -25,7 +26,9 @@ The 12,902,784-parameter large extension completed but scored below medium, so t
 
 The subsequent user evaluation still rejected the demo as usable: tokenizer output was unclear and action response was incorrect. A source/runtime audit found a concrete protocol defect: Procgen CoinRun exposes 15 actions, while the repository config declares 16, and the generic action shifter prepends action 8 although Procgen no-op is action 4. Because this shifter is used during dynamics training, the current checkpoint is retained only as pipeline-smoke evidence. The next run must fix and test the action contract before spending more compute on model scale.
 
-`CR-TOK-0002` therefore blocks new dynamics work and restarts the representation study from scratch. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` scale ladder on one structured dataset; the two largest arms receive larger declared FLOPs budgets to preserve useful optimization depth, so the result is a practical quality/capacity sweep rather than a strict five-point iso-FLOPs curve. All five points are evaluated before ranking, and the final candidate still requires aligned-grid visual acceptance and later joint tokenizer-plus-dynamics inference compatibility before it can be frozen.
+`CR-TOK-0002` restarted the representation study but exposed a second confound. Its FLOPs allocations translated to `62,675 / 9,358 / 2,938 / 2,550 / 2,656` optimizer updates, and the obsolete initial runner exited after only the first three arms. Those retained results are optimization-budget diagnostics, not a fair quality curve; the experiment is closed as aborted rather than silently filled under a changed meaning.
+
+`CR-TOK-0003` is the corrected quality-first experiment. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` ladder from scratch for exactly 20,000 optimizer updates per arm, with scaling helpers disabled. Every arm is evaluated after 2,500, 5,000, 10,000 and 20,000 completed updates. The final ranking remains descriptive, and dynamics stays blocked until the aligned final grid receives explicit visual acceptance and a later joint-interface smoke test passes.
 
 ## Creating or closing an experiment
 

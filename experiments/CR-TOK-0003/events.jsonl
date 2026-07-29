@@ -1,0 +1,1 @@
+{"at":"2026-07-29T14:38:09+08:00","type":"planned","message":"Preregistered a five-scale fixed-20k tokenizer experiment after CR-TOK-0002 exposed an optimizer-step confound. All scales and four milestone evaluations are unconditional; dynamics remains blocked.","evidence":["manifest.json","CR-TOK-0002/results.json revision 6"]}

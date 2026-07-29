@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0003",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered and not yet launched.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Which tokenizer scale has the best fixed-20k held-out quality.",
+      "Whether any tokenizer is visually acceptable.",
+      "Whether any tokenizer supports controllable dynamics."
+    ],
+    "decision": [
+      "Launch only after the exact source commit, runner hash and remote worktree are bound in the ledger.",
+      "Do not start dynamics."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T14:38:09+08:00",
+      "reason": "Preregistered the quality-first fixed-20k protocol before creating or reusing any checkpoint for this experiment."
+    }
+  ]
+}

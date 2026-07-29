@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T12:50:03+08:00",
+  "updated_at": "2026-07-29T14:38:09+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -13,13 +13,26 @@
     },
     {
       "experiment_id": "CR-TOK-0002",
-      "title": "CoinRun tokenizer v2 adaptive scale and visual-quality gate",
+      "title": "CoinRun tokenizer v2 unequal-step pilot",
       "path": "experiments/CR-TOK-0002",
-      "execution_status": "running",
-      "scientific_status": "not_evaluated",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
       "claim_level": "internal_result",
       "depends_on": [
         "CR-TOK-0001",
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-TOK-0003",
+      "title": "CoinRun tokenizer quality-first fixed-20k scale sweep",
+      "path": "experiments/CR-TOK-0003",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-TOK-0002",
         "CR-DEMO-0001"
       ]
     },
