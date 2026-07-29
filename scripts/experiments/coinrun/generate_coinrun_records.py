@@ -13,6 +13,12 @@ from array_record.python.array_record_module import ArrayRecordWriter
 from gym3 import types_np
 from procgen import ProcgenGym3Env
 
+from dreamer.coinrun import (
+    COINRUN_ACTION_DIM,
+    COINRUN_NOOP_ACTION,
+    StructuredCoinRunPolicy,
+)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -22,6 +28,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--envs", type=int, default=8)
     parser.add_argument("--records-per-shard", type=int, default=64)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--policy",
+        choices=("random", "structured"),
+        default="random",
+    )
+    parser.add_argument("--goal-directed-fraction", type=float, default=0.65)
     return parser.parse_args()
 
 
@@ -38,6 +50,20 @@ def main() -> None:
         start_level=args.seed,
         num_levels=max(args.records, args.envs),
     )
+    action_dim = int(env.ac_space.eltype.n)
+    if action_dim != COINRUN_ACTION_DIM:
+        raise ValueError(
+            f"expected CoinRun action space {COINRUN_ACTION_DIM}, got {action_dim}"
+        )
+    structured_policy = (
+        StructuredCoinRunPolicy(
+            num_envs=args.envs,
+            seed=args.seed,
+            goal_directed_fraction=args.goal_directed_fraction,
+        )
+        if args.policy == "structured"
+        else None
+    )
 
     video_buffers: list[list[np.ndarray]] = [[] for _ in range(args.envs)]
     action_buffers: list[list[np.ndarray]] = [[] for _ in range(args.envs)]
@@ -45,6 +71,11 @@ def main() -> None:
     writer: ArrayRecordWriter | None = None
     shard_index = -1
     written = 0
+    action_counts = np.zeros(action_dim, dtype=np.int64)
+    episode_returns = np.zeros(args.envs, dtype=np.float32)
+    has_started = np.zeros(args.envs, dtype=bool)
+    completed_episodes = 0
+    successful_episodes = 0
 
     def open_shard(index: int) -> ArrayRecordWriter:
         path = args.output_dir / f"shard-{index:05d}.array_record"
@@ -53,7 +84,23 @@ def main() -> None:
     try:
         while written < args.records:
             rewards, observations, first = env.observe()
-            actions = types_np.sample(env.ac_space, bshape=(env.num,), rng=rng)
+            episode_returns += np.asarray(rewards, dtype=np.float32)
+            for index in np.flatnonzero(first):
+                if has_started[index]:
+                    completed_episodes += 1
+                    successful_episodes += int(episode_returns[index] > 0)
+                    episode_returns[index] = 0.0
+                has_started[index] = True
+
+            actions = (
+                structured_policy.sample(first)
+                if structured_policy is not None
+                else types_np.sample(env.ac_space, bshape=(env.num,), rng=rng)
+            )
+            action_counts += np.bincount(
+                np.asarray(actions, dtype=np.int32),
+                minlength=action_dim,
+            )
 
             for index in range(args.envs):
                 if bool(first[index]) and video_buffers[index]:
@@ -101,7 +148,29 @@ def main() -> None:
         "records": written,
         "frames_per_record": args.frames,
         "seed": args.seed,
+        "start_level": args.seed,
+        "num_levels": max(args.records, args.envs),
         "shards": shard_index + 1,
+        "action_space": {
+            "categorical_action_dim": action_dim,
+            "categorical_noop_action": COINRUN_NOOP_ACTION,
+        },
+        "action_policy": args.policy,
+        "goal_directed_fraction": (
+            args.goal_directed_fraction if structured_policy is not None else None
+        ),
+        "action_counts": {
+            str(action_id): int(count)
+            for action_id, count in enumerate(action_counts)
+            if count
+        },
+        "completed_episodes": completed_episodes,
+        "successful_episodes": successful_episodes,
+        "success_rate": (
+            successful_episodes / completed_episodes
+            if completed_episodes
+            else None
+        ),
     }
     (args.output_dir / "metadata.json").write_text(
         json.dumps(metadata, indent=2) + "\n",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0001",
-  "record_revision": 6,
+  "record_revision": 7,
   "execution_status": "completed",
   "scientific_status": "rejects_hypothesis",
   "claim_level": "smoke_test",
@@ -184,7 +184,8 @@
       "name": "live demo server",
       "kind": "python",
       "uri": "scripts/experiments/coinrun/live_coinrun_demo.py",
-      "retention": "git",
+      "retention": "git_at_commit",
+      "source_commit": "a4537c0cef5463e8ab5bba343359e0b9a11224da",
       "sha256": "c8bdfd9a0b43ca01c6b419121a95bb9f7f177e5d651666fdadfd8e4d1fb57263"
     },
     {
@@ -303,6 +304,11 @@
       "revision": 6,
       "at": "2026-07-29T12:13:16+08:00",
       "reason": "Recorded the user's qualitative rejection of the demo and the subsequent Procgen action-cardinality/no-op contract audit."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-29T12:40:00+08:00",
+      "reason": "Pinned the mutable live-demo source artifact to its historical commit before the v2 action-contract implementation changed the working-tree path."
     }
   ]
 }

@@ -39,7 +39,8 @@ def main() -> None:
         W=64,
         C=3,
         patch_size=8,
-        categorical_action_dim=16,
+        categorical_action_dim=15,
+        categorical_noop_action=4,
         p_include_reward=0.5,
         dataloader_cfg=DataloaderConfig(
             B=args.batch_size,

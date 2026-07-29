@@ -276,7 +276,11 @@ def run(cfg: DynamicsConfig):
                 latents = batch.get("latents")
                 input_tensor = latents if latents is not None else videos
 
-                actions = shift_actions(actions, cfg.dataset.categorical_action_dim)
+                actions = shift_actions(
+                    actions,
+                    cfg.dataset.categorical_action_dim,
+                    cfg.dataset.categorical_noop_action,
+                )
 
                 # Validation/visualization — all hosts must participate in JAX
                 # compute (model is sharded), but only process 0 does I/O.

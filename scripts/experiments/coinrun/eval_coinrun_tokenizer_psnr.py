@@ -16,6 +16,12 @@ from flax import nnx
 from dreamer.checkpointing import TokenizerCheckpointBundle
 from dreamer.configs import DataloaderConfig, DatasetConfig
 from dreamer.data import build_iterator
+from dreamer.image_metrics import (
+    edge_mask,
+    psnr_from_squared_error,
+    region_squared_error,
+    temporal_change_mask,
+)
 from dreamer.parallel import build_parallel
 from dreamer.training import compute_psnr
 
@@ -75,7 +81,8 @@ def main() -> None:
         W=64,
         C=3,
         patch_size=8,
-        categorical_action_dim=16,
+        categorical_action_dim=15,
+        categorical_noop_action=4,
         p_include_reward=0.5,
         dataloader_cfg=DataloaderConfig(
             B=args.batch_size,
@@ -100,6 +107,15 @@ def main() -> None:
         "ema_masked_psnr",
     )
     totals = {name: 0.0 for name in metric_names}
+    regional_totals = {
+        name: {"squared_error": 0.0, "count": 0}
+        for name in (
+            "online_clean_edge",
+            "online_clean_temporal_change",
+            "ema_clean_edge",
+            "ema_clean_temporal_change",
+        )
+    }
     first_visualization = None
 
     with jax.set_mesh(mesh):
@@ -122,7 +138,7 @@ def main() -> None:
             batch_key = jax.random.fold_in(jax.random.key(args.seed), batch_index)
             mae_key, dropout_key = jax.random.split(batch_key)
 
-            online_clean_mse, online_clean_psnr, _ = evaluate_clean(
+            online_clean_mse, online_clean_psnr, online_clean_pred = evaluate_clean(
                 bundle.tokenizer, videos
             )
             (
@@ -154,9 +170,33 @@ def main() -> None:
             for name, value in values.items():
                 totals[name] += float(jax.device_get(value))
 
+            target_u8 = to_uint8(videos)
+            edge = edge_mask(target_u8, threshold=16 / 255)
+            temporal_change = temporal_change_mask(
+                target_u8,
+                threshold=16 / 255,
+            )
+            for prefix, prediction in (
+                ("online_clean", online_clean_pred),
+                ("ema_clean", ema_clean_pred),
+            ):
+                prediction_u8 = to_uint8(prediction)
+                for region_name, region_mask in (
+                    ("edge", edge),
+                    ("temporal_change", temporal_change),
+                ):
+                    squared_error, count = region_squared_error(
+                        prediction_u8,
+                        target_u8,
+                        region_mask,
+                    )
+                    aggregate = regional_totals[f"{prefix}_{region_name}"]
+                    aggregate["squared_error"] += squared_error
+                    aggregate["count"] += count
+
             if first_visualization is None:
                 first_visualization = (
-                    to_uint8(videos),
+                    target_u8,
                     to_uint8(ema_clean_pred),
                     to_uint8(ema_masked_pred),
                     np.asarray(jax.device_get(frame_mask), dtype=bool),
@@ -168,6 +208,18 @@ def main() -> None:
                 flush=True,
             )
 
+    metrics = {name: totals[name] / args.batches for name in metric_names}
+    regions = {}
+    for name, aggregate in regional_totals.items():
+        metrics[f"{name}_psnr"] = psnr_from_squared_error(
+            aggregate["squared_error"],
+            aggregate["count"],
+        )
+        regions[name] = {
+            "selected_rgb_values": aggregate["count"],
+            "squared_error": aggregate["squared_error"],
+        }
+
     payload = {
         "checkpoint": str(args.checkpoint),
         "dataset": str(args.dataset),
@@ -176,7 +228,8 @@ def main() -> None:
         "frames": args.frames,
         "batches": args.batches,
         "num_clips": args.batch_size * args.batches,
-        "metrics": {name: totals[name] / args.batches for name in metric_names},
+        "metrics": metrics,
+        "regions": regions,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

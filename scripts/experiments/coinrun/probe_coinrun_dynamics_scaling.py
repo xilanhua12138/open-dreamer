@@ -102,7 +102,7 @@ def main() -> None:
                 dtype="bfloat16",
                 param_dtype="float32",
                 num_binary_actions=0,
-                categorical_action_dim=16,
+                categorical_action_dim=15,
                 continuous_action_dim=0,
                 latent_mean=tuple(stats["mean"]),
                 latent_std=tuple(stats["std"]),

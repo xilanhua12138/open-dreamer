@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0005",
-  "record_revision": 2,
+  "record_revision": 3,
   "execution_status": "completed",
   "scientific_status": "supports_hypothesis",
   "claim_level": "internal_result",
@@ -113,7 +113,8 @@
       "name": "context evaluator",
       "kind": "python",
       "uri": "scripts/experiments/coinrun/eval_coinrun_context_ablation.py",
-      "retention": "git",
+      "retention": "git_at_commit",
+      "source_commit": "a4537c0cef5463e8ab5bba343359e0b9a11224da",
       "sha256": "324af668dc72df2cd1648092ff6312483958e2c78abc8a769d8bc51a7968296f"
     },
     {
@@ -191,6 +192,11 @@
       "revision": 2,
       "at": "2026-07-29T08:35:09+08:00",
       "reason": "Closed the valid fixed-future 4/16/32 ablation with selection evidence, raw metrics, hash verification, and interpretation."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T12:40:00+08:00",
+      "reason": "Pinned the mutable context-evaluator source artifact to its historical commit before the v2 action-contract implementation changed the working-tree path."
     }
   ]
 }

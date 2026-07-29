@@ -179,7 +179,9 @@ class CoinRunWorld:
         frames = batch["videos"]
         self.latents_ctx = encode_jit(self.tokenizer, frames)
         self.actions_ctx = shift_actions(
-            batch["actions"], self.cfg.dataset.categorical_action_dim
+            batch["actions"],
+            self.cfg.dataset.categorical_action_dim,
+            self.cfg.dataset.categorical_noop_action,
         )
         self.current_frame = jnp.clip(frames[0, -1], 0, 255).astype(jnp.uint8)
         self.step_count = 0

@@ -7,11 +7,14 @@ on:
       - "AGENTS.md"
       - "experiments/**"
       - "operations/**"
+      - "configs/dataset/**"
+      - "dreamer/actions.py"
+      - "dreamer/coinrun.py"
+      - "dreamer/image_metrics.py"
       - "scripts/experiments/**"
       - "scripts/train_dynamics.py"
       - "scripts/validate_experiments.py"
-      - "tests/test_validate_experiments.py"
-      - "tests/test_coinrun_records.py"
+      - "tests/**"
       - ".github/workflows/experiment-ledger.yml"
   push:
     paths:
@@ -19,11 +22,14 @@ on:
       - "AGENTS.md"
       - "experiments/**"
       - "operations/**"
+      - "configs/dataset/**"
+      - "dreamer/actions.py"
+      - "dreamer/coinrun.py"
+      - "dreamer/image_metrics.py"
       - "scripts/experiments/**"
       - "scripts/train_dynamics.py"
       - "scripts/validate_experiments.py"
-      - "tests/test_validate_experiments.py"
-      - "tests/test_coinrun_records.py"
+      - "tests/**"
       - ".github/workflows/experiment-ledger.yml"
 
 jobs:
@@ -34,6 +40,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install lightweight test dependencies
+        run: python -m pip install numpy "jax[cpu]" flax
       - name: Validate machine-readable records and hashes
         run: python scripts/validate_experiments.py
       - name: Test validator happy, edge, and failure paths

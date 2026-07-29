@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0002",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "internal_result",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered; no v2 tokenizer training has started.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Which tokenizer scale is visually acceptable.",
+      "Whether any tokenizer candidate can support a controllable dynamics model."
+    ],
+    "decision": [
+      "Do not start dynamics until this tokenizer experiment clears both metric and visual gates."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T12:33:40+08:00",
+      "reason": "Preregistered the adaptive tokenizer scale protocol before v2 GPU training."
+    }
+  ]
+}

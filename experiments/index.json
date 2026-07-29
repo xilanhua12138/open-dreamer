@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T12:13:16+08:00",
+  "updated_at": "2026-07-29T12:33:40+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -10,6 +10,18 @@
       "scientific_status": "supports_hypothesis",
       "claim_level": "partial_reproduction",
       "depends_on": []
+    },
+    {
+      "experiment_id": "CR-TOK-0002",
+      "title": "CoinRun tokenizer v2 adaptive scale and visual-quality gate",
+      "path": "experiments/CR-TOK-0002",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-DEMO-0001"
+      ]
     },
     {
       "experiment_id": "CR-DYN-0001",

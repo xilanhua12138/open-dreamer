@@ -186,7 +186,9 @@ def main() -> None:
 
             videos = batch["videos"]
             shifted_actions = shift_actions(
-                batch["actions"], cfg.dataset.categorical_action_dim
+                batch["actions"],
+                cfg.dataset.categorical_action_dim,
+                cfg.dataset.categorical_noop_action,
             )
             full_latents = encode_jit(tokenizer, videos)
             full_gt_decoded = jnp_to_u8(decode_jit(tokenizer, full_latents))

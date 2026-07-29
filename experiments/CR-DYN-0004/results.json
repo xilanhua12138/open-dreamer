@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0004",
-  "record_revision": 4,
+  "record_revision": 5,
   "execution_status": "completed",
   "scientific_status": "rejects_hypothesis",
   "claim_level": "internal_result",
@@ -118,7 +118,8 @@
       "name": "capacity probe",
       "kind": "python",
       "uri": "scripts/experiments/coinrun/probe_coinrun_dynamics_scaling.py",
-      "retention": "git",
+      "retention": "git_at_commit",
+      "source_commit": "a4537c0cef5463e8ab5bba343359e0b9a11224da",
       "sha256": "b263d210094bbaae299cd18dfecbac217038aa1c0104e3bc58cc8ca76c48172e"
     },
     {
@@ -196,6 +197,11 @@
       "revision": 4,
       "at": "2026-07-29T08:33:43+08:00",
       "reason": "Closed the completed large run with exact held-out metrics, artifact hashes, and rejection of the capacity-extension hypothesis."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-29T12:40:00+08:00",
+      "reason": "Pinned the mutable capacity-probe source artifact to its historical commit before the v2 action-contract implementation changed the working-tree path."
     }
   ]
 }

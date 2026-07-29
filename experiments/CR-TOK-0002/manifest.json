@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0002",
+  "retrospective": false,
+  "created_at": "2026-07-29T12:33:40+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun tokenizer v2 adaptive scale and visual-quality gate",
+  "kind": "adaptive_confirmatory",
+  "question": "What is the smallest CoinRun tokenizer scale that clears held-out global, edge and temporal-change reconstruction gates while retaining the fixed latent interface required by dynamics?",
+  "reason": "CR-DEMO-0001 was technically runnable but visually unusable. Its 0.17M tokenizer reached only 24.2447 dB held-out EMA clean PSNR and visibly lost small sprites and platform edges, so dynamics scaling must pause until the representation bottleneck is improved.",
+  "hypothesis": "Scaling the tokenizer backbone while holding the latent interface, data, seed and primary per-arm FLOPs fixed will improve both full-frame and detail-sensitive reconstruction; at least one candidate at or above the local 3.7M label will clear the preregistered quality gate.",
+  "falsification": "The hypothesis is rejected if no candidate through the conditional 16.6M label clears the full-frame, edge and temporal-change gates, or if a qualifying tokenizer cannot preserve the 16-latent by 16-channel interface needed by dynamics.",
+  "baseline_id": "CR-TOK-0001",
+  "depends_on": [
+    "CR-TOK-0001",
+    "CR-DEMO-0001"
+  ],
+  "controlled_variable": {
+    "name": "tokenizer_backbone_scale",
+    "primary_values": [
+      "n0.17m",
+      "n1.1m",
+      "n3.7m"
+    ],
+    "conditional_values": [
+      "n8.6m",
+      "n16.6m"
+    ]
+  },
+  "constants": {
+    "train_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "eval_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "train_records": 4096,
+    "eval_records": 512,
+    "frames_per_record": 64,
+    "training_clip_frames": 16,
+    "training_batch_size": 128,
+    "primary_training_flops_per_arm": 1e16,
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "patch_size": 8,
+    "optimizer": "muon",
+    "mup_scaling": true,
+    "lpips_weight": 0.2,
+    "heldout_seed": 4242,
+    "heldout_clips": 512
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/experiment-ledger",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_scale_v2.sh",
+    "runner_sha256": "204a1fe73e8923284ca8731bb0265d86d82fc8b3e601357802615a47937caee1"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "policy": "65% goal-directed persistent right/right-jump/no-op macros mixed with 35% balanced persistent left/left-jump/no-op/jump/right/right-jump macros",
+    "train_level_range": [
+      7000,
+      11095
+    ],
+    "eval_level_range": [
+      20000,
+      20511
+    ],
+    "split_overlap": 0,
+    "tree_sha256": null
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "3e16 FLOPs for the primary three arms; conditionally +2e16 and +4e16 only when prior scales miss the quality gate",
+    "shutdown_policy": "A bounded shutdown timer is created before launch; a monitor stops the existing instance after terminal artifacts are synchronized."
+  },
+  "protocol": {
+    "model_family": {
+      "encoder_decoder_depths_match": true,
+      "head_dimension": 64,
+      "n_kv_heads": 1,
+      "one_temporal_attention_layer_per_stack": true,
+      "latent_interface_fixed": {
+        "n_latents": 16,
+        "d_bottleneck": 16
+      }
+    },
+    "candidates": [
+      {
+        "name": "n0.17m",
+        "depth": 1,
+        "d_model": 64,
+        "expected_parameters": 163392,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n1.1m",
+        "depth": 2,
+        "d_model": 128,
+        "expected_parameters": 1048192,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n3.7m",
+        "depth": 3,
+        "d_model": 192,
+        "expected_parameters": 3342528,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n8.6m",
+        "depth": 4,
+        "d_model": 256,
+        "expected_parameters": 7734528,
+        "flops_budget": 2e16,
+        "phase": "conditional_quality_extension"
+      },
+      {
+        "name": "n16.6m",
+        "depth": 5,
+        "d_model": 320,
+        "expected_parameters": 14912320,
+        "flops_budget": 4e16,
+        "phase": "conditional_quality_extension"
+      }
+    ],
+    "training": {
+      "from_scratch": true,
+      "resume_only_after_fault": true,
+      "loss": "mse plus 0.2 LPIPS",
+      "mae_p_max": 0.9,
+      "precision": "bfloat16 compute, float32 parameters"
+    },
+    "evaluation": {
+      "weights": [
+        "online",
+        "ema"
+      ],
+      "conditions": [
+        "clean",
+        "masked"
+      ],
+      "primary_metrics": [
+        "ema_clean_psnr",
+        "ema_masked_psnr",
+        "ema_clean_edge_psnr",
+        "ema_clean_temporal_change_psnr"
+      ],
+      "visual_artifact": "one retained reconstruction grid per scale plus a vertically aligned comparison grid"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Every primary arm completes its native 1e16 FLOPs allocation from random initialization and produces finite held-out metrics on the identical 512 clips."
+    },
+    {
+      "id": "SC-2",
+      "rule": "A candidate is metric-eligible only if EMA clean PSNR is at least 26.0 dB and improves over the v2 n0.17m arm by at least 1.0 dB clean, 0.75 dB on target-edge pixels and 0.75 dB on temporal-change pixels."
+    },
+    {
+      "id": "SC-3",
+      "rule": "If the primary three arms miss SC-2, train n8.6m at 2e16 FLOPs and then n16.6m at 4e16 FLOPs only if the preceding extension also misses."
+    },
+    {
+      "id": "SC-4",
+      "rule": "The selected candidate must retain n_latents=16 and d_bottleneck=16 and later pass a joint tokenizer-plus-medium-dynamics one-step A10 smoke before dynamics training is authorized."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Metric eligibility is provisional: dynamics remains blocked until the aligned reconstruction grid receives explicit visual acceptance for player outline and platform-edge clarity."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/tokenizer-scale-probe.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/train.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/eval.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/*/checkpoints",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/*/heldout_eval.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/tokenizer-scale-comparison.png",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/selection.json"
+  ]
+}

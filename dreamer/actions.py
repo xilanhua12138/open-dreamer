@@ -37,8 +37,23 @@ class Actions:
         return cls(binary=d["binary"], categorical=d["categorical"], continuous=d["continuous"])
 
 
-def create_noop_action_like(template: Actions, categorical_action_dim: int) -> Actions:
+def create_noop_action_like(
+    template: Actions,
+    categorical_action_dim: int,
+    categorical_noop_action: int | None,
+) -> Actions:
     """Creates a (B, 1, ...) no-op start action."""
+
+    if template.categorical is not None:
+        if categorical_noop_action is None:
+            raise ValueError(
+                "categorical_noop_action must be explicit for categorical actions"
+            )
+        if not 0 <= categorical_noop_action < categorical_action_dim:
+            raise ValueError(
+                "categorical_noop_action must be in "
+                f"[0, {categorical_action_dim}), got {categorical_noop_action}"
+            )
 
     def _create_action(arr, fill_value):
         if arr is None: return None
@@ -46,15 +61,23 @@ def create_noop_action_like(template: Actions, categorical_action_dim: int) -> A
 
     return Actions(
         binary     = _create_action(template.binary, 0),
-        categorical = _create_action(template.categorical, categorical_action_dim//2), #verified that this is equal to mouse_movement_to_categorical(dx=0,dy=0)
+        categorical = _create_action(template.categorical, categorical_noop_action),
         continuous  = _create_action(template.continuous, 0.)
     )
 
 
-def shift_actions(actions: Actions, categorical_action_dim: int) -> Actions:
-    """Shift actions right by 1, preprend noop action."""
+def shift_actions(
+    actions: Actions,
+    categorical_action_dim: int,
+    categorical_noop_action: int | None,
+) -> Actions:
+    """Shift actions right by one and prepend the configured no-op action."""
 
-    noop_action = create_noop_action_like(actions, categorical_action_dim)
+    noop_action = create_noop_action_like(
+        actions,
+        categorical_action_dim,
+        categorical_noop_action,
+    )
     
     def _shift(current_arr, start_arr):
         if current_arr is None: return None
