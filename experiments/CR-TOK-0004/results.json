@@ -1,85 +1,42 @@
 {
-  "schema_version": "1.0",
-  "experiment_id": "CR-TOK-0004",
-  "record_revision": 4,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
+  "artifacts": [
+    {
+      "kind": "json",
+      "name": "attempt 01 generated run evidence",
+      "retention": "git",
+      "sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-01-run-evidence.json"
+    },
+    {
+      "kind": "log",
+      "name": "attempt 01 bootstrap log",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/bootstrap.log",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "c7c8178e7e8bcaf97873ff690b9496a1bfc386b0bf42a1cc213ea494592675e2",
+      "uri": "local-task://tokenizer-28p7-sync/attempt-01/bootstrap.log"
+    },
+    {
+      "kind": "json",
+      "name": "generated run evidence: n28p7m-seed0-attempt-02-cuda-stream-capture",
+      "retention": "git",
+      "sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json"
+    },
+    {
+      "kind": "log",
+      "name": "attempt 02 CUDA stream-capture failure log",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/pipeline.log",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "9b70f4c0f07255c9fc64ec34483b1751e0529d7aa4d101b2eff088dca6e1756a",
+      "uri": "local-task://tokenizer-28p7-sync/attempt-02-cuda-stream-capture/pipeline.log"
+    }
+  ],
   "claim_level": "none",
-  "started_at": "2026-07-30T01:01:06+08:00",
-  "ended_at": null,
-  "summary": "The first zero-update failure is retained. After a red-test-first validation-config fix, the same n28.7m protocol restarted from scratch on execution commit b3eb2af and is running on the same A10 with W&B offline and a 12-hour shutdown guard.",
-  "observations": [
-    {
-      "name": "pretraining_architecture_probe",
-      "label": "n28.7m",
-      "depth": 6,
-      "d_model": 384,
-      "parameters": 25564032,
-      "flops_per_step": 25728028508160,
-      "estimated_training_flops": 514560570163200000,
-      "device": "CPU parameter/FLOPs construction only",
-      "scientific_outcome_observed": false
-    },
-    {
-      "name": "frozen_execution_source",
-      "commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
-      "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_28p7_fixed20k.sh",
-      "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5",
-      "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-28p7",
-      "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729",
-      "started": true
-    },
-    {
-      "name": "attempt_01_failure",
-      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
-      "attempt_id": "1953d550-bf9c-4138-9500-f66c867eb4dd",
-      "source_commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
-      "last_completed_updates": null,
-      "wandb_mode": "offline",
-      "failure": "omegaconf.errors.ConfigAttributeError: Key 'mouse_repr' is not in struct",
-      "scientific_outcome_observed": false
-    },
-    {
-      "name": "attempt_02_recovery_launch",
-      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
-      "pipeline_pid": 68104,
-      "started_at": "2026-07-30T01:07:25+08:00",
-      "wandb_mode": "offline",
-      "checkpoint_reused": false,
-      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
-      "shutdown_due_at": "2026-07-30T13:01:15+08:00"
-    }
-  ],
   "comparisons": [],
-  "deviations": [
-    {
-      "at": "2026-07-30T01:04:32+08:00",
-      "kind": "source_bugfix_before_first_update",
-      "reason": "The validation helper copied every DatasetConfig dataclass field with direct getattr, but the CoinRun Hydra node omitted mouse_repr and other defaulted fields.",
-      "red_test": "tests.test_tokenizer_validation_runtime.TokenizerValidationRuntimeTests.test_validation_config_materializes_missing_dataclass_defaults",
-      "fix_commit": "c565f0b5c18ef7847853d1988c47afa425951984",
-      "remote_execution_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
-      "protocol_changed": false,
-      "checkpoint_reused": false
-    }
-  ],
-  "failures": [
-    {
-      "at": "2026-07-30T01:01:11+08:00",
-      "stage": "validation_dataset_initialization",
-      "exit_code": 1,
-      "last_completed_updates": null,
-      "error_type": "omegaconf.errors.ConfigAttributeError",
-      "error_message": "Key 'mouse_repr' is not in struct; full_key: dataset.mouse_repr",
-      "recoverable": true,
-      "evidence_sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62"
-    }
-  ],
   "conclusion": {
-    "observed": [
-      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label.",
-      "The first launch from source commit 3833b34 failed before any optimizer update while materializing a validation DatasetConfig that omitted a defaulted mouse_repr field.",
-      "A regression test reproduced the missing-default failure before the helper was changed to materialize explicit DatasetConfig and DataloaderConfig defaults."
+    "decision": [
+      "Continue attempt 03 as a fault recovery from CR-TOK-0004's own step-0 checkpoint after the transient CUDA stream-capture failure.",
+      "Do not start dynamics."
     ],
     "interpretation": [],
     "not_established": [
@@ -87,48 +44,156 @@
       "Whether n28.7m improves over the n16.6m baseline.",
       "Whether the tokenizer is suitable for dynamics."
     ],
-    "decision": [
-      "Restart from zero using the bugfix execution commit; do not reuse a checkpoint because no update completed.",
-      "Do not start dynamics."
+    "observed": [
+      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label.",
+      "The first launch from source commit 3833b34 failed before any optimizer update while materializing a validation DatasetConfig that omitted a defaulted mouse_repr field.",
+      "A regression test reproduced the missing-default failure before the helper was changed to materialize explicit DatasetConfig and DataloaderConfig defaults.",
+      "Attempt 02 reached 1,179 recorder-confirmed completed updates before JAX reported CUDA_ERROR_STREAM_CAPTURE_INVALIDATED; no NVIDIA Xid, kernel OOM or surviving GPU process was observed.",
+      "Attempt 03 restored CR-TOK-0004's own checkpoint step 0 and resumed the unchanged protocol under PID 71283."
     ]
   },
-  "artifacts": [
+  "deviations": [
     {
-      "name": "attempt 01 generated run evidence",
-      "kind": "json",
-      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-01-run-evidence.json",
-      "retention": "git",
-      "sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62"
+      "at": "2026-07-30T01:04:32+08:00",
+      "checkpoint_reused": false,
+      "fix_commit": "c565f0b5c18ef7847853d1988c47afa425951984",
+      "kind": "source_bugfix_before_first_update",
+      "protocol_changed": false,
+      "reason": "The validation helper copied every DatasetConfig dataclass field with direct getattr, but the CoinRun Hydra node omitted mouse_repr and other defaulted fields.",
+      "red_test": "tests.test_tokenizer_validation_runtime.TokenizerValidationRuntimeTests.test_validation_config_materializes_missing_dataclass_defaults",
+      "remote_execution_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6"
     },
     {
-      "name": "attempt 01 bootstrap log",
-      "kind": "log",
-      "uri": "local-task://tokenizer-28p7-sync/attempt-01/bootstrap.log",
-      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/bootstrap.log",
-      "retention": "local task and DSW persistent storage",
-      "sha256": "c7c8178e7e8bcaf97873ff690b9496a1bfc386b0bf42a1cc213ea494592675e2"
+      "at": "2026-07-30T01:58:23+08:00",
+      "checkpoint_reused": true,
+      "checkpoint_step": 0,
+      "kind": "fault_recovery_after_cuda_runtime_failure",
+      "protocol_changed": false,
+      "reason": "Attempt 02 exited after a JAX CUDA graph stream-capture invalidation. The GPU was idle and healthy afterward, with no kernel Xid or OOM evidence, so the unchanged runner was restarted from this experiment's own latest durable checkpoint.",
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6"
     }
   ],
+  "ended_at": null,
+  "execution_status": "running",
+  "experiment_id": "CR-TOK-0004",
+  "failures": [
+    {
+      "at": "2026-07-30T01:01:11+08:00",
+      "error_message": "Key 'mouse_repr' is not in struct; full_key: dataset.mouse_repr",
+      "error_type": "omegaconf.errors.ConfigAttributeError",
+      "evidence_sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62",
+      "exit_code": 1,
+      "last_completed_updates": null,
+      "recoverable": true,
+      "stage": "validation_dataset_initialization"
+    },
+    {
+      "at": "2026-07-30T01:33:15+08:00",
+      "error_message": "Failed to end stream capture: CUDA_ERROR_STREAM_CAPTURE_INVALIDATED",
+      "error_type": "jax.errors.JaxRuntimeError",
+      "evidence_sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "exit_code": 1,
+      "last_completed_updates": 1179,
+      "recoverable": true,
+      "stage": "tokenizer_training"
+    }
+  ],
+  "observations": [
+    {
+      "d_model": 384,
+      "depth": 6,
+      "device": "CPU parameter/FLOPs construction only",
+      "estimated_training_flops": 514560570163200000,
+      "flops_per_step": 25728028508160,
+      "label": "n28.7m",
+      "name": "pretraining_architecture_probe",
+      "parameters": 25564032,
+      "scientific_outcome_observed": false
+    },
+    {
+      "commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "name": "frozen_execution_source",
+      "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729",
+      "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-28p7",
+      "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_28p7_fixed20k.sh",
+      "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5",
+      "started": true
+    },
+    {
+      "attempt_id": "1953d550-bf9c-4138-9500-f66c867eb4dd",
+      "failure": "omegaconf.errors.ConfigAttributeError: Key 'mouse_repr' is not in struct",
+      "last_completed_updates": null,
+      "name": "attempt_01_failure",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "scientific_outcome_observed": false,
+      "source_commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "wandb_mode": "offline"
+    },
+    {
+      "checkpoint_reused": false,
+      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
+      "name": "attempt_02_recovery_launch",
+      "pipeline_pid": 68104,
+      "shutdown_due_at": "2026-07-30T13:01:15+08:00",
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "started_at": "2026-07-30T01:07:25+08:00",
+      "wandb_mode": "offline"
+    },
+    {
+      "last_completed_updates": 1179,
+      "name": "generated_run_evidence:n28p7m-seed0-attempt-02-cuda-stream-capture",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "state": "FAILED",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json"
+    },
+    {
+      "attempt_id": "fa4474bb-38a2-4f5c-a40d-3c5de1dcdbe6",
+      "checkpoint_reused": true,
+      "checkpoint_step": 0,
+      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
+      "name": "attempt_03_fault_recovery_launch",
+      "pipeline_pid": 71283,
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "started_at": "2026-07-30T01:58:23+08:00",
+      "wandb_mode": "offline"
+    }
+  ],
+  "record_revision": 6,
   "revision_history": [
     {
-      "revision": 1,
       "at": "2026-07-29T20:38:34+08:00",
-      "reason": "Preregistered the missing 28.7M-label fixed-20k extension before any candidate training or held-out evaluation."
+      "reason": "Preregistered the missing 28.7M-label fixed-20k extension before any candidate training or held-out evaluation.",
+      "revision": 1
     },
     {
-      "revision": 2,
       "at": "2026-07-29T20:42:15+08:00",
-      "reason": "Bound the runner to source commit 3833b34, verified remote runtime dependencies and queued the detached worktree behind CR-TOK-0003 without starting GPU work."
+      "reason": "Bound the runner to source commit 3833b34, verified remote runtime dependencies and queued the detached worktree behind CR-TOK-0003 without starting GPU work.",
+      "revision": 2
     },
     {
-      "revision": 3,
       "at": "2026-07-30T01:04:32+08:00",
-      "reason": "Preserved the zero-update failed launch, exact runtime evidence and ConfigAttributeError; recorded the red-test-first default-materialization fix and the resulting execution-source deviation without changing the scientific protocol."
+      "reason": "Preserved the zero-update failed launch, exact runtime evidence and ConfigAttributeError; recorded the red-test-first default-materialization fix and the resulting execution-source deviation without changing the scientific protocol.",
+      "revision": 3
     },
     {
-      "revision": 4,
       "at": "2026-07-30T01:07:25+08:00",
-      "reason": "Restarted the unchanged n28.7m protocol from zero on execution commit b3eb2af after the regression fix; recorded PID, offline W&B mode and shutdown guard while retaining attempt-01 failure evidence."
+      "reason": "Restarted the unchanged n28.7m protocol from zero on execution commit b3eb2af after the regression fix; recorded PID, offline W&B mode and shutdown guard while retaining attempt-01 failure evidence.",
+      "revision": 4
+    },
+    {
+      "at": "2026-07-29T17:58:54.542116+00:00",
+      "reason": "Materialized machine-owned runtime, telemetry, metric and validation evidence for n28p7m-seed0-attempt-02-cuda-stream-capture.",
+      "revision": 5
+    },
+    {
+      "at": "2026-07-30T01:58:23+08:00",
+      "reason": "Retained attempt-02 CUDA stream-capture failure evidence and recorded an unchanged-protocol fault recovery from CR-TOK-0004's own step-0 checkpoint.",
+      "revision": 6
     }
-  ]
+  ],
+  "schema_version": "1.0",
+  "scientific_status": "not_evaluated",
+  "started_at": "2026-07-30T01:01:06+08:00",
+  "summary": "Both the zero-update validation-config failure and the attempt-02 CUDA stream-capture interruption at 1,179 recorder-confirmed updates are retained. Attempt 03 is running the unchanged n28.7m protocol on execution commit b3eb2af from this experiment's own step-0 checkpoint, with W&B offline and the existing shutdown guard."
 }

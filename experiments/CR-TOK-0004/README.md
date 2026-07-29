@@ -32,11 +32,13 @@ The first launch from source commit `3833b34b46358b0443bb3571a5745c013eb7a7e7` f
 
 The exact missing-default case was added as a regression test and observed failing before the implementation was fixed. Local fix commit `c565f0b` was applied to the detached execution source as `b3eb2af`. The architecture, data, optimizer, update budget and evaluation protocol did not change, and no checkpoint was reused because the failed attempt completed zero updates.
 
-Attempt 02 started from scratch at `2026-07-30T01:07:25+08:00` under PID `68104`. W&B is truthfully offline, and the local structured evidence remains authoritative. The same A10 has a shutdown guard due at `2026-07-30T13:01:15+08:00`.
+Attempt 02 started from scratch at `2026-07-30T01:07:25+08:00` under PID `68104`. It reached 1,179 recorder-confirmed completed updates before JAX raised `CUDA_ERROR_STREAM_CAPTURE_INVALIDATED` while materializing asynchronous train metrics. The process exited, the GPU returned idle, and neither NVIDIA Xid nor kernel OOM evidence was observed. The machine-owned failed-run record and full local/remote log are retained.
+
+Attempt 03 started once at `2026-07-30T01:58:23+08:00` under PID `71283`. It restored this experiment's own checkpoint step 0; no external or earlier-experiment checkpoint was used. The source and scientific protocol are unchanged. W&B remains truthfully offline, and the local structured evidence remains authoritative. The same A10 has a shutdown guard due at `2026-07-30T13:01:15+08:00`.
 
 ### Interpretation
 
-This is an infrastructure failure before a scientific observation, not evidence about the 28.7M-label tokenizer.
+Neither failure is a held-out scientific observation about the 28.7M-label tokenizer. The first was a source initialization defect; the second is currently classified as a recoverable CUDA runtime interruption because it left no kernel Xid/OOM evidence and did not recur during launch validation.
 
 ### Not established
 
@@ -46,4 +48,19 @@ This is an infrastructure failure before a scientific observation, not evidence 
 
 ### Decision
 
-Continue the single attempt-02 PID, preserve attempt-01 failure evidence, and do not start dynamics.
+Continue the single attempt-03 PID, preserve both earlier failures, and do not start dynamics or PPO while tokenizer training is active.
+
+<!-- BEGIN GENERATED RUN n28p7m-seed0-attempt-02-cuda-stream-capture -->
+### Generated run evidence: `n28p7m-seed0-attempt-02-cuda-stream-capture`
+
+- Run ID: `3d478ca3-6f1d-4068-8d36-6139b28b3a1c`
+- State: `FAILED`
+- Last completed updates: `1179`
+- Source commit: `b3eb2afd37ece2880c60c34762e5cfa427ee19f6`
+
+| Prefix | Last metrics |
+|---|---|
+| `train/` | `data_tokens_seen=150732800`, `flops_spent=29587232784384000`, `loss=0.037765804678201675`, `lpips=0.03341260552406311`, `lr=0.003000000026077032`, `mse=0.031083282083272934`, `psnr=27.570392608642578`, `rmse=0.17630451917648315`, `total_tokens_seen=188416000` |
+
+Machine-readable evidence: `experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json`.
+<!-- END GENERATED RUN n28p7m-seed0-attempt-02-cuda-stream-capture -->
