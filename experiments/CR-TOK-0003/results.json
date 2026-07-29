@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0003",
-  "record_revision": 5,
+  "record_revision": 6,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-29T14:56:16+08:00",
   "ended_at": null,
-  "summary": "The single fixed-20k pipeline remains healthy on the existing A10. Fresh n0.17m, n1.1m and n3.7m arms each completed exactly 20,000 updates and all four held-out milestones; n8.6m training began next. These are partial observations only: all five arms and the aligned final visual grid are still required, and dynamics remains blocked.",
+  "summary": "The single fixed-20k pipeline remains healthy on the existing A10. Fresh n0.17m, n1.1m, n3.7m and n8.6m arms each completed exactly 20,000 updates and all four held-out milestones; n16.6m training began next. These are partial observations only: the fifth arm and aligned final visual grid are still required, and dynamics remains blocked.",
   "observations": [
     {
       "name": "source_identity",
@@ -394,6 +394,124 @@
         "bytes": 212884153,
         "tree_sha256": "e8126765568feeb91db535e5e0cc39d7320ef073f72bd4701d96dc5e37784006"
       }
+    },
+    {
+      "name": "n8p6m_fixed_20k",
+      "parameters": 7734528,
+      "latent_interface": {
+        "n_latents": 16,
+        "d_bottleneck": 16
+      },
+      "completed_updates": 20000,
+      "milestone_evaluations": [
+        {
+          "completed_updates": 2500,
+          "checkpoint_step": 2499,
+          "metrics": {
+            "online_clean_psnr_db": 29.734541654586792,
+            "online_masked_psnr_db": 28.64002025127411,
+            "online_clean_edge_psnr_db": 22.433147979513855,
+            "online_clean_temporal_change_psnr_db": 23.082721316057558,
+            "ema_clean_psnr_db": 25.34773862361908,
+            "ema_masked_psnr_db": 24.705000162124634,
+            "ema_clean_edge_psnr_db": 19.745827322206054,
+            "ema_clean_temporal_change_psnr_db": 20.3610547021289
+          },
+          "metrics_uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-02500-heldout-eval.json",
+          "metrics_sha256": "892ac1b3fe3193042afdc6011d4e09c7ee097d74a25dc82336501b151d0318eb",
+          "reconstruction": {
+            "uri": "local-task://quality-first-sync/n8p6m/milestones/updates-02500/heldout_reconstruction.png",
+            "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-02500/heldout_reconstruction.png",
+            "bytes": 130524,
+            "sha256": "e5dd40aeb771612dd957bee29308670dd2e9651ae7154f5fb8cf99999f65c4e4"
+          }
+        },
+        {
+          "completed_updates": 5000,
+          "checkpoint_step": 4999,
+          "metrics": {
+            "online_clean_psnr_db": 31.462037682533264,
+            "online_masked_psnr_db": 30.22396469116211,
+            "online_clean_edge_psnr_db": 23.717768661762175,
+            "online_clean_temporal_change_psnr_db": 24.400131226104712,
+            "ema_clean_psnr_db": 30.89678692817688,
+            "ema_masked_psnr_db": 29.82789671421051,
+            "ema_clean_edge_psnr_db": 23.242992729783065,
+            "ema_clean_temporal_change_psnr_db": 24.06094875205383
+          },
+          "metrics_uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-05000-heldout-eval.json",
+          "metrics_sha256": "3be0c26b2dd3dbc2c4bb53cb4aa9ad7494040b642d0ff63a4af1557ec609a22c",
+          "reconstruction": {
+            "uri": "local-task://quality-first-sync/n8p6m/milestones/updates-05000/heldout_reconstruction.png",
+            "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-05000/heldout_reconstruction.png",
+            "bytes": 142538,
+            "sha256": "a559daea49ad92fd83c003adc96158a96a4c0c42be8e23c19e9352173227e465"
+          }
+        },
+        {
+          "completed_updates": 10000,
+          "checkpoint_step": 9999,
+          "metrics": {
+            "online_clean_psnr_db": 33.08935511112213,
+            "online_masked_psnr_db": 31.4636013507843,
+            "online_clean_edge_psnr_db": 24.809784612168393,
+            "online_clean_temporal_change_psnr_db": 25.484973576332703,
+            "ema_clean_psnr_db": 33.5190646648407,
+            "ema_masked_psnr_db": 32.097424030303955,
+            "ema_clean_edge_psnr_db": 25.050122456283717,
+            "ema_clean_temporal_change_psnr_db": 25.804139328328315
+          },
+          "metrics_uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-10000-heldout-eval.json",
+          "metrics_sha256": "ef314ae8d5c6c9d9de0fe78eba44aff27f8f0ac8cebc772ef70efe11d975643a",
+          "reconstruction": {
+            "uri": "local-task://quality-first-sync/n8p6m/milestones/updates-10000/heldout_reconstruction.png",
+            "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-10000/heldout_reconstruction.png",
+            "bytes": 152671,
+            "sha256": "39bd0e058d788553368e0c2f86ba3e66f14e35db064ba119545f46b0531df936"
+          }
+        },
+        {
+          "completed_updates": 20000,
+          "checkpoint_step": 19999,
+          "metrics": {
+            "online_clean_psnr_db": 34.905033111572266,
+            "online_masked_psnr_db": 31.76402759552002,
+            "online_clean_edge_psnr_db": 25.90090086878699,
+            "online_clean_temporal_change_psnr_db": 26.569205655318413,
+            "ema_clean_psnr_db": 34.89623951911926,
+            "ema_masked_psnr_db": 32.00216221809387,
+            "ema_clean_edge_psnr_db": 25.915083530027147,
+            "ema_clean_temporal_change_psnr_db": 26.591452617781467
+          },
+          "metrics_uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-20000-heldout-eval.json",
+          "metrics_sha256": "4330a8f035c1819bd6850ffa092b10806d1ea26e45f7c9d82f949f8431cbd375",
+          "reconstruction": {
+            "uri": "local-task://quality-first-sync/n8p6m/milestones/updates-20000/heldout_reconstruction.png",
+            "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-20000/heldout_reconstruction.png",
+            "bytes": 152435,
+            "sha256": "9db564dfd34b6676b203d81d5e7b049b2a915a594735c0c7ae969f8d6d13e41f"
+          }
+        }
+      ],
+      "hydra": {
+        "config_uri": "experiments/CR-TOK-0003/raw/n8p6m-config.yaml",
+        "config_sha256": "177694b0eb4cf7dfc327fc6e8950c62b0578297e33cb715349588275f2da026f",
+        "overrides_uri": "experiments/CR-TOK-0003/raw/n8p6m-overrides.yaml",
+        "overrides_sha256": "1513fa2d9e87b6fdca5eb6b6eac8883b34fb21b696070041b9564d8d691c7448"
+      },
+      "checkpoint": {
+        "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/checkpoints",
+        "steps": [
+          0,
+          2499,
+          4999,
+          9999,
+          14999,
+          19999
+        ],
+        "bytes": 490094042,
+        "tree_sha256": "377676edcd31569bb3142ddaac0771638bbc2db6071d5d51ab08d6b3f41f3f02"
+      }
     }
   ],
   "comparisons": [],
@@ -401,12 +519,12 @@
   "failures": [],
   "conclusion": {
     "observed": [
-      "Fresh n0.17m, n1.1m and n3.7m arms each completed exactly 20,000 optimizer updates and emitted all four preregistered held-out evaluations at 2,500 / 5,000 / 10,000 / 20,000 updates.",
-      "At 20,000 updates, n0.17m EMA clean / edge / temporal-change PSNR was 12.0610 / 11.9328 / 11.4600 dB; n1.1m was 27.7460 / 20.9956 / 21.2332 dB; n3.7m was 32.7710 / 24.5359 / 25.2065 dB.",
-      "All three completed arms retained n_latents=16 and d_bottleneck=16, and the pipeline advanced to fresh n8.6m training without reusing CR-TOK-0002 checkpoints."
+      "Fresh n0.17m, n1.1m, n3.7m and n8.6m arms each completed exactly 20,000 optimizer updates and emitted all four preregistered held-out evaluations at 2,500 / 5,000 / 10,000 / 20,000 updates.",
+      "At 20,000 updates, n0.17m EMA clean / edge / temporal-change PSNR was 12.0610 / 11.9328 / 11.4600 dB; n1.1m was 27.7460 / 20.9956 / 21.2332 dB; n3.7m was 32.7710 / 24.5359 / 25.2065 dB; n8.6m was 34.8962 / 25.9151 / 26.5915 dB.",
+      "All four completed arms retained n_latents=16 and d_bottleneck=16, and the pipeline advanced to fresh n16.6m training without reusing CR-TOK-0002 checkpoints."
     ],
     "interpretation": [
-      "The observed fixed-20k metrics improve substantially from n0.17m to n1.1m to n3.7m, and n3.7m still improves between 10k and 20k. This partial three-arm trend is not the preregistered five-scale scientific conclusion and has not passed visual review."
+      "The observed fixed-20k metrics improve substantially from n0.17m through n8.6m, and n8.6m still improves between 10k and 20k. This partial four-arm trend is not the preregistered five-scale scientific conclusion and has not passed visual review."
     ],
     "not_established": [
       "Which tokenizer scale has the best fixed-20k held-out quality.",
@@ -414,7 +532,7 @@
       "Whether any tokenizer supports controllable dynamics."
     ],
     "decision": [
-      "Continue the same healthy PID through n8.6m and n16.6m without changing the frozen protocol.",
+      "Continue the same healthy PID through n16.6m without changing the frozen protocol.",
       "Do not start dynamics."
     ]
   },
@@ -645,6 +763,77 @@
         "updates-10000": "8f9f26ed3ce270053a87b175a9abe1a09812c8eccb34c8d1559b7d9cd2cb74cc",
         "updates-20000": "c0e0365e27943a91183d883d49e17c90c891c76768a82f7baf432d5367baceed"
       }
+    },
+    {
+      "name": "n8.6m Hydra config",
+      "kind": "yaml",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-config.yaml",
+      "retention": "git",
+      "sha256": "177694b0eb4cf7dfc327fc6e8950c62b0578297e33cb715349588275f2da026f"
+    },
+    {
+      "name": "n8.6m Hydra runtime config",
+      "kind": "yaml",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-hydra.yaml",
+      "retention": "git",
+      "sha256": "cf923003fc9b066371dae5183ca51f462e7cfefb8cded8566fd9769a59b1fd45"
+    },
+    {
+      "name": "n8.6m Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-overrides.yaml",
+      "retention": "git",
+      "sha256": "1513fa2d9e87b6fdca5eb6b6eac8883b34fb21b696070041b9564d8d691c7448"
+    },
+    {
+      "name": "n8.6m 2,500-update held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-02500-heldout-eval.json",
+      "retention": "git",
+      "sha256": "892ac1b3fe3193042afdc6011d4e09c7ee097d74a25dc82336501b151d0318eb"
+    },
+    {
+      "name": "n8.6m 5,000-update held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-05000-heldout-eval.json",
+      "retention": "git",
+      "sha256": "3be0c26b2dd3dbc2c4bb53cb4aa9ad7494040b642d0ff63a4af1557ec609a22c"
+    },
+    {
+      "name": "n8.6m 10,000-update held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-10000-heldout-eval.json",
+      "retention": "git",
+      "sha256": "ef314ae8d5c6c9d9de0fe78eba44aff27f8f0ac8cebc772ef70efe11d975643a"
+    },
+    {
+      "name": "n8.6m 20,000-update held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/n8p6m-updates-20000-heldout-eval.json",
+      "retention": "git",
+      "sha256": "4330a8f035c1819bd6850ffa092b10806d1ea26e45f7c9d82f949f8431cbd375"
+    },
+    {
+      "name": "n8.6m checkpoint tree",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/checkpoints",
+      "retention": "DSW persistent storage",
+      "bytes": 490094042,
+      "sha256": "377676edcd31569bb3142ddaac0771638bbc2db6071d5d51ab08d6b3f41f3f02"
+    },
+    {
+      "name": "n8.6m reconstruction grids",
+      "kind": "png series",
+      "uri": "local-task://quality-first-sync/n8p6m/milestones",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones",
+      "retention": "local task and DSW persistent storage",
+      "sha256": null,
+      "member_sha256": {
+        "updates-02500": "e5dd40aeb771612dd957bee29308670dd2e9651ae7154f5fb8cf99999f65c4e4",
+        "updates-05000": "a559daea49ad92fd83c003adc96158a96a4c0c42be8e23c19e9352173227e465",
+        "updates-10000": "39bd0e058d788553368e0c2f86ba3e66f14e35db064ba119545f46b0531df936",
+        "updates-20000": "9db564dfd34b6676b203d81d5e7b049b2a915a594735c0c7ae969f8d6d13e41f"
+      }
     }
   ],
   "revision_history": [
@@ -672,6 +861,11 @@
       "revision": 5,
       "at": "2026-07-29T17:31:45+08:00",
       "reason": "Recorded all four fixed-update held-out milestones, Hydra configs, checkpoint-tree hash and reconstruction evidence for the completed n3.7m arm; the pipeline then advanced to n8.6m."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-29T20:11:01+08:00",
+      "reason": "Recorded all four fixed-update held-out milestones, Hydra configs, checkpoint-tree hash and reconstruction evidence for the completed n8.6m arm; the pipeline then advanced to n16.6m."
     }
   ]
 }
