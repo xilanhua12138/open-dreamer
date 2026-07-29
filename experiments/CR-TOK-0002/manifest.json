@@ -4,12 +4,12 @@
   "retrospective": false,
   "created_at": "2026-07-29T12:33:40+08:00",
   "owner": "xilanhua12138",
-  "title": "CoinRun tokenizer v2 adaptive scale and visual-quality gate",
-  "kind": "adaptive_confirmatory",
-  "question": "What is the smallest CoinRun tokenizer scale that clears held-out global, edge and temporal-change reconstruction gates while retaining the fixed latent interface required by dynamics?",
+  "title": "CoinRun tokenizer v2 complete five-scale reconstruction sweep",
+  "kind": "confirmatory",
+  "question": "How do held-out global, edge and temporal-change reconstruction metrics change across five CoinRun tokenizer scales that retain the fixed latent interface required by dynamics?",
   "reason": "CR-DEMO-0001 was technically runnable but visually unusable. Its 0.17M tokenizer reached only 24.2447 dB held-out EMA clean PSNR and visibly lost small sprites and platform edges, so dynamics scaling must pause until the representation bottleneck is improved.",
-  "hypothesis": "Scaling the tokenizer backbone while holding the latent interface, data, seed and primary per-arm FLOPs fixed will improve both full-frame and detail-sensitive reconstruction; at least one candidate at or above the local 3.7M label will clear the preregistered quality gate.",
-  "falsification": "The hypothesis is rejected if no candidate through the conditional 16.6M label clears the full-frame, edge and temporal-change gates, or if a qualifying tokenizer cannot preserve the 16-latent by 16-channel interface needed by dynamics.",
+  "hypothesis": "Scaling the tokenizer backbone while holding the latent interface, data and evaluation protocol fixed will improve full-frame and detail-sensitive reconstruction through at least one of the larger scales.",
+  "falsification": "The hypothesis is rejected if the complete five-scale sweep shows no reproducible full-frame, edge or temporal-change improvement over the fresh 0.17M arm, or if the larger tokenizers cannot preserve the 16-latent by 16-channel interface needed by dynamics.",
   "baseline_id": "CR-TOK-0001",
   "depends_on": [
     "CR-TOK-0001",
@@ -17,12 +17,10 @@
   ],
   "controlled_variable": {
     "name": "tokenizer_backbone_scale",
-    "primary_values": [
+    "values": [
       "n0.17m",
       "n1.1m",
-      "n3.7m"
-    ],
-    "conditional_values": [
+      "n3.7m",
       "n8.6m",
       "n16.6m"
     ]
@@ -47,12 +45,14 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": "5ad134f914c12afa66eda141afd9e446c51d43e3",
+    "commit": null,
+    "initial_execution_commit": "5ad134f914c12afa66eda141afd9e446c51d43e3",
+    "protocol_amendment_commit": null,
     "branch": "feat/experiment-ledger",
     "dirty": false,
     "patch_sha256": null,
     "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_scale_v2.sh",
-    "runner_sha256": "204a1fe73e8923284ca8731bb0265d86d82fc8b3e601357802615a47937caee1"
+    "runner_sha256": "24a5d9ff6ccfbd91642eecd0e8af265f2d9517209178b7511333402edbbb01ab"
   },
   "data": {
     "environment": "Procgen CoinRun",
@@ -87,7 +87,7 @@
     "accelerator": "NVIDIA A10",
     "accelerator_count": 1,
     "accelerator_memory_gb": 23,
-    "estimated_budget": "3e16 FLOPs for the primary three arms; conditionally +2e16 and +4e16 only when prior scales miss the quality gate",
+    "estimated_budget": "9e16 FLOPs total: 1e16 for each of n0.17m, n1.1m and n3.7m; 2e16 for n8.6m; 4e16 for n16.6m",
     "shutdown_policy": "A bounded shutdown timer is created before launch; a monitor stops the existing instance after terminal artifacts are synchronized."
   },
   "protocol": {
@@ -132,7 +132,7 @@
         "d_model": 256,
         "expected_parameters": 7734528,
         "flops_budget": 2e16,
-        "phase": "conditional_quality_extension"
+        "phase": "unconditional_capacity_sweep"
       },
       {
         "name": "n16.6m",
@@ -140,7 +140,7 @@
         "d_model": 320,
         "expected_parameters": 14912320,
         "flops_budget": 4e16,
-        "phase": "conditional_quality_extension"
+        "phase": "unconditional_capacity_sweep"
       }
     ],
     "training": {
@@ -171,15 +171,15 @@
   "success_criteria": [
     {
       "id": "SC-1",
-      "rule": "Every primary arm completes its native 1e16 FLOPs allocation from random initialization and produces finite held-out metrics on the identical 512 clips."
+      "rule": "All five arms complete their declared from-scratch FLOPs allocations and produce finite held-out metrics on the identical 512 clips."
     },
     {
       "id": "SC-2",
-      "rule": "A candidate is metric-eligible only if EMA clean PSNR is at least 26.0 dB and improves over the v2 n0.17m arm by at least 1.0 dB clean, 0.75 dB on target-edge pixels and 0.75 dB on temporal-change pixels."
+      "rule": "Report the complete scale curve for EMA clean, masked, edge and temporal-change PSNR without using any threshold to stop or skip a scale."
     },
     {
       "id": "SC-3",
-      "rule": "If the primary three arms miss SC-2, train n8.6m at 2e16 FLOPs and then n16.6m at 4e16 FLOPs only if the preceding extension also misses."
+      "rule": "Train n8.6m at 2e16 FLOPs and n16.6m at 4e16 FLOPs unconditionally after the first three arms."
     },
     {
       "id": "SC-4",
@@ -187,7 +187,7 @@
     },
     {
       "id": "SC-5",
-      "rule": "Metric eligibility is provisional: dynamics remains blocked until the aligned reconstruction grid receives explicit visual acceptance for player outline and platform-edge clarity."
+      "rule": "Automatic ranking is descriptive only: dynamics remains blocked until the aligned five-scale reconstruction grid receives explicit visual acceptance for player outline and platform-edge clarity."
     }
   ],
   "planned_outputs": [

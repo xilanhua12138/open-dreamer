@@ -25,7 +25,7 @@ The 12,902,784-parameter large extension completed but scored below medium, so t
 
 The subsequent user evaluation still rejected the demo as usable: tokenizer output was unclear and action response was incorrect. A source/runtime audit found a concrete protocol defect: Procgen CoinRun exposes 15 actions, while the repository config declares 16, and the generic action shifter prepends action 8 although Procgen no-op is action 4. Because this shifter is used during dynamics training, the current checkpoint is retained only as pipeline-smoke evidence. The next run must fix and test the action contract before spending more compute on model scale.
 
-`CR-TOK-0002` therefore blocks new dynamics work and restarts the representation study from scratch. Its primary fixed-FLOPs arms are the local `0.17M / 1.1M / 3.7M` labels on one structured dataset. Larger `8.6M / 16.6M` labels are conditional quality-search arms, not part of the fixed-FLOPs curve. A metric-eligible tokenizer still requires aligned-grid visual acceptance and later joint tokenizer-plus-dynamics inference compatibility before it can be frozen.
+`CR-TOK-0002` therefore blocks new dynamics work and restarts the representation study from scratch. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` scale ladder on one structured dataset; the two largest arms receive larger declared FLOPs budgets to preserve useful optimization depth, so the result is a practical quality/capacity sweep rather than a strict five-point iso-FLOPs curve. All five points are evaluated before ranking, and the final candidate still requires aligned-grid visual acceptance and later joint tokenizer-plus-dynamics inference compatibility before it can be frozen.
 
 ## Creating or closing an experiment
 

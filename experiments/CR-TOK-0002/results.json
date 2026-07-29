@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0002",
-  "record_revision": 2,
+  "record_revision": 3,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "internal_result",
   "started_at": "2026-07-29T12:49:27+08:00",
   "ended_at": null,
-  "summary": "The exact preregistered source commit is running on the existing A10. Isolated structured train/eval datasets passed audit, the exact five tokenizer sizes were probed, and the fresh n0.17m primary arm started first; no quality result exists yet.",
+  "summary": "The experiment is running on the existing A10. Isolated structured train/eval datasets passed audit and fresh n0.17m training started first. Before any held-out arm result existed, the user amended the protocol to train all five scales unconditionally and rank them only after the full sweep.",
   "observations": [
     {
       "name": "source_identity",
@@ -70,7 +70,15 @@
     }
   ],
   "comparisons": [],
-  "deviations": [],
+  "deviations": [
+    {
+      "at": "2026-07-29T12:58:48+08:00",
+      "type": "user_directed_protocol_amendment",
+      "before": "Train n8.6m and n16.6m only when smaller candidates miss an absolute quality gate.",
+      "after": "Train n0.17m, n1.1m, n3.7m, n8.6m and n16.6m unconditionally; use metrics only for post-hoc comparison and ranking.",
+      "bias_control": "The amendment occurred during fresh n0.17m training before any held-out evaluation existed, so no observed scale result selected the new rule."
+    }
+  ],
   "failures": [],
   "conclusion": {
     "observed": [],
@@ -80,7 +88,7 @@
       "Whether any tokenizer candidate can support a controllable dynamics model."
     ],
     "decision": [
-      "Do not start dynamics until this tokenizer experiment clears both metric and visual gates."
+      "Complete all five tokenizer arms before choosing a candidate, and do not start dynamics until the aligned five-scale grid passes explicit visual review."
     ]
   },
   "artifacts": [
@@ -109,6 +117,11 @@
       "revision": 2,
       "at": "2026-07-29T12:50:03+08:00",
       "reason": "Recorded exact-source launch, audited structured datasets, exact scale parameters and native step allocations before the first primary arm produced a result."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T12:58:48+08:00",
+      "reason": "Recorded the user's pre-result protocol amendment from conditional quality-gated extensions to an unconditional complete five-scale sweep."
     }
   ]
 }

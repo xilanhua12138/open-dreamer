@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
-"""Select the smallest CoinRun tokenizer that clears preregistered gates."""
+"""Rank a complete CoinRun tokenizer scale sweep by retained quality metrics."""
 
 from __future__ import annotations
 
 import argparse
 import json
 from pathlib import Path
-
-
-ABSOLUTE_CLEAN_PSNR_DB = 26.0
-MIN_CLEAN_IMPROVEMENT_DB = 1.0
-MIN_EDGE_IMPROVEMENT_DB = 0.75
-MIN_TEMPORAL_IMPROVEMENT_DB = 0.75
 
 
 def select_candidate(candidates: list[dict]) -> dict:
@@ -24,48 +18,47 @@ def select_candidate(candidates: list[dict]) -> dict:
     evaluated = []
     for candidate in ordered:
         metrics = candidate["metrics"]
-        gates = {
-            "absolute_clean_psnr": (
-                metrics["ema_clean_psnr"] >= ABSOLUTE_CLEAN_PSNR_DB
-            ),
-            "clean_improvement": (
+        improvements = {
+            "clean_psnr_db": (
                 metrics["ema_clean_psnr"]
                 - baseline_metrics["ema_clean_psnr"]
-                >= MIN_CLEAN_IMPROVEMENT_DB
             ),
-            "edge_improvement": (
+            "edge_psnr_db": (
                 metrics["ema_clean_edge_psnr"]
                 - baseline_metrics["ema_clean_edge_psnr"]
-                >= MIN_EDGE_IMPROVEMENT_DB
             ),
-            "temporal_improvement": (
+            "temporal_change_psnr_db": (
                 metrics["ema_clean_temporal_change_psnr"]
                 - baseline_metrics["ema_clean_temporal_change_psnr"]
-                >= MIN_TEMPORAL_IMPROVEMENT_DB
             ),
         }
-        evaluated.append({**candidate, "gates": gates, "eligible": all(gates.values())})
-
-    eligible = [candidate for candidate in evaluated if candidate["eligible"]]
-    best_quality = max(
-        evaluated,
-        key=lambda candidate: (
+        quality_score = (
             candidate["metrics"]["ema_clean_psnr"]
             + candidate["metrics"]["ema_clean_edge_psnr"]
             + candidate["metrics"]["ema_clean_temporal_change_psnr"]
+        )
+        evaluated.append(
+            {
+                **candidate,
+                "improvements_vs_smallest_db": improvements,
+                "quality_score": quality_score,
+            }
+        )
+
+    ranking = sorted(
+        evaluated,
+        key=lambda candidate: (
+            -candidate["quality_score"],
+            candidate["parameters"],
         ),
     )
     return {
-        "quality_gate_passed": bool(eligible),
-        "selected": eligible[0] if eligible else None,
-        "best_quality": best_quality,
+        "selection_basis": (
+            "highest_unweighted_sum_of_clean_edge_and_temporal_change_psnr"
+        ),
+        "selected": ranking[0],
         "baseline": evaluated[0],
-        "thresholds": {
-            "absolute_clean_psnr_db": ABSOLUTE_CLEAN_PSNR_DB,
-            "min_clean_improvement_db": MIN_CLEAN_IMPROVEMENT_DB,
-            "min_edge_improvement_db": MIN_EDGE_IMPROVEMENT_DB,
-            "min_temporal_improvement_db": MIN_TEMPORAL_IMPROVEMENT_DB,
-        },
+        "ranking": ranking,
         "candidates": evaluated,
     }
 

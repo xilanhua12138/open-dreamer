@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 readonly ROOT="${OPEN_DREAMER_ROOT:-/mnt/workspace/open-dreamer-v2}"
-readonly RUN_ROOT="${ROOT}/logs/coinrun-tokenizer-scale-v2-20260729"
+readonly RUN_ROOT="${OPEN_DREAMER_RUN_ROOT:-${ROOT}/logs/coinrun-tokenizer-scale-v2-20260729}"
 readonly DATA_ROOT="/mnt/workspace/datasets/coinrun-structured-v2-20260729"
 readonly TRAIN_DATA="${DATA_ROOT}/train"
 readonly EVAL_DATA="${DATA_ROOT}/eval"
@@ -190,31 +190,13 @@ write_selection() {
     --output "${SELECTION}"
 }
 
-quality_gate_passed() {
-  .venv/bin/python -c \
-    'import json,sys; raise SystemExit(0 if json.load(open(sys.argv[1]))["quality_gate_passed"] else 1)' \
-    "${SELECTION}"
-}
-
 run_candidate "n0.17m" "n0p17m" 1 64 1e16
 run_candidate "n1.1m" "n1p1m" 2 128 1e16
 run_candidate "n3.7m" "n3p7m" 3 192 1e16
-evaluated=("n0.17m" "n1.1m" "n3.7m")
+run_candidate "n8.6m" "n8p6m" 4 256 2e16
+run_candidate "n16.6m" "n16p6m" 5 320 4e16
+evaluated=("n0.17m" "n1.1m" "n3.7m" "n8.6m" "n16.6m")
 write_selection "${evaluated[@]}"
-
-if ! quality_gate_passed; then
-  stage "PRIMARY_GATE_MISSED_EXTENDING_TO_N8P6M"
-  run_candidate "n8.6m" "n8p6m" 4 256 2e16
-  evaluated+=("n8.6m")
-  write_selection "${evaluated[@]}"
-fi
-
-if ! quality_gate_passed; then
-  stage "N8P6M_GATE_MISSED_EXTENDING_TO_N16P6M"
-  run_candidate "n16.6m" "n16p6m" 5 320 4e16
-  evaluated+=("n16.6m")
-  write_selection "${evaluated[@]}"
-fi
 
 grid_arguments=()
 for candidate in "${evaluated[@]}"; do
@@ -231,13 +213,9 @@ done
   --output "${RUN_ROOT}/tokenizer-scale-comparison.png" \
   --manifest "${RUN_ROOT}/tokenizer-scale-comparison.json"
 
-if quality_gate_passed; then
-  selected="$(
-    .venv/bin/python -c \
-      'import json,sys; print(json.load(open(sys.argv[1]))["selected"]["name"])' \
-      "${SELECTION}"
-  )"
-  stage "COMPLETE QUALITY_GATE_PASSED selected=${selected} awaiting_visual_review"
-else
-  stage "COMPLETE QUALITY_GATE_FAILED awaiting_visual_review"
-fi
+selected="$(
+  .venv/bin/python -c \
+    'import json,sys; print(json.load(open(sys.argv[1]))["selected"]["name"])' \
+    "${SELECTION}"
+)"
+stage "COMPLETE ALL_FIVE_SCALES_EVALUATED selected=${selected} awaiting_visual_review"

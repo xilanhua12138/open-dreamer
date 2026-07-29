@@ -47,14 +47,14 @@ CANDIDATES = (
         "depth": 4,
         "d_model": 256,
         "training_flops_budget": 2e16,
-        "phase": "conditional_quality_extension",
+        "phase": "unconditional_capacity_sweep",
     },
     {
         "name": "n16.6m",
         "depth": 5,
         "d_model": 320,
         "training_flops_budget": 4e16,
-        "phase": "conditional_quality_extension",
+        "phase": "unconditional_capacity_sweep",
     },
 )
 

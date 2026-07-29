@@ -26,7 +26,7 @@ def candidate(
 
 
 class TokenizerSelectionTests(unittest.TestCase):
-    def test_selects_smallest_candidate_that_clears_all_quality_gates(self) -> None:
+    def test_selects_highest_detail_aware_quality_after_full_sweep(self) -> None:
         candidates = [
             candidate("n0.17m", 163_392, 24.2, 18.0, 17.0),
             candidate("n1.1m", 1_048_192, 25.8, 18.9, 17.8),
@@ -35,11 +35,17 @@ class TokenizerSelectionTests(unittest.TestCase):
 
         result = select_candidate(candidates)
 
-        self.assertTrue(result["quality_gate_passed"])
         self.assertEqual(result["selected"]["name"], "n3.7m")
-        self.assertEqual(result["best_quality"]["name"], "n3.7m")
+        self.assertEqual(
+            result["selection_basis"],
+            "highest_unweighted_sum_of_clean_edge_and_temporal_change_psnr",
+        )
+        self.assertEqual(
+            [row["name"] for row in result["ranking"]],
+            ["n3.7m", "n1.1m", "n0.17m"],
+        )
 
-    def test_rejects_scale_when_any_region_metric_misses_gate(self) -> None:
+    def test_does_not_reject_candidates_with_an_absolute_gate(self) -> None:
         candidates = [
             candidate("n0.17m", 163_392, 24.2, 18.0, 17.0),
             candidate("n1.1m", 1_048_192, 25.8, 18.9, 17.8),
@@ -48,9 +54,10 @@ class TokenizerSelectionTests(unittest.TestCase):
 
         result = select_candidate(candidates)
 
-        self.assertFalse(result["quality_gate_passed"])
-        self.assertIsNone(result["selected"])
-        self.assertEqual(result["best_quality"]["name"], "n3.7m")
+        self.assertEqual(result["selected"]["name"], "n3.7m")
+        self.assertNotIn("quality_gate_passed", result)
+        self.assertNotIn("thresholds", result)
+        self.assertTrue(all("eligible" not in row for row in result["candidates"]))
 
     def test_requires_smallest_scale_baseline(self) -> None:
         with self.assertRaisesRegex(ValueError, "at least two"):
