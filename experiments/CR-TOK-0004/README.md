@@ -26,11 +26,15 @@ The current quality-first sweep intentionally ends at the 16.6M published label.
 
 ### Observed
 
-A CPU-only construction probe measured 25,564,032 parameters and 25,728,028,508,160 estimated FLOPs per optimizer update. Source commit `3833b34b46358b0443bb3571a5745c013eb7a7e7` is staged in a detached DSW worktree with runtime dependencies verified. No n28.7m training or held-out evaluation has started.
+A CPU-only construction probe measured 25,564,032 parameters and 25,728,028,508,160 estimated FLOPs per optimizer update.
+
+The first launch from source commit `3833b34b46358b0443bb3571a5745c013eb7a7e7` failed before any optimizer update. `build_validation_dataset_config` directly read every dataclass field from the CoinRun Hydra node; that node legitimately omitted `mouse_repr` and relied on the `DatasetConfig` default, producing `ConfigAttributeError`.
+
+The exact missing-default case was added as a regression test and observed failing before the implementation was fixed. Local fix commit `c565f0b` was applied to the detached execution source as `b3eb2af`. The architecture, data, optimizer, update budget and evaluation protocol did not change, and no checkpoint can be reused because the failed attempt completed zero updates.
 
 ### Interpretation
 
-None yet.
+This is an infrastructure failure before a scientific observation, not evidence about the 28.7M-label tokenizer.
 
 ### Not established
 
@@ -40,4 +44,4 @@ None yet.
 
 ### Decision
 
-Keep this arm queued behind the currently running `CR-TOK-0003` PID on the same A10. Do not run both concurrently and do not start dynamics.
+Restart from zero using execution commit `b3eb2af`, preserve the failed attempt, and do not start dynamics.

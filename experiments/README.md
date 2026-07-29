@@ -11,7 +11,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
 | `CR-TOK-0002` | What did the unequal-step tokenizer pilot establish before the obsolete runner exited? | aborted | inconclusive | internal result |
 | `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | completed | supports hypothesis | internal result |
-| `CR-TOK-0004` | At fixed 20k updates, does the 28.7M-label extension improve over 16.6M? | queued | not evaluated | none |
+| `CR-TOK-0004` | At fixed 20k updates, does the 28.7M-label extension improve over 16.6M? | failed | not evaluated | none |
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
@@ -33,7 +33,7 @@ The subsequent user evaluation still rejected the demo as usable: tokenizer outp
 
 All five arms are now durably recorded. Final EMA clean / edge / temporal-change PSNR increased from `12.0610 / 11.9328 / 11.4600 dB` at 0.17M to `36.1691 / 26.7739 / 27.4284 dB` at 16.6M. The descriptive ranking is `16.6M > 8.6M > 3.7M > 1.1M > 0.17M`, with no quality gate or eligible filter. This supports the fixed-20k capacity-quality hypothesis but does not establish visual acceptability or dynamics controllability.
 
-`CR-TOK-0004` is preregistered and queued to add the missing published `28.7M` label only after `CR-TOK-0003` terminates. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its execution source is frozen at `3833b34`; it keeps the same fixed-20k recipe and held-out identity, adds structured runtime telemetry plus fixed validation media every 2,500 updates, and remains blocked from dynamics pending visual review.
+`CR-TOK-0004` is preregistered to add the missing published `28.7M` label after `CR-TOK-0003`. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its first launch from frozen source `3833b34` failed before any optimizer update because the validation helper did not materialize omitted dataclass defaults. The exact failure is retained; a red regression test and code-only fix were committed and applied as execution source `b3eb2af` without changing the protocol. Dynamics remains blocked.
 
 ## Creating or closing an experiment
 

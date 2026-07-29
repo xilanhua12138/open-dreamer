@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0004",
-  "record_revision": 2,
-  "execution_status": "queued",
+  "record_revision": 3,
+  "execution_status": "failed",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Queued but not started. Source commit 3833b34 is staged in a detached remote worktree; the new n28.7m-label arm will run only after CR-TOK-0003 reaches terminal state, using the same A10 and fixed-20k protocol.",
+  "started_at": "2026-07-30T01:01:06+08:00",
+  "ended_at": "2026-07-30T01:01:11+08:00",
+  "summary": "The first n28.7m launch failed before any optimizer update because validation dataset materialization required the DatasetConfig.mouse_repr key even though the CoinRun Hydra config legitimately omitted it and relied on the dataclass default. The failed attempt is retained; a red regression test and source fix were committed without changing model scale or training protocol.",
   "observations": [
     {
       "name": "pretraining_architecture_probe",
@@ -27,16 +27,49 @@
       "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5",
       "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-28p7",
       "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729",
-      "started": false
+      "started": true
+    },
+    {
+      "name": "attempt_01_failure",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "attempt_id": "1953d550-bf9c-4138-9500-f66c867eb4dd",
+      "source_commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "last_completed_updates": null,
+      "wandb_mode": "offline",
+      "failure": "omegaconf.errors.ConfigAttributeError: Key 'mouse_repr' is not in struct",
+      "scientific_outcome_observed": false
     }
   ],
   "comparisons": [],
-  "deviations": [],
-  "failures": [],
+  "deviations": [
+    {
+      "at": "2026-07-30T01:04:32+08:00",
+      "kind": "source_bugfix_before_first_update",
+      "reason": "The validation helper copied every DatasetConfig dataclass field with direct getattr, but the CoinRun Hydra node omitted mouse_repr and other defaulted fields.",
+      "red_test": "tests.test_tokenizer_validation_runtime.TokenizerValidationRuntimeTests.test_validation_config_materializes_missing_dataclass_defaults",
+      "fix_commit": "c565f0b5c18ef7847853d1988c47afa425951984",
+      "remote_execution_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "protocol_changed": false,
+      "checkpoint_reused": false
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-07-30T01:01:11+08:00",
+      "stage": "validation_dataset_initialization",
+      "exit_code": 1,
+      "last_completed_updates": null,
+      "error_type": "omegaconf.errors.ConfigAttributeError",
+      "error_message": "Key 'mouse_repr' is not in struct; full_key: dataset.mouse_repr",
+      "recoverable": true,
+      "evidence_sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62"
+    }
+  ],
   "conclusion": {
     "observed": [
       "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label.",
-      "Execution source commit 3833b34 is staged in a detached DSW worktree without starting a second GPU process."
+      "The first launch from source commit 3833b34 failed before any optimizer update while materializing a validation DatasetConfig that omitted a defaulted mouse_repr field.",
+      "A regression test reproduced the missing-default failure before the helper was changed to materialize explicit DatasetConfig and DataloaderConfig defaults."
     ],
     "interpretation": [],
     "not_established": [
@@ -45,11 +78,27 @@
       "Whether the tokenizer is suitable for dynamics."
     ],
     "decision": [
-      "Freeze the source commit and queue this arm behind CR-TOK-0003 on the same A10.",
+      "Restart from zero using the bugfix execution commit; do not reuse a checkpoint because no update completed.",
       "Do not start dynamics."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "attempt 01 generated run evidence",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-01-run-evidence.json",
+      "retention": "git",
+      "sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62"
+    },
+    {
+      "name": "attempt 01 bootstrap log",
+      "kind": "log",
+      "uri": "local-task://tokenizer-28p7-sync/attempt-01/bootstrap.log",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/bootstrap.log",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "c7c8178e7e8bcaf97873ff690b9496a1bfc386b0bf42a1cc213ea494592675e2"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -60,6 +109,11 @@
       "revision": 2,
       "at": "2026-07-29T20:42:15+08:00",
       "reason": "Bound the runner to source commit 3833b34, verified remote runtime dependencies and queued the detached worktree behind CR-TOK-0003 without starting GPU work."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T01:04:32+08:00",
+      "reason": "Preserved the zero-update failed launch, exact runtime evidence and ConfigAttributeError; recorded the red-test-first default-materialization fix and the resulting execution-source deviation without changing the scientific protocol."
     }
   ]
 }
