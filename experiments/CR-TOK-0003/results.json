@@ -1,14 +1,22 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0003",
-  "record_revision": 1,
+  "record_revision": 2,
   "execution_status": "planned",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": null,
   "ended_at": null,
-  "summary": "Preregistered and not yet launched.",
-  "observations": [],
+  "summary": "Preregistered and bound to exact source commit 26d9a12; not yet launched.",
+  "observations": [
+    {
+      "name": "source_identity",
+      "commit": "26d9a1290dc7e1a42a98cea62284fe7787bbe4e6",
+      "branch": "feat/experiment-ledger",
+      "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_quality_first_20k.sh",
+      "runner_sha256": "0b1a6f0b3cde9db49d94b88487268fdd0a299fb2430494f56f9a6987e7a9288d"
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
@@ -31,6 +39,11 @@
       "revision": 1,
       "at": "2026-07-29T14:38:09+08:00",
       "reason": "Preregistered the quality-first fixed-20k protocol before creating or reusing any checkpoint for this experiment."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T14:52:12+08:00",
+      "reason": "Bound the runner and exact checkpoint-step implementation to source commit 26d9a12 before remote launch."
     }
   ]
 }
