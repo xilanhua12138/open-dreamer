@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0001",
+  "observed_at": "2026-07-29T12:13:16+08:00",
+  "evaluation_type": "user_qualitative_and_action_contract_audit",
+  "user_observation": {
+    "overall": "unusable",
+    "tokenizer_reconstruction": "visually unclear",
+    "action_conditioning": "predicted dynamics did not respond correctly to actions"
+  },
+  "retained_metric_context": {
+    "tokenizer_heldout_ema_clean_psnr_db": 24.24467635154724,
+    "tokenizer_heldout_ema_masked_psnr_db": 20.335304975509644,
+    "dynamics_medium_psnr_at_horizon_1_db": 20.731323724448515,
+    "dynamics_medium_mean_frame_psnr_at_horizon_16_db": 16.016930541728687,
+    "dynamics_medium_mean_ssim_at_horizon_16": 0.5419038439903843,
+    "metric_target": "tokenizer_decoded_ground_truth"
+  },
+  "action_contract_audit": {
+    "live_procgen_action_space": {
+      "observed_value": "D15[]",
+      "categorical_cardinality": 15,
+      "command": ".venv-procgen/bin/python -c 'from procgen import ProcgenGym3Env; e=ProcgenGym3Env(num=1, env_name=\"coinrun\", start_level=0, num_levels=1); print(e.ac_space)'"
+    },
+    "repository_config": {
+      "path": "configs/dataset/coinrun.yaml",
+      "categorical_action_dim": 16
+    },
+    "shift_implementation": {
+      "path": "dreamer/actions.py",
+      "rule": "categorical_action_dim // 2",
+      "inserted_action_id_under_current_config": 8
+    },
+    "procgen_action_mapping": {
+      "noop_action_id": 4,
+      "action_id_8": "RIGHT+UP"
+    },
+    "training_usage": {
+      "path": "scripts/train_dynamics.py",
+      "behavior": "shift_actions is applied to every training batch"
+    },
+    "dataset_policy": {
+      "path": "scripts/experiments/coinrun/generate_coinrun_records.py",
+      "behavior": "actions are sampled from the environment action space with types_np.sample"
+    }
+  },
+  "interpretation": [
+    "The passing HTTP and two-step smoke test established runtime continuity only, not visual quality or controllability.",
+    "The tokenizer reconstruction ceiling is visibly weak, and dynamics introduces additional error relative to tokenizer-decoded targets.",
+    "The CoinRun action protocol is internally inconsistent: the live environment exposes 15 categories, the config declares 16, and the generic shifted start action inserts action 8 instead of Procgen no-op action 4.",
+    "Because the mismatch is present in the training path, action-response quality from the current checkpoint cannot be treated as a valid control-fidelity result."
+  ],
+  "sources": [
+    "experiments/CR-TOK-0001/results.json",
+    "experiments/CR-DYN-0003/results.json",
+    "configs/dataset/coinrun.yaml",
+    "dreamer/actions.py",
+    "scripts/train_dynamics.py",
+    "scripts/experiments/coinrun/generate_coinrun_records.py",
+    "https://github.com/openai/procgen"
+  ]
+}
