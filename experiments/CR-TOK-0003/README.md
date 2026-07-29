@@ -26,11 +26,26 @@ At the same 20,000 optimizer updates, how do held-out reconstruction quality and
 
 ### Observed
 
-The exact source commit `26d9a1290dc7e1a42a98cea62284fe7787bbe4e6` started one pipeline on the existing A10 at `2026-07-29T14:56:16+08:00`. The generated plan confirms `20,000` updates for every arm, disabled FLOPs/tokens-per-param overrides, exact `2,500 / 5,000 / 10,000 / 20,000` evaluation milestones and `dynamics_authorized=false`. Fresh 0.17M training is the first active arm; no old checkpoint was reused.
+The exact source commit `26d9a1290dc7e1a42a98cea62284fe7787bbe4e6` started one pipeline on the existing A10 at `2026-07-29T14:56:16+08:00`. The generated plan confirms `20,000` updates for every arm, disabled FLOPs/tokens-per-param overrides, exact `2,500 / 5,000 / 10,000 / 20,000` evaluation milestones and `dynamics_authorized=false`.
+
+Fresh 0.17M and 1.1M have each completed exactly 20,000 updates and all four held-out evaluations on the same 512 clips. Their EMA metrics are:
+
+| Scale | Updates | Clean PSNR | Masked PSNR | Edge PSNR | Temporal-change PSNR |
+|---|---:|---:|---:|---:|---:|
+| 0.17M | 2,500 | 12.0504 | 12.0504 | 11.9046 | 11.4659 |
+| 0.17M | 5,000 | 12.0612 | 12.0612 | 11.9386 | 11.4584 |
+| 0.17M | 10,000 | 12.0612 | 12.0612 | 11.9348 | 11.4598 |
+| 0.17M | 20,000 | 12.0610 | 12.0610 | 11.9328 | 11.4600 |
+| 1.1M | 2,500 | 21.7918 | 21.2389 | 17.0254 | 17.4338 |
+| 1.1M | 5,000 | 25.6757 | 24.6136 | 19.5432 | 19.8007 |
+| 1.1M | 10,000 | 27.0566 | 25.5887 | 20.5354 | 20.7290 |
+| 1.1M | 20,000 | 27.7460 | 24.7005 | 20.9956 | 21.2332 |
+
+The same PID then advanced to fresh 3.7M training. All milestone JSON, reconstruction PNG, Hydra config and checkpoint-tree hashes for the first two arms are retained; no old checkpoint was reused.
 
 ### Interpretation
 
-None yet.
+The observed 1.1M fixed-20k metrics are substantially above 0.17M, while its learning curve still changes meaningfully between 10k and 20k. This is only a partial two-arm observation, not the preregistered five-scale ranking or a visual-quality acceptance.
 
 ### Not established
 
@@ -40,4 +55,4 @@ None yet.
 
 ### Decision
 
-Monitor the single PID without restarting healthy work, synchronize every new arm/milestone into this ledger, and keep dynamics blocked until explicit visual review.
+Continue the same healthy PID through 3.7M, 8.6M and 16.6M, synchronize every new arm into this ledger, and keep dynamics blocked until the complete aligned final grid receives explicit visual review.

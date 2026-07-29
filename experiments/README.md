@@ -30,6 +30,8 @@ The subsequent user evaluation still rejected the demo as usable: tokenizer outp
 
 `CR-TOK-0003` is the corrected quality-first experiment. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` ladder from scratch for exactly 20,000 optimizer updates per arm, with scaling helpers disabled. Every arm is evaluated after 2,500, 5,000, 10,000 and 20,000 completed updates. The final ranking remains descriptive, and dynamics stays blocked until the aligned final grid receives explicit visual acceptance and a later joint-interface smoke test passes.
 
+The first two arms are now durably recorded: 0.17M stayed near 12 dB across all four EMA curves, while 1.1M reached final EMA clean / edge / temporal-change PSNR of `27.7460 / 20.9956 / 21.2332 dB`. The pipeline is training fresh 3.7M. These partial metrics do not establish the five-scale ranking or visual acceptability.
+
 ## Creating or closing an experiment
 
 Read the complete rules in `../CLAUDE.md`, copy `./_template`, allocate the next ID, and validate:
