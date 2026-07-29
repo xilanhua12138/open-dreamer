@@ -23,7 +23,8 @@
     ]
   },
   "constants": {
-    "checkpoint": "selected once after CR-DYN-0004",
+    "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+    "selected_model": "medium",
     "selection_rule": "highest held-out mean_frame_psnr_db; mean_ssim tiebreaker",
     "future_frames": "identical byte content across all arms",
     "future_actions": "identical across all arms",
@@ -60,7 +61,10 @@
   },
   "protocol": {
     "model": {
-      "checkpoint": "pending CR-DYN-0004 selection"
+      "name": "medium",
+      "parameters": 3931392,
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+      "selection_evidence": "experiments/CR-DYN-0005/raw/best-model.json"
     },
     "training": {
       "performed": false

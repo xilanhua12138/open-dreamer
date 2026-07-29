@@ -1,37 +1,111 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0005",
-  "record_revision": 1,
-  "execution_status": "blocked",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Not run. Checkpoint selection is intentionally deferred until the large extension completes.",
-  "observations": [],
-  "comparisons": [],
-  "deviations": [],
+  "record_revision": 2,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "internal_result",
+  "started_at": "2026-07-29T08:33:43+08:00",
+  "ended_at": "2026-07-29T08:35:09+08:00",
+  "summary": "On the selected medium checkpoint and byte-identical 16-frame futures, context 16 scored best; contexts 16 and 32 both exceeded context 4, while 32 was slightly below 16.",
+  "observations": [
+    {
+      "name": "selected_checkpoint",
+      "model": "medium",
+      "parameters": 3931392,
+      "remote_uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+      "selection_metric": {
+        "mean_frame_psnr_db": 16.016930541728687,
+        "mean_ssim": 0.5419038439903843
+      }
+    },
+    {
+      "context_frames": 4,
+      "mean_video_psnr_db": 15.964574889925787,
+      "mean_frame_psnr_db": 16.8811926540789,
+      "mean_ssim": 0.5694862177328359
+    },
+    {
+      "context_frames": 16,
+      "mean_video_psnr_db": 16.089159798245156,
+      "mean_frame_psnr_db": 17.148326256371398,
+      "mean_ssim": 0.5921903248725502
+    },
+    {
+      "context_frames": 32,
+      "mean_video_psnr_db": 16.00021146611325,
+      "mean_frame_psnr_db": 17.01505326084585,
+      "mean_ssim": 0.5885515430392311
+    },
+    {
+      "name": "fixed_future_verification",
+      "shape": [
+        8,
+        16,
+        64,
+        64,
+        3
+      ],
+      "gt_decoded_sha256": "4345583fcef0e07ae8fa46ae46a53242c642ca2e8c1f94dea893b470a677ee3f",
+      "contexts_equal": [
+        4,
+        16,
+        32
+      ],
+      "valid": true
+    }
+  ],
+  "comparisons": [
+    {
+      "left_context": 4,
+      "right_context": 16,
+      "mean_frame_psnr_difference_right_minus_left_db": 0.26713360229249616,
+      "mean_ssim_difference_right_minus_left": 0.02270410713971427
+    },
+    {
+      "left_context": 4,
+      "right_context": 32,
+      "mean_frame_psnr_difference_right_minus_left_db": 0.1338606067669481,
+      "mean_ssim_difference_right_minus_left": 0.019065325306395153
+    },
+    {
+      "left_context": 16,
+      "right_context": 32,
+      "mean_frame_psnr_difference_right_minus_left_db": -0.13327299552554805,
+      "mean_ssim_difference_right_minus_left": -0.0036387818333191158
+    }
+  ],
+  "deviations": [
+    "Only one checkpoint, one seed, and eight futures were evaluated.",
+    "The original dependency block was resolved after the same authorized A10 restarted."
+  ],
   "failures": [
     {
       "stage": "dependency",
       "type": "blocked_dependency",
-      "message": "CR-DYN-0004 has no large metric or selected checkpoint because the DSW A10 instance is unavailable."
+      "message": "CR-DYN-0004 initially had no large metric or selected checkpoint because the DSW A10 instance was unavailable.",
+      "resolved_at": "2026-07-29T08:33:43+08:00"
     }
   ],
   "conclusion": {
     "observed": [
-      "No context-ablation metrics or future manifest exists."
+      "Medium was selected once by the frozen PSNR/SSIM rule.",
+      "The decoded future array hash was identical for contexts 4, 16, and 32.",
+      "Context 16 achieved 17.1483 dB mean-frame PSNR and 0.59219 mean SSIM, the best of the three arms.",
+      "Context 32 remained above context 4 but slightly below context 16."
     ],
     "interpretation": [
-      "The experiment is dependency-blocked rather than scientifically negative."
+      "The hypothesis is supported in the preregistered sense that longer histories preserved or improved both primary metrics relative to four frames.",
+      "The non-monotonic 16-to-32 change suggests a plateau rather than evidence that maximum available history is always best."
     ],
     "not_established": [
-      "Whether 4, 16, or 32 context frames is best.",
-      "Whether longer history improves action-conditioned rollout quality."
+      "Multi-seed significance of the small 16-versus-32 difference.",
+      "Whether context 16 remains optimal for other checkpoints or data scales.",
+      "Subjective action controllability."
     ],
     "decision": [
-      "Run only after CR-DYN-0004 and checkpoint selection complete.",
-      "Reject the run if future identity hashes differ."
+      "Use context 16 for the live demo.",
+      "Retain the strict future-hash contract in any repeated context experiment."
     ]
   },
   "artifacts": [
@@ -48,6 +122,63 @@
       "uri": "scripts/experiments/coinrun/run_coinrun_context_ablation.sh",
       "retention": "git",
       "sha256": "52c11c27d86712dc48f1f1921dbeb6806069149d1e47ab3d9980cbd13933ad18"
+    },
+    {
+      "name": "checkpoint selection",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/best-model.json",
+      "retention": "git",
+      "sha256": "43ce2a6ecc75704d0db1f8ee1deec8c99295d24c898e5cc7a3d5fd42dfc0c2f0"
+    },
+    {
+      "name": "future identity manifest",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/ablation-manifest.json",
+      "retention": "git",
+      "sha256": "5bb2fadb6b3a89b4c268cede10ed16084d0d931233190d0e7868e3e68b566934"
+    },
+    {
+      "name": "future hash verification",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/future-hash-verification.json",
+      "retention": "git",
+      "sha256": "c2f6e64e13ddc9c9cda33b9d3c385b2cb7bdc1b6006b39649341f719e035a2c7"
+    },
+    {
+      "name": "context summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/summary.json",
+      "retention": "git",
+      "sha256": "29d658157496f3a5290d3d8c29284506de092f9c8a8405397f5217aad3be0961"
+    },
+    {
+      "name": "context 4 metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/context-4-metrics.json",
+      "retention": "git",
+      "sha256": "316f2858daec67f12efd50c07af1fadb5bb222e12ca2efd54842138fdce3f767"
+    },
+    {
+      "name": "context 16 metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/context-16-metrics.json",
+      "retention": "git",
+      "sha256": "68d867616621e0f1516099f71585340aff5118f03e6b8b24499714ee1f789eaa"
+    },
+    {
+      "name": "context 32 metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0005/raw/context-32-metrics.json",
+      "retention": "git",
+      "sha256": "777730483c5752da3d8fc6fb069b7e7ec5c25e0ad18ca2c5c8d085e2232d8585"
+    },
+    {
+      "name": "context rollout tree",
+      "kind": "raw arrays, metrics and mp4 tree",
+      "uri": "local-task://extension-final-20260729/context-ablation-medium",
+      "retention": "local task archive",
+      "bytes": 7030036,
+      "sha256": "63b964217a2e6665f0e91b39eeac7c91c3b963a44fb23b96459aa87164daec8e"
     }
   ],
   "revision_history": [
@@ -55,6 +186,11 @@
       "revision": 1,
       "at": "2026-07-29T00:00:00+08:00",
       "reason": "Backfilled frozen planned protocol and dependency block."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T08:35:09+08:00",
+      "reason": "Closed the valid fixed-future 4/16/32 ablation with selection evidence, raw metrics, hash verification, and interpretation."
     }
   ]
 }

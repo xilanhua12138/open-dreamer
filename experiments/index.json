@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T06:49:24+08:00",
+  "updated_at": "2026-07-29T08:45:24+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -47,9 +47,9 @@
       "experiment_id": "CR-DYN-0004",
       "title": "CoinRun large fixed-20k capacity extension",
       "path": "experiments/CR-DYN-0004",
-      "execution_status": "running",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-DYN-0003"
       ]
@@ -58,9 +58,9 @@
       "experiment_id": "CR-DYN-0005",
       "title": "CoinRun 4/16/32 history-context ablation",
       "path": "experiments/CR-DYN-0005",
-      "execution_status": "blocked",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-DYN-0004"
       ]
@@ -69,9 +69,9 @@
       "experiment_id": "CR-DEMO-0001",
       "title": "Action-conditioned CoinRun browser demo",
       "path": "experiments/CR-DEMO-0001",
-      "execution_status": "blocked",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "smoke_test",
       "depends_on": [
         "CR-DYN-0004",
         "CR-DYN-0005"

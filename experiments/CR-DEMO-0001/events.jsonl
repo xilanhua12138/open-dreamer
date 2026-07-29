@@ -1,3 +1,8 @@
 {"at":"2026-07-28","type":"planned","message":"Planned a browser action-conditioning demo after capacity selection and context ablation.","evidence":["live_coinrun_demo.py","run_coinrun_live_demo.sh"]}
 {"at":"2026-07-28T16:17:00+08:00","type":"blocked","message":"Demo launch blocked after the existing DSW A10 stopped and could not restart.","evidence":["CR-DYN-0004 blocked"]}
 {"at":"2026-07-29T00:00:00+08:00","type":"protocol_frozen","message":"Defined readiness as both a passing health call and one real model-inference step.","evidence":["manifest.json success criteria"]}
+{"at":"2026-07-29T08:35:09+08:00","type":"started","message":"Started the medium/context-16 live demo after model and context selection.","evidence":["STATUS_EXTENSION START_LIVE_DEMO_MEDIUM"]}
+{"at":"2026-07-29T08:41:16+08:00","type":"deviation","message":"Initial demo startup failed because ThreadPrefetchIterDataset was iterable but not an iterator.","evidence":["raw/startup-failure.json"]}
+{"at":"2026-07-29T08:41:47+08:00","type":"recovered","message":"Applied commit 58758e5 and restarted only the demo process; training and evaluation artifacts were unchanged.","evidence":["scripts/experiments/coinrun/live_coinrun_demo.py","commit 58758e581945715445f42856c53130e08d978ec6"]}
+{"at":"2026-07-29T08:42:19+08:00","type":"ready","message":"Remote health passed and the pipeline wrote LIVE_DEMO_READY.json.","evidence":["raw/LIVE_DEMO_READY.json","raw/health.json"]}
+{"at":"2026-07-29T08:43:23+08:00","type":"completed","message":"The SSH-forwarded health and one real action-7 model step passed; measured step latency was 7412.4 ms.","evidence":["raw/step-smoke.json","http://127.0.0.1:7860"]}

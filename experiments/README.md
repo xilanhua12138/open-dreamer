@@ -12,15 +12,15 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
-| `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | running | not evaluated | none |
-| `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | blocked | not evaluated | none |
-| `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | blocked | not evaluated | none |
+| `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
+| `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 
 ## Important reading of the chain
 
 `CR-DYN-0002` is intentionally not deleted. Its medium model received only 474 total steps, with bootstrap beginning at step 237, and its PSNR scored below the small model while SSIM scored above it. The corrected `CR-DYN-0003` fixed every model at 20,000 optimizer steps and found monotonic improvement with capacity. The first run is evidence about an extremely small compute budget, not evidence that larger models are worse.
 
-`CR-DYN-0004` resumed at 2026-07-29 06:49 Asia/Shanghai after the existing A10 became available. Its exact large parameter count is 12,902,784 and training is running. `CR-DYN-0005` and `CR-DEMO-0001` remain blocked on that terminal result; no context-ablation metric or verified live demo exists yet.
+The 12,902,784-parameter large extension completed but scored below medium, so the prior monotonic capacity trend stopped under this fixed-20k recipe. Medium was then evaluated on byte-identical futures with 4/16/32 history frames; context 16 scored best. The browser demo passed health and one real inference step through SSH, but its 7.4-second step latency rejected the low-latency hypothesis.
 
 ## Creating or closing an experiment
 

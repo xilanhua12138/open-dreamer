@@ -1,0 +1,19 @@
+{
+  "verified_at": "2026-07-29T08:43:58+08:00",
+  "array": "gt_decoded",
+  "shape": [
+    8,
+    16,
+    64,
+    64,
+    3
+  ],
+  "contexts": {
+    "4": "4345583fcef0e07ae8fa46ae46a53242c642ca2e8c1f94dea893b470a677ee3f",
+    "16": "4345583fcef0e07ae8fa46ae46a53242c642ca2e8c1f94dea893b470a677ee3f",
+    "32": "4345583fcef0e07ae8fa46ae46a53242c642ca2e8c1f94dea893b470a677ee3f"
+  },
+  "all_equal": true,
+  "valid": true,
+  "method": "SHA256 over contiguous uint8 array bytes loaded from each context raw_future_arrays.npz"
+}

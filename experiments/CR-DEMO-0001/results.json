@@ -1,39 +1,94 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0001",
-  "record_revision": 1,
-  "execution_status": "blocked",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Not run. No live server, port forward, health response, or model step has been verified.",
-  "observations": [],
+  "record_revision": 2,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "smoke_test",
+  "started_at": "2026-07-29T08:35:09+08:00",
+  "ended_at": "2026-07-29T08:43:23+08:00",
+  "summary": "The medium checkpoint served a browser demo through an SSH tunnel and passed health plus one real model step, but 7.4-second steady-step latency rejected the low-latency hypothesis.",
+  "observations": [
+    {
+      "name": "remote_health",
+      "value": {
+        "ok": true,
+        "model": "medium"
+      },
+      "observed_at": "2026-07-29T08:42:19+08:00"
+    },
+    {
+      "name": "local_tunnel_health",
+      "url": "http://127.0.0.1:7860/health",
+      "value": {
+        "ok": true,
+        "model": "medium"
+      },
+      "observed_at": "2026-07-29T08:43:15+08:00"
+    },
+    {
+      "name": "real_step",
+      "request": {
+        "action": 7,
+        "repeat": 1
+      },
+      "response": {
+        "model": "medium",
+        "context_frames": 16,
+        "denoise_steps": 4,
+        "step": 1,
+        "action_id": 7,
+        "action": "右",
+        "latency_ms": 7412.4,
+        "warmup_ms": 24014.2,
+        "generated_png": true
+      },
+      "observed_at": "2026-07-29T08:43:23+08:00"
+    },
+    {
+      "name": "shutdown_timer_due",
+      "value": "2026-07-29T11:45:24+08:00",
+      "policy": "three-hour user evaluation window after verified readiness"
+    }
+  ],
   "comparisons": [],
-  "deviations": [],
+  "deviations": [
+    "The first demo process failed because ThreadPrefetchIterDataset was iterable but not an iterator; commit 58758e5 wrapped it with iter and restarted only the demo process.",
+    "The training and evaluation pipeline, selected checkpoint, and context metrics were not rerun or changed during demo recovery."
+  ],
   "failures": [
     {
       "stage": "dependency",
       "type": "blocked_dependency",
-      "message": "Model selection and DSW availability are unresolved."
+      "message": "Model selection and DSW availability were initially unresolved.",
+      "resolved_at": "2026-07-29T08:35:09+08:00"
+    },
+    {
+      "stage": "demo_startup",
+      "type": "runtime_type_error",
+      "message": "'ThreadPrefetchIterDataset' object is not an iterator",
+      "resolved_at": "2026-07-29T08:41:47+08:00",
+      "recovery_commit": "58758e581945715445f42856c53130e08d978ec6"
     }
   ],
   "conclusion": {
     "observed": [
-      "Only the demo source and launcher are prepared."
+      "The selected medium checkpoint loaded and GET /health passed remotely and through the local SSH tunnel.",
+      "POST /api/step executed real model inference and returned a generated PNG frame for action 7.",
+      "Warm-up took 24.0 seconds and the verified steady step took 7.4 seconds."
     ],
     "interpretation": [
-      "No interactive-performance conclusion is possible."
+      "The functional demo smoke test passed, but the low-latency hypothesis is rejected on this implementation and A10.",
+      "The interface is suitable for deliberate frame-by-frame inspection, not real-time game control."
     ],
     "not_established": [
-      "A working live URL.",
-      "Successful model inference through /api/step.",
-      "Real-time latency or action controllability.",
+      "Qualitative button-to-motion controllability across multiple actions.",
+      "Browser interaction quality under sustained autoregressive rollout.",
       "A trained policy or agent."
     ],
     "decision": [
-      "Start and verify the demo only after checkpoint selection.",
-      "Do not tell the user a URL is ready until both /health and a real /api/step pass."
+      "Expose http://127.0.0.1:7860 for the verified three-hour user window.",
+      "Treat latency optimization as a separate engineering experiment rather than claiming this is real time."
     ]
   },
   "artifacts": [
@@ -50,6 +105,49 @@
       "uri": "scripts/experiments/coinrun/run_coinrun_live_demo.sh",
       "retention": "git",
       "sha256": "5e831d5836bc29849e080bde2dfc58cd3a6c44289fa91bd292eecee62cf729fa"
+    },
+    {
+      "name": "startup failure evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/startup-failure.json",
+      "retention": "git",
+      "sha256": "8b5a292caea0ae6e249e7b30d7acb4d4e590c78aa537eee3646f49b5ec01a121"
+    },
+    {
+      "name": "demo readiness",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/LIVE_DEMO_READY.json",
+      "retention": "git",
+      "sha256": "4a4766c69b0cc393812a82216191c308e39caf7952a0a84dcdf22218ea1337fe"
+    },
+    {
+      "name": "health response",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/health.json",
+      "retention": "git",
+      "sha256": "cb86b281240481b43f353693483f9ebe51f9ecedc4d5ee88b3708d590e757a3c"
+    },
+    {
+      "name": "real step smoke",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/step-smoke.json",
+      "retention": "git",
+      "sha256": "88f4f7732ed6e0216be2781206f6732d19e33e51005a34e77f65eabd54aa9210"
+    },
+    {
+      "name": "verified live demo log",
+      "kind": "log",
+      "uri": "experiments/CR-DEMO-0001/raw/live-demo.log",
+      "retention": "git",
+      "sha256": "4c5141af9ca48ac7b4d8a48e7b48b95ceab482465223ba646645340b084bd24d"
+    },
+    {
+      "name": "extension terminal archive",
+      "kind": "tar.gz",
+      "uri": "local-task://open-dreamer-extension-final-20260729.tar.gz",
+      "retention": "local task archive",
+      "bytes": 7292546,
+      "sha256": "867b0fa9c684b1fd7ccb943260c8857f547fe6ae1a84afdc58539a97378b1d98"
     }
   ],
   "revision_history": [
@@ -57,6 +155,11 @@
       "revision": 1,
       "at": "2026-07-29T00:00:00+08:00",
       "reason": "Backfilled planned demo protocol and dependency block."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T08:43:23+08:00",
+      "reason": "Closed the recovered demo with remote and tunneled health, one real inference step, latency evidence, and a three-hour user window."
     }
   ]
 }

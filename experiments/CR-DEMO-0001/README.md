@@ -25,23 +25,27 @@ Planned actions use the retained Procgen mapping:
 
 The server binds `127.0.0.1:7860`; local access is through an SSH tunnel. The inference sampler uses four denoise steps and context 16 unless `CR-DYN-0005` supports another choice.
 
-## Current result
+## Results
 
 ### Observed
 
-The server and launcher scripts exist, but no live server was started, no tunnel was established, and `/health` or `/api/step` has not been verified.
+- The selected medium checkpoint loaded with context 16 and four denoise steps.
+- The first startup exposed an iterable-versus-iterator bug; commit `58758e5` fixed it without rerunning training or evaluation.
+- Remote and SSH-forwarded `GET /health` returned `{"ok": true, "model": "medium"}`.
+- A real action-7 `POST /api/step` returned a generated PNG frame.
+- Warm-up took `24.0 s`; the verified model step took `7.4 s`.
+- The local URL is `http://127.0.0.1:7860` until the DSW timer at 2026-07-29 11:45:24 Asia/Shanghai.
 
 ### Interpretation
 
-The demo is blocked by the same unavailable A10/dependent checkpoint chain as the large and context experiments.
+The functional demo smoke test passed, but the low-latency hypothesis is rejected. It is useful for deliberate frame-by-frame inspection, not real-time play.
 
 ### Not established
 
-- Real-time latency.
-- Button-to-motion controllability.
-- A working URL.
+- Qualitative control fidelity across every button.
+- Sustained autoregressive stability.
 - Any trained policy.
 
 ### Decision
 
-After model selection, start one idempotent server, verify `/health` and one real `/api/step`, then expose only through the local SSH tunnel and retain the exact demo manifest.
+Give the user the three-hour inspection window. Treat latency optimization as a separate experiment before calling the interface real time.

@@ -1,0 +1,49 @@
+- dataset=coinrun
+- dataset.array_record_path=/mnt/workspace/datasets/coinrun-minimal-complete-20260728/train
+- dataset.dataloader_cfg.B=32
+- dataset.dataloader_cfg.short_T=64
+- dataset.dataloader_cfg.long_T=64
+- dataset.dataloader_cfg.long_ratio=0.0
+- dataset.dataloader_cfg.num_workers=4
+- dataset.dataloader_cfg.prefetch_buffer_size=4
+- +dataset.latent_mean=[0.022386612370610237, 0.0067415302619338036, 0.05541854724287987,
+  0.06785254925489426, 0.052621327340602875, -0.00977724976837635, 0.011820086278021336,
+  -0.03264831751585007, -0.08541280776262283, -0.033524706959724426, 0.008486398495733738,
+  -0.08031684160232544, -0.05739366263151169, -0.022800033912062645, 0.05225718766450882,
+  0.005030859727412462]
+- +dataset.latent_std=[0.11415117233991623, 0.16637182235717773, 0.17291320860385895,
+  0.29082468152046204, 0.14874377846717834, 0.1644582897424698, 0.12025395035743713,
+  0.11319620907306671, 0.21651193499565125, 0.11267676949501038, 0.3758651912212372,
+  0.18819572031497955, 0.15189631283283234, 0.10751213133335114, 0.15867187082767487,
+  0.09151127189397812]
+- tokenizer_ckpt=/mnt/workspace/open-dreamer/logs/coinrun-official-min-n0.17m-c1e16-20260728/checkpoints
+- dynamics.d_bottleneck=16
+- dynamics.depth=6
+- dynamics.d_model=384
+- dynamics.n_heads=6
+- dynamics.n_kv_heads=1
+- dynamics.packing_factor=2
+- dynamics.n_register=32
+- dynamics.qk_norm_type=qknorm
+- dynamics.time_every=2
+- dynamics.time_layer_offset=1
+- dynamics.k_max=8
+- dynamics.context_length=64
+- max_steps=20000
+- bootstrap_start=10000
+- bootstrap_fraction=0.25
+- image_fraction=0.0
+- ot.enabled=true
+- ot.pairing=barycentric
+- loss_weighting=v_space
+- ckpt.max_to_keep=2
+- ckpt.save_interval_steps=10000
+- logger.log_every=50
+- optimizer.optimizer_type=muon
+- optimizer.mup_scaling=false
+- lr_schedule.schedule_type=wsd
+- lr_schedule.lr=0.0003
+- lr_schedule.warmup_ratio=0.05
+- lr_schedule.decay_ratio=0.1
+- write_video_every=0
+- run_name=coinrun-dynamics-large-fixed20k

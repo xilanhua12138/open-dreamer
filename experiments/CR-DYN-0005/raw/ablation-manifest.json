@@ -1,0 +1,65 @@
+{
+  "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+  "dataset": "/mnt/workspace/datasets/coinrun-minimal-complete-20260728/eval",
+  "contexts": [
+    4,
+    16,
+    32
+  ],
+  "max_context": 32,
+  "horizon": 16,
+  "num_videos": 8,
+  "seed": 4242,
+  "denoise_steps": 4,
+  "fixed_target_protocol": "Load and encode max_context+horizon once; slice context prefixes while reusing the same future latents, raw frames, actions, and RNG.",
+  "targets": [
+    {
+      "video": 0,
+      "future_original_sha256": "1b9e0ef27d6524733614b557f625851eed3bdab30e059bd2df4575ba9776ca16",
+      "future_decoded_sha256": "c003424eb5d458559d98d56f63f4a83abf52d4883630235313ef6947cd418c1b",
+      "future_actions_sha256": "ee84faade65193471d00ec487502e09411fdceb8c120ea5baff23c40a226b54f"
+    },
+    {
+      "video": 1,
+      "future_original_sha256": "01042f54bfa5698be0d532e7ae6552449032eb7b65e2927409fb386df5332fa1",
+      "future_decoded_sha256": "d5a3803c855461841b5d8b70d925d76a6f7d39b4a8aefa5739f1f01c970e166f",
+      "future_actions_sha256": "fdbce13fd6f152023d9728bb2bec79464a5791c68778cdf263a71359d27156e2"
+    },
+    {
+      "video": 2,
+      "future_original_sha256": "0efdba9eb070484338f7fa9468354df65292a4689735ad4d59ca56d3228ef9fe",
+      "future_decoded_sha256": "d23cc5b8211bb91c5a262dfa60677a0ac37da94b5b8fc8ec09e6e43ab7de7c52",
+      "future_actions_sha256": "ec76c5765d6aa61ec3438d895e6ceb59dced6f474c22c4a0e5d62bda588fb89e"
+    },
+    {
+      "video": 3,
+      "future_original_sha256": "80656d970c94177caee555162e1e25c71539f352669455b3abe0c57ede0cee5b",
+      "future_decoded_sha256": "4fb9ae4c44b9943ff095fdfc0869da5bd6d30169870ef7afc8c1d77a99876c84",
+      "future_actions_sha256": "c6b25a98a47731bb62b572e9e06318b952f0f62ebb5af6f213b7f7bbfff68fc9"
+    },
+    {
+      "video": 4,
+      "future_original_sha256": "a2faa1465d736d984ff26ff1f080709a6bd690f8511228718165a44007bb6593",
+      "future_decoded_sha256": "7d91fdcc32caed64bda43fde16a5a1b1ffdfff03e59185b0cb55a07aa272299d",
+      "future_actions_sha256": "3628f5f2da2133a6d38f97939a4e5888ba0b4a1635d71e8581be0a833134059d"
+    },
+    {
+      "video": 5,
+      "future_original_sha256": "1e171a6ce77be50cab18abfc35e4186f684e3e6cc2d643a0d4c580a0f632d67a",
+      "future_decoded_sha256": "628d03713e565bc0200726b6c27143b2bf2fac2246568d15f4167092a31bfe2b",
+      "future_actions_sha256": "0dd11d045b0337695810215a8601dd3fea283d2184428fb47c56724b7bea2e96"
+    },
+    {
+      "video": 6,
+      "future_original_sha256": "0bdd728871427815b4b4e132a0a0270a0b4c8acdaacffb476fe66986e3a54a4d",
+      "future_decoded_sha256": "5d1f5863ac0fae6c446608a1f9746ceb7264e427a0a0ec198e8b54a1c3e805ca",
+      "future_actions_sha256": "bddbfc2d7d125ffa7319e99b0ee60c059f5064102e6d066bbe689bc96755c4b5"
+    },
+    {
+      "video": 7,
+      "future_original_sha256": "da92f5abdac88ac842e647c57b5b53b45fc800d5cf36d1410767ca40fa56df1e",
+      "future_decoded_sha256": "1d6eb11d1a538a4996a18b0513d13690412306d9fe34eba21d45a330605660aa",
+      "future_actions_sha256": "da9c91cc56e9940122a4a6519a70fc03ed621fd4643099cbd62dbe3f88f99dfa"
+    }
+  ]
+}

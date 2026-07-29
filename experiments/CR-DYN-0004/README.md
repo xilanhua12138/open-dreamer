@@ -20,26 +20,31 @@ Three points support a local capacity trend, but the tested range ends at 3.93M 
 - Fixed: tokenizer, data, batch 32 × 64, 20,000 steps, bootstrap at 10,000, optimizer and schedule, eight held-out videos, context 4, horizon 16, seed 4242, EMA shortcut evaluation.
 - The DSW probe instantiated the frozen architecture at exactly **12,902,784 parameters**. Its retained JSON has SHA256 `3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f`.
 
-## Current result
+## Results
 
-### Observed at 2026-07-29 06:49 Asia/Shanghai
+| Model | Parameters | PSNR@1 | PSNR@3 | PSNR@8 | PSNR@16 | SSIM@16 |
+|---|---:|---:|---:|---:|---:|---:|
+| medium baseline | 3,931,392 | 20.73 | 19.23 | 16.89 | **16.02** | **0.542** |
+| large | 12,902,784 | 19.23 | 17.61 | 16.16 | 15.64 | 0.531 |
+
+### Observed
 
 - The existing one-A10 instance recovered from the recorded inventory block and reached `Running`.
-- A six-hour shutdown timer is due at 2026-07-29 12:45:44 Asia/Shanghai.
 - The parameter probe completed before training and recorded 12,902,784 parameters.
-- The single extension pipeline entered `TRAINING_LARGE` at 06:49:24.
-- At 07:40, training was at approximately 10,344/20,000 steps and the configured step-10,000 checkpoint existed under `runs/large/checkpoints/10000`.
-- No terminal checkpoint comparison or held-out metric exists yet.
+- Large completed all 20,000 steps and identical held-out evaluation.
+- Large trailed medium by `0.38095 dB` mean-frame PSNR and `0.01105` mean SSIM.
+- The retained checkpoint tree has SHA256 `ce2629b7f3962d79fed0ff7f101549f6620068820aa88c7dec9164ef3499015b`.
 
 ### Interpretation
 
-The infrastructure block is resolved for this attempt. The experiment remains scientifically unevaluated while training is running.
+The hypothesis is rejected. Under this small-data fixed-20k protocol, the prior tiny→small→medium monotonic improvement did not extend to large. This identifies a local optimum at medium under the tested recipe, not a universal capacity limit.
 
 ### Not established
 
-- Whether the model fits A10 24 GB.
-- Any large-vs-medium quality comparison.
+- Whether the reversal is caused by saturation, overfitting, or a schedule mismatch.
+- Multi-seed statistical significance.
+- Compute-optimal scaling or official reproduction.
 
 ### Decision
 
-Monitor the recorded PID and do not restart a healthy pipeline. On terminal completion or failure, retain the checkpoint/config/metrics evidence and update this record before interpreting the result.
+Select medium for the fixed-future context ablation and live demo. Before testing a still-larger model, vary data scale, regularization, or schedule rather than spending compute on capacity alone.
