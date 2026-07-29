@@ -27,8 +27,12 @@ Before reuse:
 | `CR-DYN-0003` | `run_coinrun_dynamics_fixed20k.sh`, `score_coinrun_rollouts.py` |
 | `CR-DYN-0004` | `probe_coinrun_dynamics_scaling.py`, `run_coinrun_large_fixed20k.sh` |
 | `CR-DYN-0005` | `select_best_coinrun_checkpoint.py`, `eval_coinrun_context_ablation.py`, `run_coinrun_context_ablation.sh` |
-| `CR-DEMO-0001` | `live_coinrun_demo.py`, `run_coinrun_live_demo.sh` |
+| `CR-DEMO-0001` | `live_coinrun_demo.py`, `run_coinrun_live_demo.sh`, `smoke_live_coinrun_demo.sh` |
 
 `run_coinrun_extension_pipeline.sh` orders the large run, checkpoint selection, context ablation, and demo startup. It must remain idempotent through its PID/status/ready files.
 
 The repository-level `scripts/train_dynamics.py` accepts dataset-declared non-negative action dimensions instead of hard-coding Minecraft action counts. This is required for CoinRun's 16-way categorical action space.
+
+The live-demo smoke test deliberately executes two consecutive generated steps.
+A single successful step does not exercise the dtype of the autoregressively
+updated latent context and is insufficient evidence for sustained interaction.

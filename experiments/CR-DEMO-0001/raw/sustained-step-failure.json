@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-07-29T11:41:00+08:00",
+  "transport": "SSH local port forward to 127.0.0.1:7860",
+  "sequence": [
+    {
+      "request": "POST /api/reset",
+      "status": 200
+    },
+    {
+      "request": "POST /api/step",
+      "body": {
+        "action": 7
+      },
+      "status": 200,
+      "returned_step": 1
+    },
+    {
+      "request": "POST /api/step",
+      "body": {
+        "action": 7
+      },
+      "status": 400,
+      "error": "lax.dynamic_update_slice requires arguments to have the same dtypes, got float32, bfloat16."
+    }
+  ],
+  "root_cause": "The first generated latent was float32 and was concatenated into the bfloat16 context buffer. That promoted the retained context to float32, so the next rollout created float32 KV-cache buffers while the model produced bfloat16 key/value updates.",
+  "evidence_boundary": "The prior one-step smoke proved one inference call only. It did not exercise the autoregressively updated context and therefore did not establish sustained interaction."
+}

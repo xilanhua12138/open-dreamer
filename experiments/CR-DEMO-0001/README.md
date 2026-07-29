@@ -32,20 +32,22 @@ The server binds `127.0.0.1:7860`; local access is through an SSH tunnel. The in
 - The selected medium checkpoint loaded with context 16 and four denoise steps.
 - The first startup exposed an iterable-versus-iterator bug; commit `58758e5` fixed it without rerunning training or evaluation.
 - Remote and SSH-forwarded `GET /health` returned `{"ok": true, "model": "medium"}`.
-- A real action-7 `POST /api/step` returned a generated PNG frame.
-- Warm-up took `24.0 s`; the verified model step took `7.4 s`.
-- The local URL is `http://127.0.0.1:7860` until the DSW timer at 2026-07-29 11:45:24 Asia/Shanghai.
+- The original action-7 `POST /api/step` returned a generated PNG frame, but a second generated step failed because the retained latent context had been promoted from `bfloat16` to `float32`.
+- Preserving the context dtype before concatenation fixed the mismatch without changing the checkpoint, context length, action mapping or denoise schedule.
+- A reset followed by action 7 and action 8 returned generated steps 1 and 2. Their cached inference latencies were `670.9 ms` and `668.1 ms`.
+- The recovered process warmed up in `2.8 s` using the persistent JAX compilation cache.
+- The local URL is `http://127.0.0.1:7860` until the recovery timer at 2026-07-29 12:41:17 Asia/Shanghai.
 
 ### Interpretation
 
-The functional demo smoke test passed, but the low-latency hypothesis is rejected. It is useful for deliberate frame-by-frame inspection, not real-time play.
+The functional two-step demo smoke test now passes, but the low-latency hypothesis remains rejected. It is useful for deliberate sub-second frame-by-frame inspection, not real-time play.
 
 ### Not established
 
 - Qualitative control fidelity across every button.
-- Sustained autoregressive stability.
+- Autoregressive stability beyond the two-step regression sequence.
 - Any trained policy.
 
 ### Decision
 
-Give the user the three-hour inspection window. Treat latency optimization as a separate experiment before calling the interface real time.
+Give the user the one-hour recovery-verification window. Treat latency optimization as a separate experiment before calling the interface real time. Future readiness checks must execute at least two consecutive generated steps; one step cannot exercise the dtype of the updated context.

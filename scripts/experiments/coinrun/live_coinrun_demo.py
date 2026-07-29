@@ -76,6 +76,14 @@ def png_data_url(frame: jax.Array) -> str:
     return "data:image/png;base64," + base64.b64encode(encoded).decode("ascii")
 
 
+def append_context_latent(
+    latents_ctx: jax.Array, next_latent: jax.Array
+) -> jax.Array:
+    """Append one generated latent without changing the context buffer dtype."""
+    next_latent = next_latent.astype(latents_ctx.dtype)
+    return jnp.concatenate([latents_ctx[:, 1:], next_latent], axis=1)
+
+
 class CoinRunWorld:
     def __init__(
         self,
@@ -196,9 +204,7 @@ class CoinRunWorld:
         next_latent = rollout["latents"][:, -1:]
         decoded = decode_jit(self.tokenizer, next_latent)
         self.current_frame = jnp.clip(decoded[0, -1], 0, 255).astype(jnp.uint8)
-        self.latents_ctx = jnp.concatenate(
-            [self.latents_ctx[:, 1:], next_latent], axis=1
-        )
+        self.latents_ctx = append_context_latent(self.latents_ctx, next_latent)
         self.actions_ctx = Actions(
             categorical=jnp.concatenate(
                 [self.actions_ctx.categorical[:, 1:], action.categorical], axis=1

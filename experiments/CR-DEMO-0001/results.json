@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0001",
-  "record_revision": 2,
+  "record_revision": 3,
   "execution_status": "completed",
   "scientific_status": "rejects_hypothesis",
   "claim_level": "smoke_test",
   "started_at": "2026-07-29T08:35:09+08:00",
-  "ended_at": "2026-07-29T08:43:23+08:00",
-  "summary": "The medium checkpoint served a browser demo through an SSH tunnel and passed health plus one real model step, but 7.4-second steady-step latency rejected the low-latency hypothesis.",
+  "ended_at": "2026-07-29T11:54:50+08:00",
+  "summary": "The original one-step smoke passed but did not exercise the updated autoregressive context. A second step exposed float32/bfloat16 KV-cache state drift; preserving the bfloat16 context dtype fixed it, and reset plus two consecutive generated steps then passed. Cached steps were about 0.67 seconds, which remains below real-time game control.",
   "observations": [
     {
       "name": "remote_health",
@@ -49,12 +49,49 @@
       "name": "shutdown_timer_due",
       "value": "2026-07-29T11:45:24+08:00",
       "policy": "three-hour user evaluation window after verified readiness"
+    },
+    {
+      "name": "sustained_step_failure",
+      "value": {
+        "first_step_status": 200,
+        "second_step_status": 400,
+        "error": "lax.dynamic_update_slice requires arguments to have the same dtypes, got float32, bfloat16."
+      },
+      "observed_at": "2026-07-29T11:41:00+08:00"
+    },
+    {
+      "name": "two_step_recovery",
+      "value": {
+        "health_ok": true,
+        "steps": [
+          {
+            "step": 1,
+            "action_id": 7,
+            "latency_ms": 670.9,
+            "generated_png": true
+          },
+          {
+            "step": 2,
+            "action_id": 8,
+            "latency_ms": 668.1,
+            "generated_png": true
+          }
+        ]
+      },
+      "observed_at": "2026-07-29T11:54:50+08:00"
+    },
+    {
+      "name": "recovery_shutdown_timer_due",
+      "value": "2026-07-29T12:41:17+08:00",
+      "policy": "one-hour fault-recovery and user-verification window"
     }
   ],
   "comparisons": [],
   "deviations": [
     "The first demo process failed because ThreadPrefetchIterDataset was iterable but not an iterator; commit 58758e5 wrapped it with iter and restarted only the demo process.",
-    "The training and evaluation pipeline, selected checkpoint, and context metrics were not rerun or changed during demo recovery."
+    "The training and evaluation pipeline, selected checkpoint, and context metrics were not rerun or changed during demo recovery.",
+    "The original success criterion required only one real step. That was insufficient because the dtype drift appeared only after the generated latent was written back into context.",
+    "The fault-only recovery cast the generated latent to the existing context dtype before concatenation; it did not change weights, checkpoint selection, context length, actions, or denoise schedule."
   ],
   "failures": [
     {
@@ -69,25 +106,33 @@
       "message": "'ThreadPrefetchIterDataset' object is not an iterator",
       "resolved_at": "2026-07-29T08:41:47+08:00",
       "recovery_commit": "58758e581945715445f42856c53130e08d978ec6"
+    },
+    {
+      "stage": "sustained_interaction",
+      "type": "dtype_state_drift",
+      "message": "The second generated step failed because a float32 generated latent promoted the retained bfloat16 context, yielding float32 cache buffers and bfloat16 model updates.",
+      "resolved_at": "2026-07-29T11:54:50+08:00",
+      "recovery_patch_sha256": "115db40695e90250d92f5f3077d086617bdb7a6993c9b6c53972b93771e655ed"
     }
   ],
   "conclusion": {
     "observed": [
       "The selected medium checkpoint loaded and GET /health passed remotely and through the local SSH tunnel.",
-      "POST /api/step executed real model inference and returned a generated PNG frame for action 7.",
-      "Warm-up took 24.0 seconds and the verified steady step took 7.4 seconds."
+      "The original one-step POST /api/step returned a generated PNG, but a second step failed with a float32/bfloat16 dynamic_update_slice error.",
+      "After preserving the bfloat16 context dtype, reset followed by action 7 and action 8 returned steps 1 and 2 with generated PNGs.",
+      "The recovered process warmed up in 2.8 seconds from the persistent compilation cache; the two verified cached steps took 670.9 ms and 668.1 ms."
     ],
     "interpretation": [
-      "The functional demo smoke test passed, but the low-latency hypothesis is rejected on this implementation and A10.",
-      "The interface is suitable for deliberate frame-by-frame inspection, not real-time game control."
+      "The functional two-step demo smoke test now passes, but the low-latency hypothesis remains rejected on this implementation and A10.",
+      "The interface is suitable for deliberate sub-second frame-by-frame inspection, not real-time game control."
     ],
     "not_established": [
-      "Qualitative button-to-motion controllability across multiple actions.",
-      "Browser interaction quality under sustained autoregressive rollout.",
+      "Qualitative button-to-motion controllability across all actions.",
+      "Autoregressive stability beyond the two-step regression sequence.",
       "A trained policy or agent."
     ],
     "decision": [
-      "Expose http://127.0.0.1:7860 for the verified three-hour user window.",
+      "Expose http://127.0.0.1:7860 for the one-hour recovery-verification window.",
       "Treat latency optimization as a separate engineering experiment rather than claiming this is real time."
     ]
   },
@@ -97,7 +142,7 @@
       "kind": "python",
       "uri": "scripts/experiments/coinrun/live_coinrun_demo.py",
       "retention": "git",
-      "sha256": "5e6d14b651fa6dd527c3e220862ca6de5f962657ffd5ce38a57b8b3487791106"
+      "sha256": "c8bdfd9a0b43ca01c6b419121a95bb9f7f177e5d651666fdadfd8e4d1fb57263"
     },
     {
       "name": "live demo launcher",
@@ -148,6 +193,34 @@
       "retention": "local task archive",
       "bytes": 7292546,
       "sha256": "867b0fa9c684b1fd7ccb943260c8857f547fe6ae1a84afdc58539a97378b1d98"
+    },
+    {
+      "name": "two-step live-demo smoke",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/smoke_live_coinrun_demo.sh",
+      "retention": "git",
+      "sha256": "2af064095a851d31e833bcbc61c1d64c84bc58a4759bb8903ad047f9c9fef1e0"
+    },
+    {
+      "name": "context dtype regression unit test",
+      "kind": "python",
+      "uri": "tests/test_live_coinrun_demo.py",
+      "retention": "git",
+      "sha256": "d1d167fbccde5a54bada64f7b72560a31365eaa3aefda0bf75ee0bccc00ffb39"
+    },
+    {
+      "name": "sustained-step failure evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/sustained-step-failure.json",
+      "retention": "git",
+      "sha256": "4ca975a96cf963eb3fb46efaf47aec244462ba62f937f8db9ff8c86355a0e745"
+    },
+    {
+      "name": "two-step recovery evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/sustained-step-recovery.json",
+      "retention": "git",
+      "sha256": "b1e8f2324773a4c8603247297fca828b8382ffb69df0d0c76eefa60f8699a273"
     }
   ],
   "revision_history": [
@@ -160,6 +233,11 @@
       "revision": 2,
       "at": "2026-07-29T08:43:23+08:00",
       "reason": "Closed the recovered demo with remote and tunneled health, one real inference step, latency evidence, and a three-hour user window."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T11:54:50+08:00",
+      "reason": "Corrected the one-step readiness boundary after the second step exposed latent-context dtype drift; retained the failure, added two-step regression coverage, and recorded the verified recovery."
     }
   ]
 }
