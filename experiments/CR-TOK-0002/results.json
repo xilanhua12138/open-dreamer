@@ -1,14 +1,74 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0002",
-  "record_revision": 1,
-  "execution_status": "planned",
+  "record_revision": 2,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "internal_result",
-  "started_at": null,
+  "started_at": "2026-07-29T12:49:27+08:00",
   "ended_at": null,
-  "summary": "Preregistered; no v2 tokenizer training has started.",
-  "observations": [],
+  "summary": "The exact preregistered source commit is running on the existing A10. Isolated structured train/eval datasets passed audit, the exact five tokenizer sizes were probed, and the fresh n0.17m primary arm started first; no quality result exists yet.",
+  "observations": [
+    {
+      "name": "source_identity",
+      "commit": "5ad134f914c12afa66eda141afd9e446c51d43e3",
+      "tracked_worktree_clean": true,
+      "remote_worktree": "/mnt/workspace/open-dreamer-v2"
+    },
+    {
+      "name": "dataset_audit",
+      "train_tree_sha256": "276af79200604d65bd357ffbc3a4e591fa6aa3f75962719e7c3273bbf18f386f",
+      "eval_tree_sha256": "2e7c5db0cabda7645ba10dc41974eb164066864d62e9d7ae40f1cd7e242bbb3f",
+      "split_overlap": 0,
+      "train_success_rate": 0.56309963099631,
+      "eval_success_rate": 0.5517241379310345,
+      "train_macro_persistence_ratio": 0.9066220238095238,
+      "eval_macro_persistence_ratio": 0.9056919642857143,
+      "observed_actions": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8
+      ]
+    },
+    {
+      "name": "exact_scale_probe",
+      "values": [
+        {
+          "name": "n0.17m",
+          "parameters": 163392,
+          "allocated_steps": 62675
+        },
+        {
+          "name": "n1.1m",
+          "parameters": 1048192,
+          "allocated_steps": 9358
+        },
+        {
+          "name": "n3.7m",
+          "parameters": 3342528,
+          "allocated_steps": 2938
+        },
+        {
+          "name": "n8.6m",
+          "parameters": 7734528,
+          "allocated_steps": 2550
+        },
+        {
+          "name": "n16.6m",
+          "parameters": 14912320,
+          "allocated_steps": 2656
+        }
+      ]
+    },
+    {
+      "name": "instance_shutdown_guard",
+      "due_at": "2026-07-30T00:47:40+08:00",
+      "remaining_at_observation_ms": 42937685
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
@@ -23,12 +83,32 @@
       "Do not start dynamics until this tokenizer experiment clears both metric and visual gates."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "dataset audit summary",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/dataset-audit-summary.json",
+      "retention": "git",
+      "sha256": "92a36e9ec722b830d6000a0cfe375af61c4b03bc852f75459e4fb3804011ad7c"
+    },
+    {
+      "name": "tokenizer scale probe",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/tokenizer-scale-probe.json",
+      "retention": "git",
+      "sha256": "670552a683e8f8677b7dd10f46f0e74476c3426ff7ef68701d6eef30a62b279b"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
       "at": "2026-07-29T12:33:40+08:00",
       "reason": "Preregistered the adaptive tokenizer scale protocol before v2 GPU training."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T12:50:03+08:00",
+      "reason": "Recorded exact-source launch, audited structured datasets, exact scale parameters and native step allocations before the first primary arm produced a result."
     }
   ]
 }

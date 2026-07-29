@@ -36,11 +36,14 @@ A candidate must:
 
 ### Observed
 
-No v2 tokenizer arm has started.
+- The exact source commit `5ad134f914c12afa66eda141afd9e446c51d43e3` started on the existing A10 at `2026-07-29T12:49:27+08:00`.
+- The 4,096-record train split and 512-record held-out split are level-disjoint and passed audit. Both contain the explicit six-action control set, exceed `0.90` macro persistence and have about `55–56%` completed-episode success.
+- The exact model sizes are `163,392 / 1,048,192 / 3,342,528 / 7,734,528 / 14,912,320` parameters. Every arm retains the `16 × 16` latent interface.
+- Fresh `n0.17m` training is running. No reconstruction metric or visual result exists yet.
 
 ### Interpretation
 
-None before retained metrics and aligned grids exist.
+The revised data now contains sustained, successful control trajectories rather than only frame diversity. This is necessary for later dynamics training but does not itself establish tokenizer quality.
 
 ### Not established
 

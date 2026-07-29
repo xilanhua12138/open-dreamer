@@ -9,7 +9,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | ID | Question | Execution | Scientific result | Claim |
 |---|---|---|---|---|
 | `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
-| `CR-TOK-0002` | What is the smallest tokenizer scale that clears global, edge, motion and visual gates? | planned | not evaluated | internal result |
+| `CR-TOK-0002` | What is the smallest tokenizer scale that clears global, edge, motion and visual gates? | running | not evaluated | internal result |
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
