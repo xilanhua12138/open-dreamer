@@ -36,7 +36,7 @@ The server binds `127.0.0.1:7860`; local access is through an SSH tunnel. The in
 - Preserving the context dtype before concatenation fixed the mismatch without changing the checkpoint, context length, action mapping or denoise schedule.
 - A reset followed by action 7 and action 8 returned generated steps 1 and 2. Their cached inference latencies were `670.9 ms` and `668.1 ms`.
 - The recovered process warmed up in `2.8 s` using the persistent JAX compilation cache.
-- The local URL is `http://127.0.0.1:7860` until the recovery timer at 2026-07-29 12:41:17 Asia/Shanghai.
+- The local URL is `http://127.0.0.1:7860` until the final user timer at 2026-07-29 15:04:13 Asia/Shanghai.
 
 ### Interpretation
 
@@ -50,4 +50,4 @@ The functional two-step demo smoke test now passes, but the low-latency hypothes
 
 ### Decision
 
-Give the user the one-hour recovery-verification window. Treat latency optimization as a separate experiment before calling the interface real time. Future readiness checks must execute at least two consecutive generated steps; one step cannot exercise the dtype of the updated context.
+Give the user the final three-hour evaluation window. Treat latency optimization as a separate experiment before calling the interface real time. Future readiness checks must execute at least two consecutive generated steps; one step cannot exercise the dtype of the updated context.

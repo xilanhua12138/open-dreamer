@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0001",
-  "record_revision": 4,
+  "record_revision": 5,
   "execution_status": "completed",
   "scientific_status": "rejects_hypothesis",
   "claim_level": "smoke_test",
@@ -84,6 +84,11 @@
       "name": "recovery_shutdown_timer_due",
       "value": "2026-07-29T12:41:17+08:00",
       "policy": "one-hour fault-recovery and user-verification window"
+    },
+    {
+      "name": "final_user_window_shutdown_timer_due",
+      "value": "2026-07-29T15:04:13+08:00",
+      "policy": "three-hour user evaluation window after verified two-step recovery"
     }
   ],
   "comparisons": [],
@@ -133,7 +138,7 @@
       "A trained policy or agent."
     ],
     "decision": [
-      "Expose http://127.0.0.1:7860 for the one-hour recovery-verification window.",
+      "Expose http://127.0.0.1:7860 for the final three-hour user evaluation window.",
       "Treat latency optimization as a separate engineering experiment rather than claiming this is real time."
     ]
   },
@@ -244,6 +249,11 @@
       "revision": 4,
       "at": "2026-07-29T12:01:37+08:00",
       "reason": "Linked the verified dirty-patch recovery to its durable source commit and refreshed the raw recovery artifact hash."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-29T12:04:13+08:00",
+      "reason": "Recorded the final three-hour user evaluation timer after code, runtime and CI validation."
     }
   ]
 }
