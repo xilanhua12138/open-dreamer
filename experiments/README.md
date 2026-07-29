@@ -18,6 +18,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
+| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | planned | not evaluated | none |
 
 ## Important reading of the chain
 
@@ -34,6 +35,8 @@ The subsequent user evaluation still rejected the demo as usable: tokenizer outp
 The first four arms are now durably recorded: 0.17M stayed near 12 dB across all four EMA curves, 1.1M reached final EMA clean / edge / temporal-change PSNR of `27.7460 / 20.9956 / 21.2332 dB`, 3.7M reached `32.7710 / 24.5359 / 25.2065 dB`, and 8.6M reached `34.8962 / 25.9151 / 26.5915 dB`. The pipeline is training fresh 16.6M. These partial metrics do not establish the five-scale ranking or visual acceptability.
 
 `CR-TOK-0004` is preregistered and queued to add the missing published `28.7M` label only after `CR-TOK-0003` terminates. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its execution source is frozen at `3833b34`; it keeps the same fixed-20k recipe and held-out identity, adds structured runtime telemetry plus fixed validation media every 2,500 updates, and remains blocked from dynamics pending visual review.
+
+`CR-PPO-0001` preregisters the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. It trains a standard IMPALA-style PPO actor-critic in real CoinRun, compares fixed held-out performance from zero to 25,165,824 transitions, freezes the final checkpoint, and collects disjoint episode-safe dynamics train/eval records with an explicit 15-action contract. Its scope ends at audited dynamics data. It does not train an imitation policy, train a policy inside the learned world, or launch dynamics under the same experiment ID.
 
 ## Creating or closing an experiment
 

@@ -17,6 +17,11 @@ from dreamer.coinrun import (
     COINRUN_CONTROL_ACTIONS,
     COINRUN_NOOP_ACTION,
 )
+from dreamer.coinrun_dataset_audit import (
+    validate_action_range,
+    validate_ppo_metadata,
+    validate_record_terminals,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -55,6 +60,7 @@ def main() -> None:
         errors.append(f"unexpected action dimension: {action_space}")
     if action_space.get("categorical_noop_action") != COINRUN_NOOP_ACTION:
         errors.append(f"unexpected no-op action: {action_space}")
+    errors.extend(validate_ppo_metadata(metadata))
 
     sample_count = min(max(1, args.records_to_check), len(source))
     sample_indices = np.linspace(
@@ -96,6 +102,25 @@ def main() -> None:
                 f"record {index}: rewards shape={rewards.shape}, "
                 f"expected={(expected_frames,)}"
             )
+        action_errors = validate_action_range(
+            actions,
+            action_dim=COINRUN_ACTION_DIM,
+        )
+        errors.extend(
+            f"record {index}: {message}" for message in action_errors
+        )
+        if metadata.get("action_policy") == "ppo":
+            if "terminals" not in record:
+                errors.append(f"record {index}: missing terminals")
+            else:
+                terminal_errors = validate_record_terminals(
+                    np.asarray(record["terminals"]),
+                    expected_frames=expected_frames,
+                )
+                errors.extend(
+                    f"record {index}: {message}"
+                    for message in terminal_errors
+                )
         observed_actions.update(int(action) for action in actions)
         repeated_transitions += int(np.sum(actions[1:] == actions[:-1]))
         total_transitions += max(0, actions.size - 1)
