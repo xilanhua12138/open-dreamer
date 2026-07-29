@@ -7,6 +7,7 @@ from pathlib import Path
 import jax.numpy as jnp
 import numpy as np
 from flax import nnx
+from omegaconf import OmegaConf
 
 from dreamer.configs import (
     DataloaderConfig,
@@ -98,6 +99,36 @@ class TokenizerValidationRuntimeTests(unittest.TestCase):
                     batches=0,
                 ),
             )
+
+    def test_validation_config_materializes_missing_dataclass_defaults(self) -> None:
+        training = OmegaConf.create(
+            {
+                "name": "coinrun",
+                "array_record_path": "/train",
+                "categorical_action_dim": 15,
+                "dataloader_cfg": {
+                    "B": 128,
+                    "short_T": 16,
+                    "long_T": 16,
+                },
+            }
+        )
+
+        validation_dataset = build_validation_dataset_config(
+            training,
+            TokenizerValidationConfig(
+                enabled=True,
+                dataset_path="/eval",
+                batch_size=16,
+                frames=16,
+            ),
+        )
+
+        self.assertEqual(validation_dataset.name, "coinrun")
+        self.assertEqual(validation_dataset.array_record_path, "/eval")
+        self.assertEqual(validation_dataset.categorical_action_dim, 15)
+        self.assertEqual(validation_dataset.mouse_repr, "categorical")
+        self.assertEqual(validation_dataset.dataloader_cfg.B, 16)
 
     def test_validation_aggregates_exact_sse_for_online_and_ema_models(self) -> None:
         batches = [{"videos": jnp.zeros((1, 2, 4, 4, 3), dtype=jnp.uint8)}]

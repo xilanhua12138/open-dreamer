@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import fields
+from dataclasses import asdict, fields
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -12,6 +12,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from flax import nnx
+from omegaconf import DictConfig, OmegaConf
 
 from dreamer.configs import (
     DataloaderConfig,
@@ -29,9 +30,37 @@ def should_run_validation(*, step: int, max_steps: int, every_steps: int) -> boo
 
 
 def build_validation_dataset_config(
-    training_dataset: DatasetConfig,
+    training_dataset: DatasetConfig | DictConfig,
     validation: TokenizerValidationConfig,
 ) -> DatasetConfig:
+    if isinstance(training_dataset, DictConfig):
+        merged_dataset = OmegaConf.to_container(
+            OmegaConf.merge(
+                OmegaConf.create(asdict(DatasetConfig())),
+                training_dataset,
+            ),
+            resolve=True,
+        )
+        if not isinstance(merged_dataset, dict):
+            raise TypeError(
+                "DatasetConfig merge must produce a mapping, got "
+                f"{type(merged_dataset).__name__}"
+            )
+        loader_values = merged_dataset.pop("dataloader_cfg")
+        if not isinstance(loader_values, dict):
+            raise TypeError(
+                "dataloader_cfg must materialize as a mapping, got "
+                f"{type(loader_values).__name__}"
+            )
+        training_dataset = DatasetConfig(
+            **merged_dataset,
+            dataloader_cfg=DataloaderConfig(**loader_values),
+        )
+    elif not isinstance(training_dataset, DatasetConfig):
+        raise TypeError(
+            "training_dataset must be DatasetConfig or DictConfig, got "
+            f"{type(training_dataset).__name__}"
+        )
     if not validation.dataset_path:
         raise ValueError("validation.dataset_path is required when validation is enabled")
     positive_fields = {
