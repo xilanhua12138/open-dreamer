@@ -42,7 +42,7 @@
       "kind": "python",
       "uri": "scripts/experiments/coinrun/live_coinrun_demo.py",
       "retention": "git",
-      "sha256": "c4ccc434709f4b4ab3b3189979e3654c37e3f6a70376cff6f813c397b67b976f"
+      "sha256": "5e6d14b651fa6dd527c3e220862ca6de5f962657ffd5ce38a57b8b3487791106"
     },
     {
       "name": "live demo launcher",

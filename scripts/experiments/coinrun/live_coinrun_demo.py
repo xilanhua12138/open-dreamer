@@ -127,11 +127,13 @@ class CoinRunWorld:
         self.schedule = DenoiseSchedule.init(
             denoise_steps, self.dynamics.cfg.k_max
         )
-        self.dataloader = build_iterator(
-            self.cfg.dataset,
-            seed=seed,
-            device=self.data_sharding,
-            return_actions=True,
+        self.dataloader = iter(
+            build_iterator(
+                self.cfg.dataset,
+                seed=seed,
+                device=self.data_sharding,
+                return_actions=True,
+            )
         )
         self.rng = jax.random.PRNGKey(seed)
         self.step_count = 0
