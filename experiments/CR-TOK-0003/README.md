@@ -28,7 +28,7 @@ At the same 20,000 optimizer updates, how do held-out reconstruction quality and
 
 The exact source commit `26d9a1290dc7e1a42a98cea62284fe7787bbe4e6` started one pipeline on the existing A10 at `2026-07-29T14:56:16+08:00`. The generated plan confirms `20,000` updates for every arm, disabled FLOPs/tokens-per-param overrides, exact `2,500 / 5,000 / 10,000 / 20,000` evaluation milestones and `dynamics_authorized=false`.
 
-Fresh 0.17M and 1.1M have each completed exactly 20,000 updates and all four held-out evaluations on the same 512 clips. Their EMA metrics are:
+Fresh 0.17M, 1.1M and 3.7M have each completed exactly 20,000 updates and all four held-out evaluations on the same 512 clips. Their EMA metrics are:
 
 | Scale | Updates | Clean PSNR | Masked PSNR | Edge PSNR | Temporal-change PSNR |
 |---|---:|---:|---:|---:|---:|
@@ -40,12 +40,16 @@ Fresh 0.17M and 1.1M have each completed exactly 20,000 updates and all four hel
 | 1.1M | 5,000 | 25.6757 | 24.6136 | 19.5432 | 19.8007 |
 | 1.1M | 10,000 | 27.0566 | 25.5887 | 20.5354 | 20.7290 |
 | 1.1M | 20,000 | 27.7460 | 24.7005 | 20.9956 | 21.2332 |
+| 3.7M | 2,500 | 24.2511 | 23.5876 | 18.7702 | 19.7721 |
+| 3.7M | 5,000 | 29.5504 | 28.3669 | 22.3873 | 23.2115 |
+| 3.7M | 10,000 | 31.6040 | 29.9676 | 23.8374 | 24.5532 |
+| 3.7M | 20,000 | 32.7710 | 29.3187 | 24.5359 | 25.2065 |
 
-The same PID then advanced to fresh 3.7M training. All milestone JSON, reconstruction PNG, Hydra config and checkpoint-tree hashes for the first two arms are retained; no old checkpoint was reused.
+The same PID then advanced to fresh 8.6M training. All milestone JSON, reconstruction PNG, Hydra config and checkpoint-tree hashes for the first three arms are retained; no old checkpoint was reused.
 
 ### Interpretation
 
-The observed 1.1M fixed-20k metrics are substantially above 0.17M, while its learning curve still changes meaningfully between 10k and 20k. This is only a partial two-arm observation, not the preregistered five-scale ranking or a visual-quality acceptance.
+The observed fixed-20k metrics improve substantially from 0.17M to 1.1M to 3.7M. The 3.7M EMA clean / edge / temporal-change metrics also continue improving between 10k and 20k. This is only a partial three-arm observation, not the preregistered five-scale ranking or a visual-quality acceptance.
 
 ### Not established
 
@@ -55,4 +59,4 @@ The observed 1.1M fixed-20k metrics are substantially above 0.17M, while its lea
 
 ### Decision
 
-Continue the same healthy PID through 3.7M, 8.6M and 16.6M, synchronize every new arm into this ledger, and keep dynamics blocked until the complete aligned final grid receives explicit visual review.
+Continue the same healthy PID through 8.6M and 16.6M, synchronize every new arm into this ledger, and keep dynamics blocked until the complete aligned final grid receives explicit visual review.
