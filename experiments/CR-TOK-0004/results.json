@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0004",
-  "record_revision": 1,
-  "execution_status": "planned",
+  "record_revision": 2,
+  "execution_status": "queued",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": null,
   "ended_at": null,
-  "summary": "Preregistered but not started. The new n28.7m-label arm will run only after CR-TOK-0003 reaches terminal state, using the same A10 and fixed-20k protocol.",
+  "summary": "Queued but not started. Source commit 3833b34 is staged in a detached remote worktree; the new n28.7m-label arm will run only after CR-TOK-0003 reaches terminal state, using the same A10 and fixed-20k protocol.",
   "observations": [
     {
       "name": "pretraining_architecture_probe",
@@ -19,6 +19,15 @@
       "estimated_training_flops": 514560570163200000,
       "device": "CPU parameter/FLOPs construction only",
       "scientific_outcome_observed": false
+    },
+    {
+      "name": "frozen_execution_source",
+      "commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_28p7_fixed20k.sh",
+      "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5",
+      "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-28p7",
+      "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729",
+      "started": false
     }
   ],
   "comparisons": [],
@@ -26,7 +35,8 @@
   "failures": [],
   "conclusion": {
     "observed": [
-      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label."
+      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label.",
+      "Execution source commit 3833b34 is staged in a detached DSW worktree without starting a second GPU process."
     ],
     "interpretation": [],
     "not_established": [
@@ -45,6 +55,11 @@
       "revision": 1,
       "at": "2026-07-29T20:38:34+08:00",
       "reason": "Preregistered the missing 28.7M-label fixed-20k extension before any candidate training or held-out evaluation."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T20:42:15+08:00",
+      "reason": "Bound the runner to source commit 3833b34, verified remote runtime dependencies and queued the detached worktree behind CR-TOK-0003 without starting GPU work."
     }
   ]
 }

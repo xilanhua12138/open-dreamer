@@ -40,7 +40,7 @@
       "experiment_id": "CR-TOK-0004",
       "title": "CoinRun tokenizer 28.7M-label fixed-20k extension",
       "path": "experiments/CR-TOK-0004",
-      "execution_status": "planned",
+      "execution_status": "queued",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

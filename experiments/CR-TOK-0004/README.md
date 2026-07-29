@@ -26,7 +26,7 @@ The current quality-first sweep intentionally ends at the 16.6M published label.
 
 ### Observed
 
-A CPU-only construction probe measured 25,564,032 parameters and 25,728,028,508,160 estimated FLOPs per optimizer update. No n28.7m training or held-out evaluation has started.
+A CPU-only construction probe measured 25,564,032 parameters and 25,728,028,508,160 estimated FLOPs per optimizer update. Source commit `3833b34b46358b0443bb3571a5745c013eb7a7e7` is staged in a detached DSW worktree with runtime dependencies verified. No n28.7m training or held-out evaluation has started.
 
 ### Interpretation
 
@@ -40,4 +40,4 @@ None yet.
 
 ### Decision
 
-Freeze a source commit, then queue this arm behind the currently running `CR-TOK-0003` PID on the same A10. Do not run both concurrently and do not start dynamics.
+Keep this arm queued behind the currently running `CR-TOK-0003` PID on the same A10. Do not run both concurrently and do not start dynamics.

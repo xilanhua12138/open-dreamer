@@ -53,7 +53,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
     "branch": "feat/experiment-ledger",
     "dirty": false,
     "patch_sha256": null,
