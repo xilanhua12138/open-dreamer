@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0002",
-  "record_revision": 4,
+  "record_revision": 5,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "internal_result",
@@ -68,6 +68,20 @@
       "name": "instance_shutdown_guard",
       "due_at": "2026-07-30T00:47:40+08:00",
       "remaining_at_observation_ms": 42937685
+    },
+    {
+      "name": "n0p17m_heldout",
+      "parameters": 163392,
+      "completed_steps": 62675,
+      "training_flops_budget": 1e16,
+      "num_clips": 512,
+      "ema_clean_psnr_db": 12.062099814414978,
+      "ema_masked_psnr_db": 12.062099814414978,
+      "ema_clean_edge_psnr_db": 11.936024650070047,
+      "ema_clean_temporal_change_psnr_db": 11.460130465751002,
+      "checkpoint_remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n0p17m/checkpoints",
+      "checkpoint_bytes": 1768563,
+      "checkpoint_tree_sha256": "a8e068fc8c4bd3a8e80da381373ac10a53ed103ef97c874688335724d9bb26e6"
     }
   ],
   "comparisons": [],
@@ -82,7 +96,9 @@
   ],
   "failures": [],
   "conclusion": {
-    "observed": [],
+    "observed": [
+      "The fresh 163,392-parameter arm completed all 62,675 allocated steps and scored 12.0621 dB EMA clean PSNR, 11.9360 dB edge PSNR and 11.4601 dB temporal-change PSNR on 512 held-out clips."
+    ],
     "interpretation": [],
     "not_established": [
       "Which tokenizer scale is visually acceptable.",
@@ -106,6 +122,37 @@
       "uri": "experiments/CR-TOK-0002/raw/tokenizer-scale-probe.json",
       "retention": "git",
       "sha256": "670552a683e8f8677b7dd10f46f0e74476c3426ff7ef68701d6eef30a62b279b"
+    },
+    {
+      "name": "n0.17m held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0002/raw/n0p17m-heldout-eval.json",
+      "retention": "git",
+      "sha256": "50fcfaba3e1f33fe26580f330af6dfb0182c1f6f17a937c7bdfcd33ca4fd8f64"
+    },
+    {
+      "name": "n0.17m Hydra config",
+      "kind": "yaml",
+      "uri": "experiments/CR-TOK-0002/raw/n0p17m-config.yaml",
+      "retention": "git",
+      "sha256": "0437aa69eb70d26d46767c78e5bdaa195203ffca84606d91fa238e3d4154a7bf"
+    },
+    {
+      "name": "n0.17m held-out reconstruction grid",
+      "kind": "png",
+      "uri": "local-task://v2-sync/n0p17m/heldout_reconstruction.png",
+      "remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n0p17m/heldout_reconstruction.png",
+      "retention": "local task and DSW persistent storage",
+      "bytes": 53946,
+      "sha256": "a6a1886a6c5d15496c6ceb95aec8cfb8e0a2252264afdf3e1ced07187fc4e0f0"
+    },
+    {
+      "name": "n0.17m checkpoint tree",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n0p17m/checkpoints",
+      "retention": "DSW persistent storage",
+      "bytes": 1768563,
+      "sha256": "a8e068fc8c4bd3a8e80da381373ac10a53ed103ef97c874688335724d9bb26e6"
     }
   ],
   "revision_history": [
@@ -128,6 +175,11 @@
       "revision": 4,
       "at": "2026-07-29T13:09:37+08:00",
       "reason": "Bound the amended runner and threshold-free ranking rule to durable source commit dea9d18."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-29T13:49:50+08:00",
+      "reason": "Recorded the completed fresh n0.17m arm with exact held-out regional metrics, retained config/reconstruction evidence and checkpoint tree identity."
     }
   ]
 }
