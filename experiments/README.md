@@ -10,7 +10,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 |---|---|---|---|---|
 | `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
 | `CR-TOK-0002` | What did the unequal-step tokenizer pilot establish before the obsolete runner exited? | aborted | inconclusive | internal result |
-| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | planned | not evaluated | none |
+| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | running | not evaluated | none |
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |

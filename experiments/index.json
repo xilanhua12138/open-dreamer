@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T14:38:09+08:00",
+  "updated_at": "2026-07-29T14:56:30+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -27,7 +27,7 @@
       "experiment_id": "CR-TOK-0003",
       "title": "CoinRun tokenizer quality-first fixed-20k scale sweep",
       "path": "experiments/CR-TOK-0003",
-      "execution_status": "planned",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

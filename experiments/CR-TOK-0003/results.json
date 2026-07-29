@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-TOK-0003",
-  "record_revision": 2,
-  "execution_status": "planned",
+  "record_revision": 3,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-29T14:56:16+08:00",
   "ended_at": null,
-  "summary": "Preregistered and bound to exact source commit 26d9a12; not yet launched.",
+  "summary": "Running one idempotent fixed-20k pipeline on the existing A10 from exact source commit 26d9a12. The generated plan confirms five unconditional 20,000-step arms, disabled scaling helpers, four exact evaluation milestones and dynamics_authorized=false.",
   "observations": [
     {
       "name": "source_identity",
@@ -15,6 +15,31 @@
       "branch": "feat/experiment-ledger",
       "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_quality_first_20k.sh",
       "runner_sha256": "0b1a6f0b3cde9db49d94b88487268fdd0a299fb2430494f56f9a6987e7a9288d"
+    },
+    {
+      "name": "launch_identity",
+      "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-quality-first",
+      "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729",
+      "pipeline_pid": 31936,
+      "initial_status": "TRAINING_TOKENIZER_N0P17M_TO_20000",
+      "accelerator": "NVIDIA A10",
+      "shutdown_due_at": "2026-07-30T08:55:52+08:00"
+    },
+    {
+      "name": "exact_quality_first_probe",
+      "training_mode": "fixed_optimizer_updates",
+      "allocated_steps_each": 20000,
+      "total_optimizer_updates": 100000,
+      "estimated_total_training_flops": 550577897472000000,
+      "parameters": [
+        163392,
+        1048192,
+        3342528,
+        7734528,
+        14912320
+      ],
+      "latent_interfaces_all_match": true,
+      "dynamics_authorized": false
     }
   ],
   "comparisons": [],
@@ -33,7 +58,22 @@
       "Do not start dynamics."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "fixed-20k execution plan",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/plan.json",
+      "retention": "git",
+      "sha256": "c6e399a48930f166ddd4268fb242734b4a434463d1f79096e42763ce552a1c61"
+    },
+    {
+      "name": "exact tokenizer quality-first probe",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0003/raw/tokenizer-quality-first-probe.json",
+      "retention": "git",
+      "sha256": "0ca979ff63da9b313441d2b25ab8016f2017d2f85e75b257f7f017647c4cfe87"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -44,6 +84,11 @@
       "revision": 2,
       "at": "2026-07-29T14:52:12+08:00",
       "reason": "Bound the runner and exact checkpoint-step implementation to source commit 26d9a12 before remote launch."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T14:56:30+08:00",
+      "reason": "Recorded the single-pipeline A10 launch, exact generated plan and probe, remote run identity and 18-hour shutdown guard."
     }
   ]
 }

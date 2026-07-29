@@ -26,7 +26,7 @@ At the same 20,000 optimizer updates, how do held-out reconstruction quality and
 
 ### Observed
 
-The experiment is preregistered and has not started.
+The exact source commit `26d9a1290dc7e1a42a98cea62284fe7787bbe4e6` started one pipeline on the existing A10 at `2026-07-29T14:56:16+08:00`. The generated plan confirms `20,000` updates for every arm, disabled FLOPs/tokens-per-param overrides, exact `2,500 / 5,000 / 10,000 / 20,000` evaluation milestones and `dynamics_authorized=false`. Fresh 0.17M training is the first active arm; no old checkpoint was reused.
 
 ### Interpretation
 
@@ -40,4 +40,4 @@ None yet.
 
 ### Decision
 
-Bind the exact source commit, launch the single idempotent A10 pipeline, retain every milestone, and keep dynamics blocked until explicit visual review.
+Monitor the single PID without restarting healthy work, synchronize every new arm/milestone into this ledger, and keep dynamics blocked until explicit visual review.

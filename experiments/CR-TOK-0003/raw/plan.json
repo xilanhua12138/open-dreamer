@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "training_mode": "fixed_optimizer_updates",
+  "candidates": [
+    {
+      "name": "n0.17m",
+      "directory": "n0p17m",
+      "depth": 1,
+      "d_model": 64,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0
+    },
+    {
+      "name": "n1.1m",
+      "directory": "n1p1m",
+      "depth": 2,
+      "d_model": 128,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0
+    },
+    {
+      "name": "n3.7m",
+      "directory": "n3p7m",
+      "depth": 3,
+      "d_model": 192,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0
+    },
+    {
+      "name": "n8.6m",
+      "directory": "n8p6m",
+      "depth": 4,
+      "d_model": 256,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0
+    },
+    {
+      "name": "n16.6m",
+      "directory": "n16p6m",
+      "depth": 5,
+      "d_model": 320,
+      "max_steps": 20000,
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0
+    }
+  ],
+  "evaluation_completed_updates": [
+    2500,
+    5000,
+    10000,
+    20000
+  ],
+  "checkpoint_steps": [
+    2499,
+    4999,
+    9999,
+    19999
+  ],
+  "recovery_checkpoint_steps": [
+    14999
+  ],
+  "dynamics_authorized": false,
+  "terminal_state": "awaiting_visual_review"
+}
