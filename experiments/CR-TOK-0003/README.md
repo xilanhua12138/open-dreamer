@@ -28,7 +28,7 @@ At the same 20,000 optimizer updates, how do held-out reconstruction quality and
 
 The exact source commit `26d9a1290dc7e1a42a98cea62284fe7787bbe4e6` started one pipeline on the existing A10 at `2026-07-29T14:56:16+08:00`. The generated plan confirms `20,000` updates for every arm, disabled FLOPs/tokens-per-param overrides, exact `2,500 / 5,000 / 10,000 / 20,000` evaluation milestones and `dynamics_authorized=false`.
 
-Fresh 0.17M, 1.1M, 3.7M and 8.6M have each completed exactly 20,000 updates and all four held-out evaluations on the same 512 clips. Their EMA metrics are:
+All five fresh scales completed exactly 20,000 updates and all four held-out evaluations on the same 512 clips. Their EMA metrics are:
 
 | Scale | Updates | Clean PSNR | Masked PSNR | Edge PSNR | Temporal-change PSNR |
 |---|---:|---:|---:|---:|---:|
@@ -48,19 +48,23 @@ Fresh 0.17M, 1.1M, 3.7M and 8.6M have each completed exactly 20,000 updates and 
 | 8.6M | 5,000 | 30.8968 | 29.8279 | 23.2430 | 24.0609 |
 | 8.6M | 10,000 | 33.5191 | 32.0974 | 25.0501 | 25.8041 |
 | 8.6M | 20,000 | 34.8962 | 32.0022 | 25.9151 | 26.5915 |
+| 16.6M | 2,500 | 25.4389 | 24.8707 | 20.0149 | 20.7167 |
+| 16.6M | 5,000 | 31.9628 | 30.9707 | 24.0440 | 24.9204 |
+| 16.6M | 10,000 | 34.5984 | 33.2668 | 25.8410 | 26.5933 |
+| 16.6M | 20,000 | 36.1691 | 33.6156 | 26.7739 | 27.4284 |
 
-The same PID then advanced to fresh 16.6M training. All milestone JSON, reconstruction PNG, Hydra config and checkpoint-tree hashes for the first four arms are retained; no old checkpoint was reused.
+The same PID completed all five arms without reusing an old checkpoint. All 20 milestone JSON files, reconstruction PNGs, Hydra configs and checkpoint-tree hashes are retained. The final descriptive score ranks `16.6M > 8.6M > 3.7M > 1.1M > 0.17M`; no quality gate or eligible filter was used.
 
 ### Interpretation
 
-The observed fixed-20k metrics improve substantially from 0.17M through 8.6M. The 8.6M EMA clean / edge / temporal-change metrics also continue improving between 10k and 20k. This is only a partial four-arm observation, not the preregistered five-scale ranking or a visual-quality acceptance.
+Under this fixed-20k single-seed protocol, final EMA clean, edge and temporal-change PSNR improve monotonically with tokenizer capacity. The 16.6M arm still improves from 10k to 20k updates, so the largest arm was not obviously saturated at the earlier milestone. This supports the preregistered capacity-quality hypothesis, but numerical ranking is not visual acceptance.
 
 ### Not established
 
-- Which scale has the best fixed-20k quality.
 - Whether the reconstructed player and platform edges are visually acceptable.
-- Whether the selected tokenizer supports action-conditioned dynamics.
+- Whether the 16.6M tokenizer supports controllable action-conditioned dynamics.
+- Whether this single-seed ranking generalizes beyond this dataset and recipe.
 
 ### Decision
 
-Continue the same healthy PID through 16.6M, synchronize the final arm into this ledger, and keep dynamics blocked until the complete aligned final grid receives explicit visual review.
+Proceed to the separately preregistered `CR-TOK-0004` 28.7M-label extension on the same A10. Keep dynamics blocked and retain the aligned final five-scale grid for explicit visual review.

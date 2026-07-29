@@ -1,0 +1,319 @@
+{
+  "selection_basis": "highest_unweighted_sum_of_clean_edge_and_temporal_change_psnr",
+  "selected": {
+    "name": "n16.6m",
+    "parameters": 14912320,
+    "training_flops_budget": 0.0,
+    "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/milestones/updates-20000/heldout_eval.json",
+    "metrics": {
+      "online_clean_mse": 0.0005172398159629665,
+      "online_clean_psnr": 36.18611001968384,
+      "online_masked_mse": 0.0013187877520977054,
+      "online_masked_psnr": 33.46654772758484,
+      "ema_clean_mse": 0.0005141255805938272,
+      "ema_clean_psnr": 36.16913819313049,
+      "ema_masked_mse": 0.0012536540307337418,
+      "ema_masked_psnr": 33.615649700164795,
+      "online_clean_edge_psnr": 26.747717870434492,
+      "online_clean_temporal_change_psnr": 27.39872138695307,
+      "ema_clean_edge_psnr": 26.77392288969308,
+      "ema_clean_temporal_change_psnr": 27.428436051026853
+    },
+    "improvements_vs_smallest_db": {
+      "clean_psnr_db": 24.108162879943848,
+      "edge_psnr_db": 14.841146122419932,
+      "temporal_change_psnr_db": 15.968399967046118
+    },
+    "quality_score": 90.37149713385043
+  },
+  "baseline": {
+    "name": "n0.17m",
+    "parameters": 163392,
+    "training_flops_budget": 0.0,
+    "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n0p17m/milestones/updates-20000/heldout_eval.json",
+    "metrics": {
+      "online_clean_mse": 0.07215765933506191,
+      "online_clean_psnr": 12.061559677124023,
+      "online_masked_mse": 0.07215765933506191,
+      "online_masked_psnr": 12.061559677124023,
+      "ema_clean_mse": 0.07216241233982146,
+      "ema_clean_psnr": 12.060975313186646,
+      "ema_masked_mse": 0.07216241233982146,
+      "ema_masked_psnr": 12.060975313186646,
+      "online_clean_edge_psnr": 11.934283468047415,
+      "online_clean_temporal_change_psnr": 11.460055160482225,
+      "ema_clean_edge_psnr": 11.932776767273147,
+      "ema_clean_temporal_change_psnr": 11.460036083980736
+    },
+    "improvements_vs_smallest_db": {
+      "clean_psnr_db": 0.0,
+      "edge_psnr_db": 0.0,
+      "temporal_change_psnr_db": 0.0
+    },
+    "quality_score": 35.453788164440525
+  },
+  "ranking": [
+    {
+      "name": "n16.6m",
+      "parameters": 14912320,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.0005172398159629665,
+        "online_clean_psnr": 36.18611001968384,
+        "online_masked_mse": 0.0013187877520977054,
+        "online_masked_psnr": 33.46654772758484,
+        "ema_clean_mse": 0.0005141255805938272,
+        "ema_clean_psnr": 36.16913819313049,
+        "ema_masked_mse": 0.0012536540307337418,
+        "ema_masked_psnr": 33.615649700164795,
+        "online_clean_edge_psnr": 26.747717870434492,
+        "online_clean_temporal_change_psnr": 27.39872138695307,
+        "ema_clean_edge_psnr": 26.77392288969308,
+        "ema_clean_temporal_change_psnr": 27.428436051026853
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 24.108162879943848,
+        "edge_psnr_db": 14.841146122419932,
+        "temporal_change_psnr_db": 15.968399967046118
+      },
+      "quality_score": 90.37149713385043
+    },
+    {
+      "name": "n8.6m",
+      "parameters": 7734528,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.000633094441582216,
+        "online_clean_psnr": 34.905033111572266,
+        "online_masked_mse": 0.001729303017782513,
+        "online_masked_psnr": 31.76402759552002,
+        "ema_clean_mse": 0.0006300195054791402,
+        "ema_clean_psnr": 34.89623951911926,
+        "ema_masked_mse": 0.0016215391660807654,
+        "ema_masked_psnr": 32.00216221809387,
+        "online_clean_edge_psnr": 25.90090086878699,
+        "online_clean_temporal_change_psnr": 26.569205655318413,
+        "ema_clean_edge_psnr": 25.915083530027147,
+        "ema_clean_temporal_change_psnr": 26.591452617781467
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 22.835264205932617,
+        "edge_psnr_db": 13.982306762754,
+        "temporal_change_psnr_db": 15.131416533800731
+      },
+      "quality_score": 87.40277566692788
+    },
+    {
+      "name": "n3.7m",
+      "parameters": 3342528,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n3p7m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.0008981083483377006,
+        "online_clean_psnr": 32.78053903579712,
+        "online_masked_mse": 0.0027732322487281635,
+        "online_masked_psnr": 29.09324061870575,
+        "ema_clean_mse": 0.0008961497223936021,
+        "ema_clean_psnr": 32.771000266075134,
+        "ema_masked_mse": 0.0026127030578209087,
+        "ema_masked_psnr": 29.318659782409668,
+        "online_clean_edge_psnr": 24.525969749944,
+        "online_clean_temporal_change_psnr": 25.200020054441858,
+        "ema_clean_edge_psnr": 24.535892464474685,
+        "ema_clean_temporal_change_psnr": 25.20648012681797
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 20.71002495288849,
+        "edge_psnr_db": 12.603115697201538,
+        "temporal_change_psnr_db": 13.746444042837233
+      },
+      "quality_score": 82.51337285736778
+    },
+    {
+      "name": "n1.1m",
+      "parameters": 1048192,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n1p1m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.002505185446352698,
+        "online_clean_psnr": 27.74935293197632,
+        "online_masked_mse": 0.005906087928451598,
+        "online_masked_psnr": 24.471523880958557,
+        "ema_clean_mse": 0.0025039670581463724,
+        "ema_clean_psnr": 27.745975375175476,
+        "ema_masked_mse": 0.005577423813519999,
+        "ema_masked_psnr": 24.700541496276855,
+        "online_clean_edge_psnr": 20.99827043290681,
+        "online_clean_temporal_change_psnr": 21.246647834978,
+        "ema_clean_edge_psnr": 20.995594025247065,
+        "ema_clean_temporal_change_psnr": 21.233211624194553
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 15.68500006198883,
+        "edge_psnr_db": 9.062817257973919,
+        "temporal_change_psnr_db": 9.773175540213817
+      },
+      "quality_score": 69.9747810246171
+    },
+    {
+      "name": "n0.17m",
+      "parameters": 163392,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n0p17m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.07215765933506191,
+        "online_clean_psnr": 12.061559677124023,
+        "online_masked_mse": 0.07215765933506191,
+        "online_masked_psnr": 12.061559677124023,
+        "ema_clean_mse": 0.07216241233982146,
+        "ema_clean_psnr": 12.060975313186646,
+        "ema_masked_mse": 0.07216241233982146,
+        "ema_masked_psnr": 12.060975313186646,
+        "online_clean_edge_psnr": 11.934283468047415,
+        "online_clean_temporal_change_psnr": 11.460055160482225,
+        "ema_clean_edge_psnr": 11.932776767273147,
+        "ema_clean_temporal_change_psnr": 11.460036083980736
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 0.0,
+        "edge_psnr_db": 0.0,
+        "temporal_change_psnr_db": 0.0
+      },
+      "quality_score": 35.453788164440525
+    }
+  ],
+  "candidates": [
+    {
+      "name": "n0.17m",
+      "parameters": 163392,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n0p17m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.07215765933506191,
+        "online_clean_psnr": 12.061559677124023,
+        "online_masked_mse": 0.07215765933506191,
+        "online_masked_psnr": 12.061559677124023,
+        "ema_clean_mse": 0.07216241233982146,
+        "ema_clean_psnr": 12.060975313186646,
+        "ema_masked_mse": 0.07216241233982146,
+        "ema_masked_psnr": 12.060975313186646,
+        "online_clean_edge_psnr": 11.934283468047415,
+        "online_clean_temporal_change_psnr": 11.460055160482225,
+        "ema_clean_edge_psnr": 11.932776767273147,
+        "ema_clean_temporal_change_psnr": 11.460036083980736
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 0.0,
+        "edge_psnr_db": 0.0,
+        "temporal_change_psnr_db": 0.0
+      },
+      "quality_score": 35.453788164440525
+    },
+    {
+      "name": "n1.1m",
+      "parameters": 1048192,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n1p1m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.002505185446352698,
+        "online_clean_psnr": 27.74935293197632,
+        "online_masked_mse": 0.005906087928451598,
+        "online_masked_psnr": 24.471523880958557,
+        "ema_clean_mse": 0.0025039670581463724,
+        "ema_clean_psnr": 27.745975375175476,
+        "ema_masked_mse": 0.005577423813519999,
+        "ema_masked_psnr": 24.700541496276855,
+        "online_clean_edge_psnr": 20.99827043290681,
+        "online_clean_temporal_change_psnr": 21.246647834978,
+        "ema_clean_edge_psnr": 20.995594025247065,
+        "ema_clean_temporal_change_psnr": 21.233211624194553
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 15.68500006198883,
+        "edge_psnr_db": 9.062817257973919,
+        "temporal_change_psnr_db": 9.773175540213817
+      },
+      "quality_score": 69.9747810246171
+    },
+    {
+      "name": "n3.7m",
+      "parameters": 3342528,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n3p7m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.0008981083483377006,
+        "online_clean_psnr": 32.78053903579712,
+        "online_masked_mse": 0.0027732322487281635,
+        "online_masked_psnr": 29.09324061870575,
+        "ema_clean_mse": 0.0008961497223936021,
+        "ema_clean_psnr": 32.771000266075134,
+        "ema_masked_mse": 0.0026127030578209087,
+        "ema_masked_psnr": 29.318659782409668,
+        "online_clean_edge_psnr": 24.525969749944,
+        "online_clean_temporal_change_psnr": 25.200020054441858,
+        "ema_clean_edge_psnr": 24.535892464474685,
+        "ema_clean_temporal_change_psnr": 25.20648012681797
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 20.71002495288849,
+        "edge_psnr_db": 12.603115697201538,
+        "temporal_change_psnr_db": 13.746444042837233
+      },
+      "quality_score": 82.51337285736778
+    },
+    {
+      "name": "n8.6m",
+      "parameters": 7734528,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.000633094441582216,
+        "online_clean_psnr": 34.905033111572266,
+        "online_masked_mse": 0.001729303017782513,
+        "online_masked_psnr": 31.76402759552002,
+        "ema_clean_mse": 0.0006300195054791402,
+        "ema_clean_psnr": 34.89623951911926,
+        "ema_masked_mse": 0.0016215391660807654,
+        "ema_masked_psnr": 32.00216221809387,
+        "online_clean_edge_psnr": 25.90090086878699,
+        "online_clean_temporal_change_psnr": 26.569205655318413,
+        "ema_clean_edge_psnr": 25.915083530027147,
+        "ema_clean_temporal_change_psnr": 26.591452617781467
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 22.835264205932617,
+        "edge_psnr_db": 13.982306762754,
+        "temporal_change_psnr_db": 15.131416533800731
+      },
+      "quality_score": 87.40277566692788
+    },
+    {
+      "name": "n16.6m",
+      "parameters": 14912320,
+      "training_flops_budget": 0.0,
+      "metrics_path": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/milestones/updates-20000/heldout_eval.json",
+      "metrics": {
+        "online_clean_mse": 0.0005172398159629665,
+        "online_clean_psnr": 36.18611001968384,
+        "online_masked_mse": 0.0013187877520977054,
+        "online_masked_psnr": 33.46654772758484,
+        "ema_clean_mse": 0.0005141255805938272,
+        "ema_clean_psnr": 36.16913819313049,
+        "ema_masked_mse": 0.0012536540307337418,
+        "ema_masked_psnr": 33.615649700164795,
+        "online_clean_edge_psnr": 26.747717870434492,
+        "online_clean_temporal_change_psnr": 27.39872138695307,
+        "ema_clean_edge_psnr": 26.77392288969308,
+        "ema_clean_temporal_change_psnr": 27.428436051026853
+      },
+      "improvements_vs_smallest_db": {
+        "clean_psnr_db": 24.108162879943848,
+        "edge_psnr_db": 14.841146122419932,
+        "temporal_change_psnr_db": 15.968399967046118
+      },
+      "quality_score": 90.37149713385043
+    }
+  ]
+}

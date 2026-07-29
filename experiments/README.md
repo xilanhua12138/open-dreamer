@@ -10,7 +10,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 |---|---|---|---|---|
 | `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
 | `CR-TOK-0002` | What did the unequal-step tokenizer pilot establish before the obsolete runner exited? | aborted | inconclusive | internal result |
-| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | running | not evaluated | none |
+| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | completed | supports hypothesis | internal result |
 | `CR-TOK-0004` | At fixed 20k updates, does the 28.7M-label extension improve over 16.6M? | queued | not evaluated | none |
 | `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
 | `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
@@ -31,7 +31,7 @@ The subsequent user evaluation still rejected the demo as usable: tokenizer outp
 
 `CR-TOK-0003` is the corrected quality-first experiment. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` ladder from scratch for exactly 20,000 optimizer updates per arm, with scaling helpers disabled. Every arm is evaluated after 2,500, 5,000, 10,000 and 20,000 completed updates. The final ranking remains descriptive, and dynamics stays blocked until the aligned final grid receives explicit visual acceptance and a later joint-interface smoke test passes.
 
-The first four arms are now durably recorded: 0.17M stayed near 12 dB across all four EMA curves, 1.1M reached final EMA clean / edge / temporal-change PSNR of `27.7460 / 20.9956 / 21.2332 dB`, 3.7M reached `32.7710 / 24.5359 / 25.2065 dB`, and 8.6M reached `34.8962 / 25.9151 / 26.5915 dB`. The pipeline is training fresh 16.6M. These partial metrics do not establish the five-scale ranking or visual acceptability.
+All five arms are now durably recorded. Final EMA clean / edge / temporal-change PSNR increased from `12.0610 / 11.9328 / 11.4600 dB` at 0.17M to `36.1691 / 26.7739 / 27.4284 dB` at 16.6M. The descriptive ranking is `16.6M > 8.6M > 3.7M > 1.1M > 0.17M`, with no quality gate or eligible filter. This supports the fixed-20k capacity-quality hypothesis but does not establish visual acceptability or dynamics controllability.
 
 `CR-TOK-0004` is preregistered and queued to add the missing published `28.7M` label only after `CR-TOK-0003` terminates. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its execution source is frozen at `3833b34`; it keeps the same fixed-20k recipe and held-out identity, adds structured runtime telemetry plus fixed validation media every 2,500 updates, and remains blocked from dynamics pending visual review.
 
