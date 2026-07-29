@@ -1,0 +1,269 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0001",
+  "retrospective": false,
+  "created_at": "2026-07-29T23:07:51+08:00",
+  "owner": "xilanhua12138",
+  "title": "Real-CoinRun PPO trajectory collector for dynamics",
+  "kind": "confirmatory",
+  "question": "Can a fixed-budget PPO policy trained in real CoinRun produce auditable, episode-safe trajectories that are materially more goal-directed than its untrained initialization for later action-conditioned world-model training?",
+  "reason": "The current dynamics data came from non-learned action policies and produced a world model whose response to actions was rejected in user evaluation. The OpenDreamer authors likewise report that random-action CoinRun data produced a poor interactive prototype and that they trained a simple RL agent to collect better trajectories, but they did not release that RL collector.",
+  "hypothesis": "An IMPALA-style PPO policy trained for 25,165,824 real-environment transitions will reach at least 50% deterministic held-out CoinRun success, improve success by at least 25 percentage points and improve mean return over the same network before PPO updates. Its frozen stochastic collector will retain at least 30% successful completed episodes while yielding episode-safe, action-aligned train/eval datasets.",
+  "falsification": "Reject the hypothesis if the final checkpoint misses any preregistered held-out success/return threshold, either collected split has below 30% successful completed episodes, or either dataset fails the action, checkpoint-provenance, terminal-boundary or train/eval-disjointness audit.",
+  "baseline_id": null,
+  "depends_on": [
+    "CR-DEMO-0001"
+  ],
+  "controlled_variable": {
+    "name": "ppo_training_environment_steps",
+    "values": [
+      0,
+      1048576,
+      2097152,
+      3145728,
+      4194304,
+      5242880,
+      6291456,
+      7340032,
+      8388608,
+      9437184,
+      10485760,
+      11534336,
+      12582912,
+      13631488,
+      14680064,
+      15728640,
+      16777216,
+      17825792,
+      18874368,
+      19922944,
+      20971520,
+      22020096,
+      23068672,
+      24117248,
+      25165824
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_dim": 15,
+    "training_seed": 0,
+    "training_level_range": [
+      0,
+      500
+    ],
+    "heldout_seed": 4242,
+    "heldout_level_range": [
+      10000,
+      10500
+    ],
+    "heldout_episodes_per_milestone": 64,
+    "distribution_mode": "easy",
+    "evaluation_policy": "deterministic argmax",
+    "collector_policy": "temperature 1.0 with epsilon 0.05",
+    "record_frames": 64,
+    "record_transition_alignment": "observation_t, action_t, reward observed after action_t",
+    "episode_boundary_policy": "discard partial record when terminal occurs before the fixed record length"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/coinrun-ppo-collector",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_ppo_collector.sh",
+    "runner_sha256": "47038cb2fe19b67279781cdeaf15681f062cee48a497efbd46cb3e9d86aa58ce",
+    "component_sha256": {
+      "runtime_bootstrap": "61b61e6037920084247b06dc10542a7c884c40baca41a227e8ce4b434bb83e15",
+      "ppo_training": "33587146e71ada6935b3de6affdf9c759be0cd0547043eab99c781643bed663b",
+      "trajectory_collection": "7a7be25bf1ac60f6743e5d534c1dc745d43d5d78b61d7f8fd9b272eeecf99057",
+      "dataset_pair_audit": "0cae95a0ed8e76b0e821cde30d9eeb64c3774927efdb74174aa5bbf58187cf7d"
+    },
+    "source_freeze": "The execution commit must be filled and staged in a clean remote worktree before GPU launch."
+  },
+  "data": {
+    "training_environment": {
+      "start_level": 0,
+      "num_levels": 500,
+      "seed": 0
+    },
+    "policy_evaluation_environment": {
+      "start_level": 10000,
+      "num_levels": 500,
+      "seed": 4242
+    },
+    "dynamics_train_output": {
+      "uri": "/mnt/workspace/datasets/coinrun-ppo-v1/train",
+      "start_level": 0,
+      "num_levels": 500,
+      "records": 4096,
+      "frames_per_record": 64,
+      "seed": 20240
+    },
+    "dynamics_eval_output": {
+      "uri": "/mnt/workspace/datasets/coinrun-ppo-v1/eval",
+      "start_level": 10000,
+      "num_levels": 500,
+      "records": 512,
+      "frames_per_record": 64,
+      "seed": 30240
+    },
+    "split_overlap": 0,
+    "dataset_hashes": "Recorded only after collection and audit; no dataset exists at preregistration time."
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "25,165,824 CoinRun transitions plus 25 fixed 64-episode validation milestones and 4,608 trajectory records. Wall time must be measured by the smoke run before a billing estimate is claimed.",
+    "shutdown_policy": "Do not overlap the active tokenizer runs. Before launch, create a bounded shutdown timer from measured smoke throughput; stop the existing instance after evidence synchronization."
+  },
+  "protocol": {
+    "model": {
+      "architecture": "IMPALA-style CNN actor-critic",
+      "conv_channels": [
+        16,
+        32,
+        32
+      ],
+      "residual_blocks_per_stage": 2,
+      "hidden_dim": 256,
+      "policy_head": "15-way categorical",
+      "value_head": "scalar"
+    },
+    "training": {
+      "algorithm": "clipped PPO with GAE",
+      "total_environment_steps": 25165824,
+      "num_envs": 64,
+      "rollout_steps": 256,
+      "batch_size": 16384,
+      "num_updates": 1536,
+      "update_epochs": 3,
+      "num_minibatches": 8,
+      "minibatch_size": 2048,
+      "learning_rate": 0.0005,
+      "adam_epsilon": 0.00001,
+      "gamma": 0.999,
+      "gae_lambda": 0.95,
+      "clip_epsilon": 0.2,
+      "value_clip_epsilon": 0.2,
+      "value_coefficient": 0.5,
+      "entropy_coefficient": 0.01,
+      "max_grad_norm": 0.5,
+      "reward_normalization": "discounted-return running variance",
+      "reward_clip": 10.0,
+      "checkpoint_every_environment_steps": 1048576,
+      "from_scratch": true,
+      "fault_resume_only": true,
+      "runtime": {
+        "python": "3.10",
+        "reason": "Procgen 0.10.7 publishes wheels through CPython 3.10 but not CPython 3.11.",
+        "bootstrap": "scripts/experiments/coinrun/prepare_coinrun_ppo_runtime.sh",
+        "numpy": "2.2.6",
+        "scipy": "1.14.1",
+        "jax": "0.4.35 with CUDA 12",
+        "flax": "0.10.2",
+        "optax": "0.2.4",
+        "procgen": "0.10.7",
+        "gym3": "0.3.3"
+      },
+      "runtime_recorder": "scripts/experiments/run_recorded.py",
+      "wandb": {
+        "enabled": true,
+        "project": "open-dreamer",
+        "group": "CR-PPO-0001",
+        "mode": "online only when authenticated; otherwise offline",
+        "local_evidence_required": true
+      }
+    },
+    "evaluation": {
+      "initial_untrained_baseline": true,
+      "every_environment_steps": 1048576,
+      "episodes": 64,
+      "fixed_seed": 4242,
+      "fixed_level_range": [
+        10000,
+        10500
+      ],
+      "policy": "deterministic argmax",
+      "metrics": [
+        "mean return",
+        "median return",
+        "return p05/p95",
+        "success rate",
+        "mean episode length",
+        "action histogram"
+      ],
+      "visuals": "Four full-episode-span held-out GIFs uniformly capped at 256 stored frames each, plus first/middle/last contact sheet at every milestone"
+    },
+    "collection": {
+      "checkpoint": "final 25,165,824-transition PPO checkpoint only",
+      "train_records": 4096,
+      "eval_records": 512,
+      "frames_per_record": 64,
+      "temperature": 1.0,
+      "exploration_epsilon": 0.05,
+      "record_fields": [
+        "raw_video",
+        "sequence_length",
+        "actions",
+        "rewards",
+        "terminals"
+      ],
+      "audit": [
+        "checkpoint SHA256",
+        "15-way action range",
+        "action-aligned rewards",
+        "no cross-episode chunks",
+        "terminal only on final record frame",
+        "train/eval level disjointness",
+        "ArrayRecord count and tree SHA256"
+      ]
+    },
+    "downstream_scope": {
+      "collect_action_conditioned_trajectories": true,
+      "train_dynamics_after_separate_authorization": true,
+      "behavior_cloning": false,
+      "policy_training_inside_world_model": false
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "On the identical 64 held-out episodes, fixed seed and level range, the final 25,165,824-transition checkpoint has success_rate >= 0.50, improves success_rate by >= 0.25 absolute over the zero-update network, and has higher mean return."
+    },
+    {
+      "id": "SC-2",
+      "rule": "All 24 trained evaluation milestones plus the zero-update baseline emit structured metrics and bounded held-out visual artifacts with SHA256 provenance."
+    },
+    {
+      "id": "SC-3",
+      "rule": "The final frozen checkpoint collects exactly 4,096 train and 512 eval records of 64 frames; each split reports success_rate >= 0.30 over completed episodes; and both datasets pass all action, checkpoint, episode-boundary, count and hash audits."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No dynamics training, imitation policy, or policy optimization inside the learned world model is launched under this experiment ID."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-ppo-collector/.venv-ppo/runtime-versions.json",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/run-state.json",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/metrics.jsonl",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/telemetry.jsonl",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/validation",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+    "/mnt/workspace/datasets/coinrun-ppo-v1/train/metadata.json",
+    "/mnt/workspace/datasets/coinrun-ppo-v1/eval/metadata.json",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/train-dataset-audit.json",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/eval-dataset-audit.json",
+    "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/dataset-pair-audit.json"
+  ]
+}

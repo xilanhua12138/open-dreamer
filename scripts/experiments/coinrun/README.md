@@ -50,6 +50,7 @@ validation.every_steps=<preregistered-interval>
 | `CR-DYN-0004` | `probe_coinrun_dynamics_scaling.py`, `run_coinrun_large_fixed20k.sh` |
 | `CR-DYN-0005` | `select_best_coinrun_checkpoint.py`, `eval_coinrun_context_ablation.py`, `run_coinrun_context_ablation.sh` |
 | `CR-DEMO-0001` | `live_coinrun_demo.py`, `run_coinrun_live_demo.sh`, `smoke_live_coinrun_demo.sh` |
+| `CR-PPO-0001` | `prepare_coinrun_ppo_runtime.sh`, `train_coinrun_ppo.py`, `collect_coinrun_ppo_records.py`, `audit_coinrun_records.py`, `verify_coinrun_dataset_pair.py`, `run_coinrun_ppo_collector.sh` |
 
 `run_coinrun_extension_pipeline.sh` orders the large run, checkpoint selection, context ablation, and demo startup. It must remain idempotent through its PID/status/ready files.
 
@@ -58,3 +59,18 @@ The repository-level `scripts/train_dynamics.py` accepts dataset-declared non-ne
 The live-demo smoke test deliberately executes two consecutive generated steps.
 A single successful step does not exercise the dtype of the autoregressively
 updated latent context and is insufficient evidence for sustained interaction.
+
+The PPO collector is a data-generation dependency for a later dynamics
+experiment. `train_coinrun_ppo.py` learns and validates the policy in real
+Procgen CoinRun. `collect_coinrun_ppo_records.py` loads a frozen checkpoint and
+writes action-aligned records that cannot cross episode boundaries. The runner
+stops after dataset audit; it deliberately does not start a world model or any
+additional policy stage.
+
+Procgen 0.10.7 has no CPython 3.11 wheel, while the repository training
+environment uses Python 3.11. `prepare_coinrun_ppo_runtime.sh` therefore creates
+one explicit Python 3.10 environment containing both Procgen and pinned
+CUDA-enabled JAX/Flax/Optax versions. It performs a CPU-only import,
+environment, action-space and actor-critic shape smoke test without competing
+for the active training GPU. A later launch must separately verify that this
+same environment sees the A10 through JAX.

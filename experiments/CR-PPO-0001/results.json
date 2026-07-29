@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0001",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered and implemented locally; no PPO GPU training or trajectory collection has started.",
+  "observations": [
+    {
+      "name": "cpu_test_status",
+      "observed": "Core PPO, Gym3 alignment, checkpoint, collection-boundary and dataset-audit tests pass on CPU.",
+      "scientific_outcome_observed": false
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "The code path is implemented on a separate branch without starting a second GPU workload."
+    ],
+    "interpretation": [],
+    "not_established": [
+      "Whether PPO learns a successful CoinRun policy under the frozen budget.",
+      "Whether the collected trajectories improve action-conditioned dynamics.",
+      "Any official reproduction claim."
+    ],
+    "decision": [
+      "Freeze and smoke-test one unified Procgen/JAX runtime after the active tokenizer sequence is terminal.",
+      "Do not start dynamics or any imitation-policy stage under this experiment."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T23:07:51+08:00",
+      "reason": "Preregistered the real-CoinRun PPO collector and explicitly removed behavior cloning from the downstream scope before any PPO result was observed."
+    }
+  ]
+}

@@ -60,6 +60,8 @@ PACKAGE_NAMES = (
     "numpy",
     "optax",
     "orbax-checkpoint",
+    "procgen",
+    "gym3",
     "wandb",
 )
 
