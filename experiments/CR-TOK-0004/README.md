@@ -36,6 +36,8 @@ Attempt 02 started from scratch at `2026-07-30T01:07:25+08:00` under PID `68104`
 
 Attempt 03 started once at `2026-07-30T01:58:23+08:00` under PID `71283`. It restored this experiment's own checkpoint step 0; no external or earlier-experiment checkpoint was used. The source and scientific protocol are unchanged. W&B remains truthfully offline, and the local structured evidence remains authoritative. The same A10 has a shutdown guard due at `2026-07-30T13:01:15+08:00`.
 
+Attempt 03 passed the first scheduled 2,500-update checkpoint. On the immutable 16-clip periodic validation set (`SHA256 350bd313...0188`), online clean PSNR was `28.1951 dB` and EMA clean PSNR was `24.4368 dB`. The matching target-online-EMA PNG/GIF are retained locally and on DSW. This is a frequent progress diagnostic, not the 512-clip held-out result used for the final comparison.
+
 ### Interpretation
 
 Neither failure is a held-out scientific observation about the 28.7M-label tokenizer. The first was a source initialization defect; the second is currently classified as a recoverable CUDA runtime interruption because it left no kernel Xid/OOM evidence and did not recur during launch validation.

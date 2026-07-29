@@ -29,6 +29,50 @@
       "retention": "local task and DSW persistent storage",
       "sha256": "9b70f4c0f07255c9fc64ec34483b1751e0529d7aa4d101b2eff088dca6e1756a",
       "uri": "local-task://tokenizer-28p7-sync/attempt-02-cuda-stream-capture/pipeline.log"
+    },
+    {
+      "kind": "json",
+      "name": "periodic validation at 2,500 completed updates",
+      "retention": "git",
+      "sha256": "77fb7fb56614cd67f7d28293bf7c958784af6cafc4ad1a03ae8f5dbc83ecec66",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-02500-periodic-validation.json"
+    },
+    {
+      "kind": "image",
+      "name": "periodic reconstruction grid at 2,500 completed updates",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/validation/updates-00002500/reconstruction.png",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "5b97bade63ccbdd21a864f24c6265f7712807129ba14b739f07af83b1b1e92eb",
+      "uri": "local-task://tokenizer-28p7-sync/milestones/updates-02500-periodic/reconstruction.png"
+    },
+    {
+      "kind": "animation",
+      "name": "periodic reconstruction animation at 2,500 completed updates",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/validation/updates-00002500/reconstruction.gif",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "009fbf650ae4e4b5d7ad8e0290bcfd46f5be5e4a6dae21a97c747b04f34f73a3",
+      "uri": "local-task://tokenizer-28p7-sync/milestones/updates-02500-periodic/reconstruction.gif"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 resolved Hydra config",
+      "retention": "git",
+      "sha256": "46c88718343d97880b94c7b79e3b4f131f82cc567219c490e340c19e4b23c17a",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-config.yaml"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 Hydra overrides",
+      "retention": "git",
+      "sha256": "4d74c707e9487fd8c310cd57feb8c503e8feb1286da7d859f0468788b5dd8aeb",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-overrides.yaml"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 Hydra runtime config",
+      "retention": "git",
+      "sha256": "c255e810f6ddab8187a279a04057ec898218215e1189b7e23e4f0b4c5113ed55",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-hydra.yaml"
     }
   ],
   "claim_level": "none",
@@ -49,7 +93,8 @@
       "The first launch from source commit 3833b34 failed before any optimizer update while materializing a validation DatasetConfig that omitted a defaulted mouse_repr field.",
       "A regression test reproduced the missing-default failure before the helper was changed to materialize explicit DatasetConfig and DataloaderConfig defaults.",
       "Attempt 02 reached 1,179 recorder-confirmed completed updates before JAX reported CUDA_ERROR_STREAM_CAPTURE_INVALIDATED; no NVIDIA Xid, kernel OOM or surviving GPU process was observed.",
-      "Attempt 03 restored CR-TOK-0004's own checkpoint step 0 and resumed the unchanged protocol under PID 71283."
+      "Attempt 03 restored CR-TOK-0004's own checkpoint step 0 and resumed the unchanged protocol under PID 71283.",
+      "The fixed 16-clip periodic validation at 2,500 completed updates measured online clean PSNR 28.1951 dB and EMA clean PSNR 24.4368 dB on validation-set SHA256 350bd313b4f98d8bd06c06f99c029e2e5a9cb6981e3bcc5d25e9aa749b7a0188."
     ]
   },
   "deviations": [
@@ -157,9 +202,19 @@
       "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
       "started_at": "2026-07-30T01:58:23+08:00",
       "wandb_mode": "offline"
+    },
+    {
+      "completed_updates": 2500,
+      "ema_clean_mse": 0.0036001275293529034,
+      "ema_clean_psnr_db": 24.43682114701251,
+      "name": "periodic_validation_updates_02500",
+      "num_clips": 16,
+      "online_clean_mse": 0.0015152764196197193,
+      "online_clean_psnr_db": 28.19508135105426,
+      "validation_set_sha256": "350bd313b4f98d8bd06c06f99c029e2e5a9cb6981e3bcc5d25e9aa749b7a0188"
     }
   ],
-  "record_revision": 6,
+  "record_revision": 7,
   "revision_history": [
     {
       "at": "2026-07-29T20:38:34+08:00",
@@ -190,10 +245,15 @@
       "at": "2026-07-30T01:58:23+08:00",
       "reason": "Retained attempt-02 CUDA stream-capture failure evidence and recorded an unchanged-protocol fault recovery from CR-TOK-0004's own step-0 checkpoint.",
       "revision": 6
+    },
+    {
+      "at": "2026-07-30T02:56:38+08:00",
+      "reason": "Recorded the first fixed-set periodic validation, its immutable validation identity and local visual artifacts after attempt 03 passed 2,500 completed updates.",
+      "revision": 7
     }
   ],
   "schema_version": "1.0",
   "scientific_status": "not_evaluated",
   "started_at": "2026-07-30T01:01:06+08:00",
-  "summary": "Both the zero-update validation-config failure and the attempt-02 CUDA stream-capture interruption at 1,179 recorder-confirmed updates are retained. Attempt 03 is running the unchanged n28.7m protocol on execution commit b3eb2af from this experiment's own step-0 checkpoint, with W&B offline and the existing shutdown guard."
+  "summary": "Both earlier failures are retained. Attempt 03 is running the unchanged n28.7m protocol on execution commit b3eb2af from this experiment's own step-0 checkpoint, has completed the 2,500-update fixed-set periodic validation and remains on the same A10 with W&B offline."
 }
