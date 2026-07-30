@@ -18,7 +18,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
-| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | planned | not evaluated | none |
+| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | running | not evaluated | none |
 
 ## Important reading of the chain
 
@@ -36,7 +36,7 @@ The first four arms are now durably recorded: 0.17M stayed near 12 dB across all
 
 `CR-TOK-0004` is preregistered and queued to add the missing published `28.7M` label only after `CR-TOK-0003` terminates. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its execution source is frozen at `3833b34`; it keeps the same fixed-20k recipe and held-out identity, adds structured runtime telemetry plus fixed validation media every 2,500 updates, and remains blocked from dynamics pending visual review.
 
-`CR-PPO-0001` preregisters the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. It trains a standard IMPALA-style PPO actor-critic in real CoinRun, compares fixed held-out performance from zero to 25,165,824 transitions, freezes the final checkpoint, and collects disjoint episode-safe dynamics train/eval records with an explicit 15-action contract. Its scope ends at audited dynamics data. It does not train an imitation policy, train a policy inside the learned world, or launch dynamics under the same experiment ID.
+`CR-PPO-0001` preregisters the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. Its unified Python 3.10/Procgen/JAX runtime passed CPU and A10 smoke checks, and the fixed 25,165,824-transition run is active from clean source `ec97611`. Two zero-update compatibility failures are retained with regression tests. The scope ends at audited dynamics data: it does not train an imitation policy, train a policy inside the learned world, or launch dynamics under the same experiment ID.
 
 ## Creating or closing an experiment
 

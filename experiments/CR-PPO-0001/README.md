@@ -61,11 +61,17 @@ these targets is a negative result, not a trigger to silently extend the budget.
 
 ### Observed
 
-The implementation and CPU tests exist on a separate branch. No PPO GPU training or trajectory collection has started.
+The exact Python 3.10 runtime passed a real Procgen action-space/model smoke on CPU and an actor forward smoke on the A10. The full local branch suite has 97 passing tests.
+
+Two compatibility failures occurred before PPO update zero and remain retained: an unconstrained CUDA 12.9 nvcc namespace package was incompatible with JAX 0.4.35, and the shared logger assumed a newer `jax.distributed.is_initialized()` API. Both received failing regression tests before the fixes.
+
+The fixed-budget run is now active from clean execution source `ec97611`, run ID `ebf9f582-e3d4-4b5c-9ddb-a78e3244eb14`, attempt ID `8303d788-8966-4850-86a2-d87bc9a47366`, with W&B offline. The 12-hour DSW shutdown timer is due at `2026-07-31 00:14:45 +08:00`.
+
+The preregistered zero-update held-out baseline completed on 64 episodes from levels `[10000,10500)` with mean return `0.0` and success rate `0.0`. The active run then reached 8 / 1,536 PPO updates (131,072 / 25,165,824 transitions) with the GPU at 99% utilization.
 
 ### Interpretation
 
-None yet.
+No policy-quality result exists yet; successful runtime launch is only execution evidence.
 
 ### Not established
 
@@ -75,4 +81,4 @@ None yet.
 
 ### Decision
 
-Do not overlap the current tokenizer jobs. Once their single-A10 sequence is terminal, freeze a clean execution commit, smoke-test the unified Procgen/JAX runtime, measure throughput, then decide whether to launch the fixed full protocol. Dynamics remains a later experiment and the pipeline has no imitation-policy stage.
+Continue the single active PPO PID under the frozen 25,165,824-transition protocol. Dynamics remains a later experiment and the pipeline has no imitation-policy stage.

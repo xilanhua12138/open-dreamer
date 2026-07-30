@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-29T23:07:51+08:00",
+  "updated_at": "2026-07-30T12:17:54+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -117,7 +117,7 @@
       "experiment_id": "CR-PPO-0001",
       "title": "Real-CoinRun PPO trajectory collector for dynamics",
       "path": "experiments/CR-PPO-0001",
-      "execution_status": "planned",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

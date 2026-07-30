@@ -72,19 +72,19 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": "2feee2a1c924019298176671e51ee63bd9e31967",
+    "commit": "ec97611f83d676fde41c0d7b7a78fe70365f940b",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
     "runner": "scripts/experiments/coinrun/run_coinrun_ppo_collector.sh",
     "runner_sha256": "47038cb2fe19b67279781cdeaf15681f062cee48a497efbd46cb3e9d86aa58ce",
     "component_sha256": {
-      "runtime_bootstrap": "61b61e6037920084247b06dc10542a7c884c40baca41a227e8ce4b434bb83e15",
+      "runtime_bootstrap": "3bd65a7068375ed3e88709e4339b9a4d2d4f9676968f468ced25fffa3bbf456f",
       "ppo_training": "33587146e71ada6935b3de6affdf9c759be0cd0547043eab99c781643bed663b",
       "trajectory_collection": "7a7be25bf1ac60f6743e5d534c1dc745d43d5d78b61d7f8fd9b272eeecf99057",
       "dataset_pair_audit": "0cae95a0ed8e76b0e821cde30d9eeb64c3774927efdb74174aa5bbf58187cf7d"
     },
-    "source_freeze": "The executable implementation is frozen at commit 2feee2a1c924019298176671e51ee63bd9e31967 in a clean detached DSW worktree. This later ledger-only edit records that already-frozen execution identity and does not change the code being executed."
+    "source_freeze": "The executable implementation is frozen at commit ec97611f83d676fde41c0d7b7a78fe70365f940b in a clean detached DSW worktree after two zero-update compatibility fixes. This later ledger-only edit records that already-frozen execution identity and does not change the code being executed."
   },
   "data": {
     "training_environment": {
@@ -124,7 +124,7 @@
     "accelerator_count": 1,
     "accelerator_memory_gb": 23,
     "estimated_budget": "25,165,824 CoinRun transitions plus 25 fixed 64-episode validation milestones and 4,608 trajectory records. Wall time must be measured by the smoke run before a billing estimate is claimed.",
-    "shutdown_policy": "Do not overlap the active tokenizer runs. Before launch, create a bounded shutdown timer from measured smoke throughput; stop the existing instance after evidence synchronization."
+    "shutdown_policy": "Tokenizer training was terminal before PPO launch. A 12-hour instance shutdown timer was created at 2026-07-30T12:14:45+08:00 with due time 2026-07-31T00:14:45+08:00; later monitoring may extend it only when less than four hours remain."
   },
   "protocol": {
     "model": {
