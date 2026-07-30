@@ -139,7 +139,7 @@
       "experiment_id": "CR-PPO-0003",
       "title": "CoinRun PPO one-factor bug screen",
       "path": "experiments/CR-PPO-0003",
-      "execution_status": "planned",
+      "execution_status": "queued",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

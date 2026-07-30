@@ -50,7 +50,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "9cb7581c034c4932ad6a073e044e65defab43789",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
@@ -58,7 +58,8 @@
     "runner_sha256": "dbe07d7be3585d90636dfcc8c9be42c63088864adbcde3557da47680ce696493",
     "component_sha256": {
       "summarizer": "2b5fef912c257d6541b8d95643b867f569d7eeb076bf60f679857b8dbd6718c7"
-    }
+    },
+    "source_freeze": "The complete preregistration, runner, summarizer and tests were committed and pushed at 9cb7581c034c4932ad6a073e044e65defab43789 before any arm result. The DSW execution worktree must be clean and detached at that commit."
   },
   "data": {
     "training_environment": "Arm-specific num_levels is the controlled variable only for levels500; all other arms use levels [0,200).",
