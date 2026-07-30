@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 7,
+  "record_revision": 8,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-30T18:00:15+08:00",
   "ended_at": null,
-  "summary": "The recorded 16-seed probe completed and strongly supports initial signal and gradient amplification under orthogonal-sqrt2. The first unconditional training arm, orthogonal_gain1, is now running.",
+  "summary": "The recorded probe supports the amplification mechanism. Orthogonal gain 1 completed at 6.640625 mean return and 66.40625% success, passing both preregistered half-gap recovery thresholds; the depth-scaled arm is running.",
   "observations": [
     {
       "type": "pipeline_start",
@@ -81,6 +81,24 @@
           "late_branch_to_skip_rms": 0.0
         }
       }
+    },
+    {
+      "type": "training_arm_final_evaluation",
+      "arm": "orthogonal_gain1",
+      "completed_env_steps": 6291456,
+      "evaluation_episodes": 256,
+      "evaluation_seed": 4242,
+      "evaluation_distribution": "full_distribution",
+      "evaluation_policy": "stochastic",
+      "mean_return": 6.640625,
+      "success_rate": 0.6640625,
+      "successes": 170,
+      "mean_return_threshold": 6.5625,
+      "success_rate_threshold": 0.65625,
+      "passes_preregistered_half_gap_threshold": true,
+      "mean_gap_recovery_fraction": 0.5333333333333333,
+      "success_gap_recovery_fraction": 0.5333333333333333,
+      "checkpoint_sha256": "384cd0aa936b5af990961248f7e831c2de3adf63ef0dc5098710710aa7c27447"
     }
   ],
   "comparisons": [],
@@ -95,6 +113,12 @@
         "green": "The probe writes runtime-identity.json, a COMPLETED run-state.json and an artifact record."
       },
       "protocol_impact": "No scientific arm, budget, seed, metric or decision rule changed."
+    },
+    {
+      "at": "2026-07-30T18:34:29+08:00",
+      "type": "machine_ledger_side_effect",
+      "reason": "Automatic run-evidence materialization writes only experiment README, events, results and raw evidence inside the execution worktree after each completed stage. Subsequent runtime identities therefore correctly report a dirty source tree even though no model, trainer, runner or test file changed.",
+      "protocol_impact": "No imported scientific code or frozen command changed. The generated source patch is retained, and this infrastructure coupling should be separated after the experiment."
     }
   ],
   "failures": [
@@ -117,7 +141,8 @@
     ],
     "interpretation": [
       "The zero-update evidence supports the preregistered amplification mechanism and identifies sqrt(2) gain, rather than orthogonality alone, as the main tested source of the initial scale gap.",
-      "The probe does not establish which mitigation improves trained policy quality; all four training arms remain unconditional."
+      "The probe does not establish which mitigation improves trained policy quality; all four training arms remain unconditional.",
+      "Orthogonal gain 1 recovered 53.3333% of both retained gaps and passed the preregistered midpoint thresholds, but remained below the Glorot anchor; it is a partial mitigation rather than a complete recovery."
     ],
     "not_established": [
       "Whether orthogonal matrices or sqrt(2) gain drive the observed gap.",
@@ -153,6 +178,31 @@
       "uri": "experiments/CR-PPO-0005/raw/probe/run-state.json",
       "local_uri": "experiments/CR-PPO-0005/raw/probe/run-state.json",
       "sha256": "5289a13b6d6e7d73a91c4dfb861c8ee6a5417c2dd01f1e7aa111b4a9cca3db7f"
+    },
+    {
+      "name": "orthogonal gain 1 final metrics",
+      "kind": "evaluation_metrics",
+      "uri": "experiments/CR-PPO-0005/raw/arms/orthogonal_gain1/final-metrics.json",
+      "sha256": "b728dd1f7d762b38683478da714c84dbf804c9d94ee2ddb7a4a9b211bdd7a3d8"
+    },
+    {
+      "name": "orthogonal gain 1 final contact sheet",
+      "kind": "image",
+      "uri": "experiments/CR-PPO-0005/raw/arms/orthogonal_gain1/final-contact-sheet.png",
+      "sha256": "40da81534931b834c0c603472fa565cbf0614d299806611e9bd744627602c3fe"
+    },
+    {
+      "name": "orthogonal gain 1 generated run evidence",
+      "kind": "json",
+      "uri": "experiments/CR-PPO-0005/raw/arms/orthogonal_gain1/run-evidence.json",
+      "sha256": "71b622dbb2bccdfabcdfab9369c023bebde2270a435afec3d9280561c62aa10e"
+    },
+    {
+      "name": "orthogonal gain 1 final checkpoint",
+      "kind": "checkpoint",
+      "uri": "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/arms/orthogonal_gain1/checkpoints/env-steps-006291456.msgpack",
+      "sha256": "384cd0aa936b5af990961248f7e831c2de3adf63ef0dc5098710710aa7c27447",
+      "retention": "remote_persistent_disk"
     }
   ],
   "revision_history": [
@@ -190,6 +240,11 @@
       "revision": 7,
       "at": "2026-07-30T18:15:47+08:00",
       "reason": "Recorded the valid 16-seed zero-update probe and transition into the first unconditional training arm."
+    },
+    {
+      "revision": 8,
+      "at": "2026-07-30T18:34:29+08:00",
+      "reason": "Recorded the orthogonal-gain-1 final 256-episode evaluation, checkpoint and first successful mitigation decision."
     }
   ]
 }

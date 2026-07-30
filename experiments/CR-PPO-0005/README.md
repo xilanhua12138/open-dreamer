@@ -75,4 +75,24 @@ Versus Glorot, the unmitigated orthogonal-√2 arm amplified encoder RMS by
 gradient by `776.2791×`. Unit-gain orthogonal initialization reduced those
 ratios to `1.5875×`, `1.6523×`, and `2.3879×`, respectively. This supports the
 initial amplification mechanism; it does not yet establish trained policy
-quality. The first unconditional training arm, `orthogonal_gain1`, is running.
+quality.
+
+The first unconditional arm then completed the frozen training and final
+evaluation protocol:
+
+| Arm | Mean return | Success | Half-gap threshold | Decision |
+|---|---:|---:|---|---|
+| Glorot retained anchor | 7.734375 | 77.34375% | — | reference |
+| Orthogonal √2 retained anchor | 5.390625 | 53.90625% | — | degraded anchor |
+| Orthogonal gain 1 | 6.640625 | 66.40625% | 6.5625 / 65.625% | passes both |
+
+Unit-gain orthogonal initialization recovered `53.3333%` of both retained gaps.
+It is therefore a successful partial mitigation, not a full Glorot recovery.
+The depth-scaled arm is running, and zero-last plus SkipInit remain
+unconditional future arms.
+
+Automatic machine evidence currently writes experiment-ledger-only files into
+the execution worktree after each stage. Later runtime identities therefore
+report a dirty tree even though no model, trainer, runner or test file changed;
+the generated patch is retained and this infrastructure coupling will be
+separated after the scientific run.

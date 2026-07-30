@@ -1,0 +1,92 @@
+{
+  "attempt_id": "7055941a-b560-4b67-bf31-facb9ea92ef1",
+  "config_sha256": "75898b9482e407f1a26fc0d32bbb8dede9820879ce885130baf193842dd161e0",
+  "experiment_id": "CR-PPO-0005",
+  "generated_at": "2026-07-30T10:34:29.506074+00:00",
+  "input_fingerprint": "4eeb73c273cdfa77c110d9af648d7d3ec88ee17867dade0f385085d22a991bdf",
+  "last_completed_updates": 384,
+  "last_metrics": {
+    "evaluation/": {
+      "completed_env_steps": 6291456,
+      "environment_transitions": 74304,
+      "episodes": 256,
+      "mean_episode_length": 276.90625,
+      "mean_return": 6.640625,
+      "median_return": 10.0,
+      "num_levels": 0,
+      "return_p05": 0.0,
+      "return_p95": 10.0,
+      "seed": 4242,
+      "start_level": 0,
+      "success_rate": 0.6640625,
+      "successes": 170,
+      "vector_steps": 4644
+    },
+    "train/": {
+      "approx_kl": 0.0069741373881697655,
+      "clip_fraction": 0.0847574919462204,
+      "completed_env_steps": 6291456,
+      "entropy": 2.304765462875366,
+      "environment_steps_per_second": 5714.451969997814,
+      "episode_return_mean": 6.619718309859155,
+      "episode_success_rate": 0.6619718309859155,
+      "episodes_completed_in_rollout": 71,
+      "optimizer_minibatches": 24,
+      "policy_loss": -0.014238936826586723,
+      "raw_reward_mean": 0.0286865234375,
+      "raw_reward_nonzero_fraction": 0.00286865234375,
+      "reward_normalizer_variance": 0.6355694892548248,
+      "total_loss": 0.08905486762523651,
+      "value_loss": 0.2526829242706299
+    }
+  },
+  "ledger_uri": "experiments/CR-PPO-0005/raw/coinrun-ppo-initializer-mitigation-orthogonal_gain1-run-evidence.json",
+  "run_artifacts": [
+    {
+      "bytes": 3992,
+      "sha256": "ee58d76a1fd5169de017f10fbe5523132f7ff676615be4b07f4ad6426848ea4f",
+      "uri": "runtime-identity.json"
+    },
+    {
+      "bytes": 468,
+      "sha256": "a26c6947ebfa55c589cf6e7dd2dde2936bf118a1ae91b6ac458a88923214b588",
+      "uri": "run-state.json"
+    },
+    {
+      "bytes": 315405,
+      "sha256": "82ee95645d9f347e3be55403be1e308d4a0ab6f8ed0ee586f8ed57af40c665f2",
+      "uri": "metrics.jsonl"
+    },
+    {
+      "bytes": 21860,
+      "sha256": "4dee930b523e80c0de1a5f200c10f44484cbf7d90be81368a6614c27d3994f93",
+      "uri": "telemetry.jsonl"
+    },
+    {
+      "bytes": 6139,
+      "sha256": "850790273fb2c6f362a1cb9d05816ef0e876f19ac7bf6c2664e06e49ce16cfe4",
+      "uri": "artifacts.jsonl"
+    },
+    {
+      "bytes": 254,
+      "sha256": "e62bf28f9aa1faeecf48eefc272c6bd20412be92f0bed46b252de3ef60a6ad55",
+      "uri": "wandb-run.json"
+    },
+    {
+      "bytes": 3992,
+      "sha256": "ee58d76a1fd5169de017f10fbe5523132f7ff676615be4b07f4ad6426848ea4f",
+      "uri": "runtime-identities/7055941a-b560-4b67-bf31-facb9ea92ef1.json"
+    },
+    {
+      "bytes": 10547,
+      "sha256": "7d83061270d6dc6a7324caf39ba708b5a677e82a9732a679450535a07de18d70",
+      "uri": "runtime-identities/7055941a-b560-4b67-bf31-facb9ea92ef1.source.patch"
+    }
+  ],
+  "run_id": "af973a68-6549-46ef-a1a1-77e02975c527",
+  "run_name": "coinrun-ppo-initializer-mitigation-orthogonal_gain1",
+  "schema_version": "1.0",
+  "source_commit": "855981088b3f5674ff1c7f05ef5da829fc4c0509",
+  "state": "COMPLETED",
+  "validation": []
+}
