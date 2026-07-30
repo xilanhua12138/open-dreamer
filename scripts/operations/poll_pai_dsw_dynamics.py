@@ -42,6 +42,13 @@ REMOTE_RUNNER = (
 REMOTE_RUNNER_SHA256 = (
     "80258b1a02125ef02b0104b7837e626c32db00cc240f2305f115c3f0195abc18"
 )
+REMOTE_DEMO_ROOT = "/mnt/workspace/open-dreamer-dynamics-live-demo"
+REMOTE_DEMO_COMMIT = "369907703807021ee6c2450d052a0ea78eb79400"
+REMOTE_DYNAMICS_PYTHON = (
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/.venv/bin/python"
+)
+REMOTE_EVAL_DATA = f"{REMOTE_DATA_ROOT}/eval-final-policy"
+LOCAL_DEMO_URL = "http://127.0.0.1:7860"
 
 SHUTDOWN_12H_MS = 12 * 60 * 60 * 1000
 SHUTDOWN_8H_MS = 8 * 60 * 60 * 1000
@@ -302,6 +309,128 @@ class Poller:
             sts_expiration=profile.get("sts_expiration"),
         )
 
+    def validate_local_demo(self, *, perform_step: bool) -> dict[str, object] | None:
+        health_result = self.run_command(
+            [
+                "curl",
+                "-fsS",
+                "--max-time",
+                "10",
+                f"{LOCAL_DEMO_URL}/health",
+            ],
+            allow_failure=True,
+        )
+        if health_result.returncode != 0:
+            return None
+        try:
+            health = json.loads(health_result.stdout)
+        except json.JSONDecodeError:
+            return None
+        if health.get("ok") is not True or not health.get("model"):
+            return None
+
+        result: dict[str, object] = {
+            "model": str(health["model"]),
+            "health_ok": True,
+        }
+        if perform_step:
+            step_result = self.run_command(
+                [
+                    "curl",
+                    "-fsS",
+                    "--max-time",
+                    "90",
+                    "-H",
+                    "Content-Type: application/json",
+                    "-d",
+                    '{"action":4}',
+                    f"{LOCAL_DEMO_URL}/api/step",
+                ],
+                allow_failure=True,
+                timeout_seconds=95,
+            )
+            if step_result.returncode != 0:
+                return None
+            try:
+                step = json.loads(step_result.stdout)
+            except json.JSONDecodeError:
+                return None
+            frame = step.get("frame")
+            if (
+                step.get("action_id") != 4
+                or not isinstance(step.get("step"), int)
+                or not isinstance(frame, str)
+                or not frame.startswith("data:image/png;base64,")
+            ):
+                return None
+            result.update(
+                {
+                    "step": int(step["step"]),
+                    "step_action_id": int(step["action_id"]),
+                    "latency_ms": step.get("latency_ms"),
+                }
+            )
+        return result
+
+    def ensure_local_demo_tunnel(self) -> str:
+        ready_path = self.config.state_dir / "LIVE_DEMO_READY.json"
+        existing_ready = ready_path.is_file()
+        validation = self.validate_local_demo(perform_step=not existing_ready)
+        if validation is None:
+            port_check = self.run_command(
+                [
+                    "/usr/sbin/lsof",
+                    "-nP",
+                    "-iTCP:7860",
+                    "-sTCP:LISTEN",
+                ],
+                allow_failure=True,
+            )
+            if port_check.returncode == 0:
+                raise PollerError(
+                    "local port 7860 is occupied but demo health validation failed"
+                )
+            self.run_command(
+                [
+                    "ssh",
+                    "-f",
+                    "-N",
+                    "-o",
+                    "BatchMode=yes",
+                    "-o",
+                    "ExitOnForwardFailure=yes",
+                    "-L",
+                    "7860:127.0.0.1:7860",
+                    SSH_ALIAS,
+                ],
+                timeout_seconds=30,
+            )
+            for _ in range(12):
+                self.sleeper(5)
+                validation = self.validate_local_demo(perform_step=True)
+                if validation is not None:
+                    break
+        if validation is None:
+            raise PollerError("local demo tunnel did not pass health and step checks")
+
+        if not existing_ready:
+            payload = {
+                "schema_version": "1.0",
+                "verified_at": datetime.now(timezone.utc).isoformat(),
+                "url": LOCAL_DEMO_URL,
+                **validation,
+            }
+            temp_path = ready_path.with_suffix(".json.tmp")
+            temp_path.write_text(
+                json.dumps(payload, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            temp_path.replace(ready_path)
+            self.emit("local_demo_verified", **validation)
+        else:
+            self.emit("local_demo_health_retained", model=validation["model"])
+        return "demo_ready"
+
     def remote_preflight_and_launch(self) -> str:
         self.refresh_proxyclient_credentials()
         result = self.run_command(
@@ -352,6 +481,16 @@ class Poller:
         if marker.startswith("DYNAMICS_ALREADY_COMPLETE"):
             self.emit("dynamics_already_complete", detail=marker)
             return "complete"
+        if marker.startswith("DYNAMICS_COMPLETE_DEMO_STARTED"):
+            self.emit("dynamics_complete_demo_started", detail=marker)
+            self.set_shutdown_timer(SHUTDOWN_12H_MS)
+            return "demo_started"
+        if marker.startswith("DYNAMICS_COMPLETE_DEMO_WARMING"):
+            self.emit("dynamics_complete_demo_warming", detail=marker)
+            return "demo_warming"
+        if marker.startswith("DYNAMICS_COMPLETE_DEMO_READY"):
+            self.emit("dynamics_complete_demo_ready", detail=marker)
+            return self.ensure_local_demo_tunnel()
         raise PollerError(f"unrecognized remote marker: {marker}")
 
     def run_cycle(self) -> str:
@@ -400,6 +539,14 @@ DATA_ROOT="{REMOTE_DATA_ROOT}"
 RUNNER="{REMOTE_RUNNER}"
 EXPECTED_HEAD="{REMOTE_COMMIT}"
 EXPECTED_RUNNER_SHA="{REMOTE_RUNNER_SHA256}"
+DEMO_ROOT="{REMOTE_DEMO_ROOT}"
+DEMO_EXPECTED_HEAD="{REMOTE_DEMO_COMMIT}"
+DEMO_PYTHON="{REMOTE_DYNAMICS_PYTHON}"
+DEMO_DATA="{REMOTE_EVAL_DATA}"
+DEMO_PID_FILE="$RUN_ROOT/live-demo.pid"
+DEMO_LOG_FILE="$RUN_ROOT/live-demo.log"
+DEMO_READY_FILE="$RUN_ROOT/LIVE_DEMO_READY.json"
+DEMO_SELECTION="$RUN_ROOT/live-demo-selection.json"
 
 blocked() {{
   printf 'PREFLIGHT_BLOCKED %s\\n' "$1"
@@ -409,7 +556,6 @@ blocked() {{
 test -d "$ROOT/.git" || test -f "$ROOT/.git" || blocked "missing_worktree"
 cd "$ROOT"
 test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD" || blocked "head_mismatch"
-test -z "$(git status --porcelain)" || blocked "dirty_worktree"
 test "$(sha256sum "$RUNNER" | awk '{{print $1}}')" = "$EXPECTED_RUNNER_SHA" ||
   blocked "runner_hash_mismatch"
 test -r experiments/CR-DYN-0008/manifest.json || blocked "missing_manifest_0008"
@@ -422,6 +568,149 @@ test -f "{tokenizer_metadata}" || blocked "missing_tokenizer_checkpoint"
 for checkpoint in {checkpoints}; do
   test -s "$checkpoint" || blocked "missing_ppo_checkpoint:$checkpoint"
 done
+
+start_or_check_demo() {{
+  test -d "$DEMO_ROOT/.git" || test -f "$DEMO_ROOT/.git" ||
+    blocked "missing_demo_worktree"
+  test "$(git -C "$DEMO_ROOT" rev-parse HEAD)" = "$DEMO_EXPECTED_HEAD" ||
+    blocked "demo_head_mismatch"
+  test -z "$(git -C "$DEMO_ROOT" status --porcelain)" ||
+    blocked "dirty_demo_worktree"
+  test -x "$DEMO_PYTHON" || blocked "missing_demo_python"
+  test -s "$DEMO_DATA/metadata.json" || blocked "missing_demo_dataset"
+
+  demo_pid=""
+  if test -f "$DEMO_PID_FILE"; then
+    demo_pid="$(tr -cd '0-9' < "$DEMO_PID_FILE" 2>/dev/null || true)"
+  fi
+  if test -n "$demo_pid" && kill -0 "$demo_pid" 2>/dev/null; then
+    if test -s "$DEMO_READY_FILE"; then
+      model="$(
+        "$DEMO_PYTHON" -c \
+          'import json,sys; print(json.load(open(sys.argv[1]))["model"])' \
+          "$DEMO_READY_FILE"
+      )"
+      printf 'DYNAMICS_COMPLETE_DEMO_READY model=%s pid=%s\\n' \
+        "$model" "$demo_pid"
+      return
+    fi
+
+    health_json="$RUN_ROOT/live-demo-health.json"
+    step_json="$RUN_ROOT/live-demo-step.json"
+    if curl -fsS --max-time 15 \
+         http://127.0.0.1:7860/health >"$health_json" &&
+       curl -fsS --max-time 90 \
+         -H 'Content-Type: application/json' \
+         -d '{{"action":4}}' \
+         http://127.0.0.1:7860/api/step >"$step_json" &&
+       "$DEMO_PYTHON" - "$health_json" "$step_json" "$DEMO_READY_FILE" <<'PY'
+import json
+import sys
+from datetime import datetime, timezone
+
+health = json.load(open(sys.argv[1], encoding="utf-8"))
+step = json.load(open(sys.argv[2], encoding="utf-8"))
+frame = step.get("frame")
+assert health.get("ok") is True
+assert health.get("model")
+assert step.get("action_id") == 4
+assert isinstance(step.get("step"), int)
+assert isinstance(frame, str) and frame.startswith("data:image/png;base64,")
+payload = {{
+    "schema_version": "1.0",
+    "verified_at": datetime.now(timezone.utc).isoformat(),
+    "model": health["model"],
+    "step": step["step"],
+    "step_action_id": step["action_id"],
+    "latency_ms": step.get("latency_ms"),
+}}
+with open(sys.argv[3] + ".tmp", "w", encoding="utf-8") as stream:
+    json.dump(payload, stream, indent=2, sort_keys=True)
+    stream.write("\\n")
+import os
+os.replace(sys.argv[3] + ".tmp", sys.argv[3])
+PY
+    then
+      model="$(
+        "$DEMO_PYTHON" -c \
+          'import json,sys; print(json.load(open(sys.argv[1]))["model"])' \
+          "$DEMO_READY_FILE"
+      )"
+      printf 'DYNAMICS_COMPLETE_DEMO_READY model=%s pid=%s\\n' \
+        "$model" "$demo_pid"
+    else
+      printf 'DYNAMICS_COMPLETE_DEMO_WARMING pid=%s\\n' "$demo_pid"
+    fi
+    return
+  fi
+  test ! -f "$DEMO_PID_FILE" || blocked "stale_demo_pid:$demo_pid"
+
+  "$DEMO_PYTHON" \
+    "$DEMO_ROOT/scripts/experiments/coinrun/select_best_coinrun_checkpoint.py" \
+    --experiment "$RUN_ROOT/scale-ablation" \
+    --output "$DEMO_SELECTION" >/dev/null
+  model="$(
+    "$DEMO_PYTHON" -c \
+      'import json,sys; print(json.load(open(sys.argv[1]))["best"]["name"])' \
+      "$DEMO_SELECTION"
+  )"
+  checkpoint="$(
+    "$DEMO_PYTHON" -c \
+      'import json,sys; print(json.load(open(sys.argv[1]))["best"]["checkpoint"])' \
+      "$DEMO_SELECTION"
+  )"
+  test -d "$checkpoint" || blocked "missing_demo_checkpoint:$checkpoint"
+
+  nohup env \
+    PYTHONPATH="$DEMO_ROOT" \
+    XLA_PYTHON_CLIENT_PREALLOCATE=false \
+    "$DEMO_PYTHON" \
+    "$DEMO_ROOT/scripts/experiments/coinrun/live_coinrun_demo.py" \
+      --checkpoint "$checkpoint" \
+      --dataset "$DEMO_DATA" \
+      --model-name "$model" \
+      --context 16 \
+      --denoise-steps 4 \
+      --host 127.0.0.1 \
+      --port 7860 \
+      >"$DEMO_LOG_FILE" 2>&1 < /dev/null &
+  demo_pid=$!
+  demo_pid_tmp="$DEMO_PID_FILE.tmp.$$"
+  printf '%s\\n' "$demo_pid" >"$demo_pid_tmp"
+  mv "$demo_pid_tmp" "$DEMO_PID_FILE"
+  sleep 3
+  kill -0 "$demo_pid" 2>/dev/null || blocked "demo_died_after_launch"
+  printf 'DYNAMICS_COMPLETE_DEMO_STARTED pid=%s model=%s\\n' \
+    "$demo_pid" "$model"
+}}
+
+mkdir -p "$RUN_ROOT"
+existing_pid=""
+if test -f "$RUN_ROOT/pipeline.pid"; then
+  existing_pid="$(
+    tr -cd '0-9' < "$RUN_ROOT/pipeline.pid" 2>/dev/null || true
+  )"
+  if test -n "$existing_pid" && kill -0 "$existing_pid" 2>/dev/null; then
+    printf 'DYNAMICS_ALREADY_RUNNING pid=%s\\n' "$existing_pid"
+    exit 0
+  fi
+fi
+if test -f "$RUN_ROOT/STATUS" &&
+   grep -q ' COMPLETE CHECKPOINT_MIXTURE_AND_DYNAMICS_SCALE_ABLATIONS$' \
+     "$RUN_ROOT/STATUS"; then
+  unexpected_runtime_dirty_path="$(
+    git status --porcelain |
+      cut -c4- |
+      grep -Ev '^experiments/CR-DYN-000(8|9)/' |
+      head -n 1 || true
+  )"
+  test -z "$unexpected_runtime_dirty_path" ||
+    blocked "unexpected_runtime_dirty_path:$unexpected_runtime_dirty_path"
+  start_or_check_demo
+  exit 0
+fi
+test ! -f "$RUN_ROOT/pipeline.pid" || blocked "stale_pipeline_pid"
+test -z "$(git status --porcelain)" || blocked "dirty_worktree"
 
 gpu_pids="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits 2>/dev/null |
   sed '/^[[:space:]]*$/d' || true)"
@@ -437,21 +726,6 @@ done < <(
   find /mnt/workspace -type f -name pipeline.pid \
     \\( -path '*ppo*' -o -path '*dynamics*' \\) 2>/dev/null
 )
-
-mkdir -p "$RUN_ROOT"
-if test -f "$RUN_ROOT/pipeline.pid"; then
-  existing_pid="$(tr -cd '0-9' < "$RUN_ROOT/pipeline.pid" 2>/dev/null || true)"
-  if test -n "$existing_pid" && kill -0 "$existing_pid" 2>/dev/null; then
-    printf 'DYNAMICS_ALREADY_RUNNING pid=%s\\n' "$existing_pid"
-    exit 0
-  fi
-  blocked "stale_pipeline_pid"
-fi
-if test -f "$RUN_ROOT/STATUS" &&
-   grep -q '^COMPLETE' "$RUN_ROOT/STATUS"; then
-  printf 'DYNAMICS_ALREADY_COMPLETE\\n'
-  exit 0
-fi
 
 nohup env \
   OPEN_DREAMER_ROOT="$ROOT" \

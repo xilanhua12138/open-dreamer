@@ -1,0 +1,1 @@
+{"at":"2026-07-31T01:59:26+08:00","type":"planned","message":"Preregistered the corrected checkpoint browser demo before CR-DYN-0008 produced its first held-out result. The existing five-minute poller will start it only after CR-DYN-0008/0009 complete and release the A10.","evidence":["experiments/CR-DEMO-0002/manifest.json","scripts/operations/poll_pai_dsw_dynamics.py"]}

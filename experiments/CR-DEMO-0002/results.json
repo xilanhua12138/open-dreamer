@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0002",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Queued behind the complete CR-DYN-0008/0009 serial chain.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Runtime readiness, sustained inference and user-perceived controllability are not established before the automatic health and two-step checks complete."
+    ],
+    "decision": [
+      "Start automatically only after the full dynamics pipeline releases the only A10."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": []
+}

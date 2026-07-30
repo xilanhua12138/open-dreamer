@@ -282,6 +282,159 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
             )
         )
 
+    def test_completed_dynamics_starts_demo_and_sets_twelve_hour_timer(self):
+        fake = FakeRunner(
+            [
+                (
+                    "get-instance",
+                    poller_module.CommandResult(
+                        0, instance_payload("Running"), ""
+                    ),
+                ),
+                (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
+                    "ssh",
+                    poller_module.CommandResult(
+                        0,
+                        "DYNAMICS_COMPLETE_DEMO_STARTED "
+                        "pid=777 model=uniform-medium\n",
+                        "",
+                    ),
+                ),
+                (
+                    "delete-instance-shutdown-timer",
+                    poller_module.CommandResult(0, "{}", ""),
+                ),
+                (
+                    "create-instance-shutdown-timer",
+                    ok_json({"Success": True}),
+                ),
+            ]
+        )
+
+        outcome = self.make_poller(fake).run_cycle()
+
+        self.assertEqual(outcome, "demo_started")
+        timer_call = next(
+            call
+            for call in fake.calls
+            if "create-instance-shutdown-timer" in call[0]
+        )
+        self.assertIn(str(poller_module.SHUTDOWN_12H_MS), timer_call[0])
+
+    def test_ready_demo_is_verified_through_local_health_and_real_step(self):
+        fake = FakeRunner(
+            [
+                (
+                    "get-instance",
+                    poller_module.CommandResult(
+                        0, instance_payload("Running"), ""
+                    ),
+                ),
+                (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
+                    "ssh",
+                    poller_module.CommandResult(
+                        0,
+                        "DYNAMICS_COMPLETE_DEMO_READY "
+                        "model=uniform-medium\n",
+                        "",
+                    ),
+                ),
+                (
+                    "/health",
+                    poller_module.CommandResult(
+                        0, '{"ok": true, "model": "uniform-medium"}', ""
+                    ),
+                ),
+                (
+                    "/api/step",
+                    poller_module.CommandResult(
+                        0,
+                        '{"step": 1, "action_id": 4, '
+                        '"frame": "data:image/png;base64,abc"}',
+                        "",
+                    ),
+                ),
+            ]
+        )
+        monitor = self.make_poller(fake)
+
+        outcome = monitor.run_cycle()
+
+        self.assertEqual(outcome, "demo_ready")
+        ready = json.loads(
+            (monitor.config.state_dir / "LIVE_DEMO_READY.json").read_text()
+        )
+        self.assertEqual(ready["model"], "uniform-medium")
+        self.assertEqual(ready["step_action_id"], 4)
+
+    def test_ready_remote_demo_opens_missing_local_tunnel(self):
+        fake = FakeRunner(
+            [
+                (
+                    "get-instance",
+                    poller_module.CommandResult(
+                        0, instance_payload("Running"), ""
+                    ),
+                ),
+                (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
+                    "ssh",
+                    poller_module.CommandResult(
+                        0,
+                        "DYNAMICS_COMPLETE_DEMO_READY "
+                        "model=uniform-medium\n",
+                        "",
+                    ),
+                ),
+                (
+                    "/health",
+                    poller_module.CommandResult(7, "", "connection refused"),
+                ),
+                (
+                    "/usr/sbin/lsof",
+                    poller_module.CommandResult(1, "", ""),
+                ),
+                (
+                    "ssh -f -N",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
+                    "/health",
+                    poller_module.CommandResult(
+                        0, '{"ok": true, "model": "uniform-medium"}', ""
+                    ),
+                ),
+                (
+                    "/api/step",
+                    poller_module.CommandResult(
+                        0,
+                        '{"step": 1, "action_id": 4, '
+                        '"frame": "data:image/png;base64,abc"}',
+                        "",
+                    ),
+                ),
+            ]
+        )
+
+        outcome = self.make_poller(fake).run_cycle()
+
+        self.assertEqual(outcome, "demo_ready")
+        tunnel_call = next(
+            call for call in fake.calls if "-L" in call[0]
+        )
+        self.assertIn("7860:127.0.0.1:7860", tunnel_call[0])
+
     def test_missing_sts_token_blocks_before_proxyclient_or_ssh(self):
         fake = FakeRunner(
             [
@@ -360,6 +513,19 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
         self.assertIn("n16p6m/checkpoints/19999/_CHECKPOINT_METADATA", script)
         self.assertIn('mv "$pid_tmp" "$RUN_ROOT/pipeline.pid"', script)
         self.assertIn("WANDB_MODE=offline", script)
+        self.assertIn("select_best_coinrun_checkpoint.py", script)
+        self.assertIn("live_coinrun_demo.py", script)
+        self.assertIn("DYNAMICS_COMPLETE_DEMO_STARTED", script)
+        self.assertIn("DYNAMICS_COMPLETE_DEMO_READY", script)
+        self.assertLess(
+            script.index("COMPLETE CHECKPOINT_MIXTURE_AND_DYNAMICS_SCALE_ABLATIONS"),
+            script.index("stale_pipeline_pid"),
+        )
+        self.assertLess(
+            script.index("DYNAMICS_ALREADY_RUNNING"),
+            script.index('blocked "dirty_worktree"'),
+        )
+        self.assertIn("unexpected_runtime_dirty_path", script)
 
 
 if __name__ == "__main__":

@@ -22,6 +22,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | blocked | not evaluated | none |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
+| `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | queued | not evaluated | none |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
@@ -70,6 +71,12 @@ select mean-frame PSNR, then mean SSIM, then horizon-16 PSNR.
 mixture. Tiny, small and large train from scratch while the byte-identical
 selected-medium arm is reused. This separates the mixture question from the
 capacity question and keeps both experiments auditable.
+
+`CR-DEMO-0002` is preregistered behind the complete CR-DYN-0008/0009 chain.
+It uses a separate frozen demo worktree, starts only after training releases
+the A10, selects among completed scale checkpoints by held-out mean-frame PSNR
+then SSIM, and requires remote health/step plus a subsequent local-tunnel step.
+User visual acceptance remains a separate final criterion.
 
 The clean remote `CR-DYN-0008/0009` worktree and CPU preflight are ready at
 commit `8711cf8`, but no dynamics process has started. The initial blocker was

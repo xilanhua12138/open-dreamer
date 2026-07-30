@@ -248,7 +248,7 @@
     {
       "name": "context dtype regression unit test",
       "kind": "python",
-      "uri": "tests/test_live_coinrun_demo.py",
+      "uri": "experiments/CR-DEMO-0001/raw/test_live_coinrun_demo.py",
       "retention": "git",
       "sha256": "d1d167fbccde5a54bada64f7b72560a31365eaa3aefda0bf75ee0bccc00ffb39"
     },
