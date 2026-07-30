@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0008",
+  "arm": "final_only-medium",
+  "source_metrics_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/final_only-medium/metrics.json",
+  "source_metrics_sha256": "60c6ada3c7b360272137efa218a7f0254ed4128bc667ee6ee2bfa976d31bf707",
+  "num_videos": 32,
+  "context_frames": 16,
+  "predicted_frames": 16,
+  "mean_video_psnr_db": 16.165150602593123,
+  "mean_frame_psnr_db": 17.073096061747968,
+  "mean_ssim": 0.7134503743891403,
+  "psnr_by_horizon_db": {
+    "1": 22.593901716677472,
+    "3": 20.605716311546818,
+    "8": 18.681996890994178,
+    "16": 17.073096061747968
+  },
+  "ssim_by_horizon": {
+    "1": 0.8267309495434061,
+    "3": 0.7910452492908426,
+    "8": 0.7538030136246154,
+    "16": 0.7134503743891403
+  }
+}

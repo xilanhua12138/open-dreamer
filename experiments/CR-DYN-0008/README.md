@@ -55,10 +55,23 @@ collection advanced through all four PPO checkpoints and the runner entered
 `final_only-medium`; at 02:01:20 the arm was at `3,711/20,000` updates,
 approximately 9.25 steps/s, 99% GPU utilization and 2,344/23,028 MiB.
 
+`final_only-medium` reached its exact terminal state at 02:38:06 with
+20,000 completed updates and last step 19,999. Its fixed 32-video held-out
+evaluation produced 16.165151 dB mean-video PSNR, 17.073096 dB mean-frame
+PSNR and 0.713450 mean SSIM. Horizon 1/3/8/16 PSNR was
+22.593902/20.605716/18.681997/17.073096 dB. The source metric file has SHA256
+`60c6ada3...1bf707`; the run-state file has SHA256
+`4e202149...42b39`.
+
+The runner then entered `uniform-medium`. Its structured run state reached
+11,190/20,000 updates at 03:06:24 while the A10 remained at 99% utilization
+and 2,364/23,028 MiB. PID `929` remains the sole active pipeline.
+
 ## Interpretation
 
-The execution path is healthy enough to continue, but no held-out mixture
-metric exists yet and therefore no mixture or scale conclusion is available.
+The first held-out arm is now a valid baseline, but one arm cannot answer the
+mixture question. No mixture ranking or scale conclusion is available until
+uniform and recency-weighted finish under the same frozen evaluation.
 
 ## Not established
 
