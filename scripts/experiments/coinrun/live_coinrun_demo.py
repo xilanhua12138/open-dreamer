@@ -84,6 +84,10 @@ def append_context_latent(
     return jnp.concatenate([latents_ctx[:, 1:], next_latent], axis=1)
 
 
+def resolve_config_dir(script_path: Path) -> Path:
+    return script_path.resolve().parents[3] / "configs"
+
+
 class CoinRunWorld:
     def __init__(
         self,
@@ -100,7 +104,7 @@ class CoinRunWorld:
         self.seed = seed
         self.lock = threading.Lock()
 
-        config_dir = Path(__file__).resolve().parent / "configs"
+        config_dir = resolve_config_dir(Path(__file__))
         with hydra.initialize_config_dir(version_base=None, config_dir=str(config_dir)):
             self.cfg = hydra.compose(
                 config_name="eval_fvd",
