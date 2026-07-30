@@ -78,6 +78,12 @@ for the same A10 failed at 18:55:21 because sales of that resource were
 temporarily suspended. `CR-DYN-0008` remains blocked for a later monitor cycle;
 no replacement instance or specification is allowed.
 
+The frequent launch poller subsequently obtained `Running` state for the same
+A10 at 22:11 Asia/Shanghai. It did not launch dynamics because the local
+ProxyClient STS credential expired before remote GPU/PID/source preflight.
+Remote training state remains unverified until that temporary credential is
+refreshed; launch ownership remains exclusively with the poller.
+
 ## Creating or closing an experiment
 
 Read the complete rules in `../CLAUDE.md`, copy `./_template`, allocate the next ID, and validate:

@@ -43,6 +43,12 @@ restart request was sent to the same A10; at 18:55:21 Asia/Shanghai the provider
 reported `Sales of this resource are temporarily suspended in the specified
 zone` and the instance returned to `Failed`.
 
+At 22:11 Asia/Shanghai the frequent launch poller observed the same A10 as
+`Running`. Its remote preflight then failed twice with
+`InvalidSecurityToken.Expired` from the local ProxyClient credential. The
+poller therefore did not attempt a dynamics launch. Until that temporary
+credential is refreshed, remote GPU and pipeline state remain unverified.
+
 ## Interpretation
 
 None yet.
@@ -55,7 +61,9 @@ None yet.
 
 ## Decision
 
-Do not repeat start in the same monitor cycle, change specification, or create a
-replacement instance. On a later cycle, start only the same A10 once; after it
-is Running, repeat the full GPU/PID/source/checkpoint preflight immediately
-before launching. No arm may be skipped based on an interim quality result.
+Do not restart the now-Running instance, change specification, create a
+replacement instance or bypass the exclusive poller. Refresh only the expired
+local ProxyClient temporary credential from the existing `open-dreamer` OAuth
+profile. The poller must then repeat the full GPU/PID/source/checkpoint
+preflight before its single launch. No arm may be skipped based on an interim
+quality result.
