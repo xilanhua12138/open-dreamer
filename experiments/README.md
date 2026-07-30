@@ -20,7 +20,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
-| `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | queued | not evaluated | none |
+| `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
 
 ## Important reading of the chain
 

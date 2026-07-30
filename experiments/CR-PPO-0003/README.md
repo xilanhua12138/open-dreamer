@@ -24,7 +24,10 @@ Which individual old-recipe difference, if any, independently reproduces the ear
 
 ### Observed
 
-Not run.
+The clean frozen source `9cb7581` started once on the existing A10 at
+`2026-07-30 16:04:08 Asia/Shanghai`. The serial runner entered the fresh
+`reference` arm with PID `98113`; no previous PPO process or compute
+application was alive before launch.
 
 ### Interpretation
 
@@ -37,4 +40,4 @@ None.
 
 ### Decision
 
-Run all five arms serially. Do not collect trajectories or start dynamics.
+Continue all five arms serially. Do not collect trajectories or start dynamics.
