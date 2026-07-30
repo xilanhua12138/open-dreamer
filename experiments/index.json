@@ -139,9 +139,9 @@
       "experiment_id": "CR-PPO-0003",
       "title": "CoinRun PPO one-factor bug screen",
       "path": "experiments/CR-PPO-0003",
-      "execution_status": "running",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-PPO-0001",
         "CR-PPO-0002"
@@ -151,8 +151,8 @@
       "experiment_id": "CR-PPO-0004",
       "title": "CoinRun PPO historical re-evaluation and all-old combined control",
       "path": "experiments/CR-PPO-0004",
-      "execution_status": "queued",
-      "scientific_status": "not_evaluated",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
       "claim_level": "none",
       "depends_on": [
         "CR-PPO-0001",

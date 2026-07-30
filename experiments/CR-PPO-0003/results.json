@@ -1,36 +1,86 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0003",
-  "record_revision": 3,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 4,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-30T16:04:08+08:00",
-  "ended_at": null,
-  "summary": "Five serial one-factor arms started from the clean frozen source 9cb7581 on the existing A10; the reference arm is running.",
+  "ended_at": "2026-07-30T17:37:20+08:00",
+  "summary": "All five fresh 6.29M-transition arms completed. Orthogonal-sqrt2 backbone initialization was the only single reversion to cross the preregistered collapse threshold.",
   "observations": [
     {
       "at": "2026-07-30T16:04:08+08:00",
-      "stage": "reference",
-      "status": "running",
-      "evidence": "remote://dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1"
+      "stage": "all_arms",
+      "status": "completed",
+      "evidence": "experiments/CR-PPO-0003/raw/comparison.json"
+    },
+    {
+      "at": "2026-07-30T17:37:20+08:00",
+      "stage": "orthogonal_init",
+      "status": "independent_collapse",
+      "mean_return": 5.390625,
+      "success_rate": 0.5390625,
+      "delta_mean_return_vs_reference": -2.34375,
+      "delta_success_rate_vs_reference": -0.234375
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "metric_identity": "6,291,456 transitions; stochastic full-distribution; 256 episodes; seed 4242",
+      "reference": {"mean_return": 7.734375, "success_rate": 0.7734375},
+      "levels500": {"mean_return": 8.359375, "success_rate": 0.8359375},
+      "reward_gamma0999": {"mean_return": 8.359375, "success_rate": 0.8359375},
+      "batch_advantage": {"mean_return": 7.7734375, "success_rate": 0.77734375},
+      "orthogonal_init": {"mean_return": 5.390625, "success_rate": 0.5390625}
+    }
+  ],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "Training 500 levels, reward-normalizer gamma 0.999 and whole-batch advantage normalization did not lower final-256 quality versus the same-run reference.",
+      "Orthogonal-sqrt2 initialization lowered mean return by 2.34375 and success rate by 0.234375 versus reference."
+    ],
+    "interpretation": [
+      "Orthogonal-sqrt2 initialization is an independently dominant early-sample-efficiency factor under this one-seed 6.29M-transition protocol."
+    ],
     "not_established": [
-      "Which individual setting is causal.",
-      "That a weaker hyperparameter is necessarily a software bug."
+      "That initialization alone explains every part of the historical 25.17M degradation.",
+      "That orthogonal initialization is a software implementation bug rather than a weaker training choice for this architecture and budget.",
+      "Multi-seed effect size or long-horizon 25.17M attribution."
     ],
     "decision": [
-      "Run five serial one-factor arms and do not collect trajectories or start dynamics."
+      "Run CR-PPO-0004 to re-evaluate the historical checkpoint under the aligned metric and test all old settings combined before closing attribution.",
+      "Do not collect trajectories or start dynamics."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "Five-arm comparison",
+      "kind": "comparison",
+      "uri": "experiments/CR-PPO-0003/raw/comparison.json",
+      "sha256": "d72de591764752234d924048fc337cd72f25ccac37077afa7ef5cb9089176838"
+    },
+    {
+      "name": "Orthogonal-initialization final validation contact sheet",
+      "kind": "visual",
+      "uri": "local-task://ppo-bug-screen-final/orthogonal_init/final-contact-sheet.png",
+      "sha256": "ea25f6a03bccd0345a89803efacedd53baa315e4f0f27ecf0b14c3ccdf27241c"
+    },
+    {
+      "name": "Final checkpoints for all five arms",
+      "kind": "checkpoints",
+      "uri": "remote://dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1/arms/*/checkpoints/env-steps-006291456.msgpack",
+      "sha256_by_arm": {
+        "reference": "a93839261d5883bbc66f387c4cc7012a49e35cf23eade1a9a39d5c1ec2082876",
+        "levels500": "841b0128bafa28276e6d90e6e92e4fee458183b50f6d716b7b8110e4115affdd",
+        "reward_gamma0999": "7c0d9a0e06d7c2d76a7c8c1e6e918f6c8b280e618f2a6bc1ce19a2191e59ee9f",
+        "batch_advantage": "78c91673402d87e4143df1bdf58b9686e0405d4c106779cb5eccea3cc2bab60b",
+        "orthogonal_init": "b60793aa092ad02820b1a82a92eced6e62e96fad64877067e06192061208390b"
+      }
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -46,6 +96,11 @@
       "revision": 3,
       "at": "2026-07-30T16:04:08+08:00",
       "reason": "Recorded the idempotent start of the five-arm serial run on the existing A10."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-30T17:37:20+08:00",
+      "reason": "Closed all five arms and recorded the preregistered single-factor result."
     }
   ]
 }

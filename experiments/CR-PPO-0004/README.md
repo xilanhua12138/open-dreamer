@@ -24,11 +24,14 @@ historical failure.
 
 ### Observed
 
-Not run.
+Aborted before execution at the user's request. No CR-PPO-0004 process,
+checkpoint re-evaluation or fresh training arm was started.
 
 ### Interpretation
 
-None.
+`CR-PPO-0003` already showed that orthogonal-sqrt2 initialization alone crossed
+the collapse threshold, so a combined old-settings arm had lower information
+value than direct mechanism and mitigation ablations.
 
 ### Not established
 
@@ -38,4 +41,5 @@ None.
 
 ### Decision
 
-Start only after CR-PPO-0003 terminates and this source is frozen.
+Preserve the unrun preregistration and move compute to an initializer mechanism
+and mitigation study.

@@ -42,7 +42,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "31ebeee1830dc14ec58d6c79fb3a0ff2989b189c",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
@@ -52,7 +52,7 @@
       "checkpoint_evaluator": "c6e84087d348a191027bebdcbd21c333648f436be620beb0cf6cde6f33b21cb1",
       "summarizer": "ddc4f62e65ab9fa12b7c3822325f96584bf7620858d1a3ea52827700366f66ce"
     },
-    "source_freeze": "Pending the preregistration commit; no historical same-metric or fresh combined result has been observed."
+    "source_freeze": "The preregistration, evaluator, runner, summarizer and tests were committed and pushed at 31ebeee1830dc14ec58d6c79fb3a0ff2989b189c before either CR-PPO-0004 result."
   },
   "data": {
     "historical_checkpoint": "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/checkpoints/env-steps-006291456.msgpack",

@@ -1,0 +1,37 @@
+{
+  "arms": [
+    {
+      "arm": "reference",
+      "delta_vs_reference_final_256": {"mean_return": 0.0, "success_rate": 0.0},
+      "final_256": {"mean_return": 7.734375, "success_rate": 0.7734375},
+      "periodic_128": {"mean_return": 8.046875, "success_rate": 0.8046875}
+    },
+    {
+      "arm": "levels500",
+      "delta_vs_reference_final_256": {"mean_return": 0.625, "success_rate": 0.0625},
+      "final_256": {"mean_return": 8.359375, "success_rate": 0.8359375},
+      "periodic_128": {"mean_return": 8.28125, "success_rate": 0.828125}
+    },
+    {
+      "arm": "reward_gamma0999",
+      "delta_vs_reference_final_256": {"mean_return": 0.625, "success_rate": 0.0625},
+      "final_256": {"mean_return": 8.359375, "success_rate": 0.8359375},
+      "periodic_128": {"mean_return": 8.4375, "success_rate": 0.84375}
+    },
+    {
+      "arm": "batch_advantage",
+      "delta_vs_reference_final_256": {"mean_return": 0.0390625, "success_rate": 0.00390625},
+      "final_256": {"mean_return": 7.7734375, "success_rate": 0.77734375},
+      "periodic_128": {"mean_return": 7.65625, "success_rate": 0.765625}
+    },
+    {
+      "arm": "orthogonal_init",
+      "delta_vs_reference_final_256": {"mean_return": -2.34375, "success_rate": -0.234375},
+      "final_256": {"mean_return": 5.390625, "success_rate": 0.5390625},
+      "periodic_128": {"mean_return": 5.703125, "success_rate": 0.5703125}
+    }
+  ],
+  "expected_env_steps": 6291456,
+  "experiment_id": "CR-PPO-0003",
+  "schema_version": "1.0"
+}

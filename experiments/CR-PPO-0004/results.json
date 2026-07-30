@@ -1,27 +1,33 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0004",
-  "record_revision": 1,
-  "execution_status": "queued",
-  "scientific_status": "not_evaluated",
+  "record_revision": 3,
+  "execution_status": "aborted",
+  "scientific_status": "inconclusive",
   "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Preregistered before same-metric historical re-evaluation or fresh all-old combined training.",
+  "started_at": "2026-07-30T17:34:00+08:00",
+  "ended_at": "2026-07-30T17:42:00+08:00",
+  "summary": "Aborted before execution at the user's request after CR-PPO-0003 showed orthogonal initialization alone crossed the collapse threshold; no CR-PPO-0004 GPU work ran.",
   "observations": [],
   "comparisons": [],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "No historical re-evaluation or fresh all-old combined process was started.",
+      "CR-PPO-0003 independently isolated orthogonal-sqrt2 initialization before this queued experiment began."
+    ],
+    "interpretation": [
+      "The all-old combined control had lower information value than targeted initializer mechanism and mitigation ablations."
+    ],
     "not_established": [
       "Whether the historical checkpoint is intrinsically poor under the aligned evaluator.",
       "Whether all four old training settings interact to reproduce the collapse.",
       "Whether any observed training difference is a software bug."
     ],
     "decision": [
-      "Wait for CR-PPO-0003, then re-evaluate the historical checkpoint and train one fresh all-old combined arm."
+      "Preserve this preregistration as an unrun negative scheduling decision.",
+      "Move compute to a separately preregistered orthogonal-initialization mechanism and mitigation study."
     ]
   },
   "artifacts": [],
@@ -30,6 +36,16 @@
       "revision": 1,
       "at": "2026-07-30T17:34:00+08:00",
       "reason": "Preregistered the combined-control diagnosis before either new result."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-30T17:39:30+08:00",
+      "reason": "Recorded the pushed clean execution commit before creating the DSW worktree."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T17:42:00+08:00",
+      "reason": "Recorded the user-requested pre-run abort after the single-factor screen isolated orthogonal initialization."
     }
   ]
 }
