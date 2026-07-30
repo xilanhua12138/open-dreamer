@@ -21,6 +21,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
+| `CR-PPO-0004` | Do the old settings collapse only when combined under an identical evaluator? | queued | not evaluated | none |
 
 ## Important reading of the chain
 
@@ -43,6 +44,8 @@ The first four arms are now durably recorded: 0.17M stayed near 12 dB across all
 `CR-PPO-0002` was therefore preregistered before its GPU run. It preserved the 25,165,824-transition budget and architecture widths while aligning 200 training levels, reward-normalizer gamma `0.99`, per-minibatch advantage normalization, Glorot IMPALA backbone initialization and stochastic `num_levels=0` evaluation. The final independent 512-episode evaluation reached `8.671875` mean return and `86.71875%` success, versus the old checkpoint's `4.9609375 / 49.609375%` under the same metric. This supports the combined parity hypothesis but does not identify a single causal bug; one-seed JAX, Procgen-version and framework confounders keep the claim at partial reproduction. No replacement trajectories or dynamics were started.
 
 `CR-PPO-0003` is the preregistered causal screen requested after that result. It repeats the validated recipe to 6,291,456 transitions and then reverts exactly one training factor in each serial arm: 500 levels, reward-normalizer gamma `0.999`, whole-batch advantage normalization or orthogonal initialization. A factor is independently dominant only if final-256 mean return drops at least 1.0 or success rate drops at least 0.10 versus the same-run reference. No arm may collect trajectories or start dynamics.
+
+`CR-PPO-0004` is the required follow-up if those single reverts remain healthy. It first re-evaluates the retained historical 6.29M checkpoint with the same stochastic full-distribution 256-episode protocol, then trains one fresh arm with all four old settings combined. This distinguishes original evaluation bias from a reproducible nonlinear interaction and from another historical source/runtime or run-variance cause.
 
 ## Creating or closing an experiment
 

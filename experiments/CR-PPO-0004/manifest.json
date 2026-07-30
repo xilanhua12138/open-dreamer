@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0004",
+  "retrospective": false,
+  "created_at": "2026-07-30T17:34:00+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO historical re-evaluation and all-old combined control",
+  "kind": "confirmatory",
+  "question": "Does the exact combination of the old CR-PPO-0001 training settings reproduce a policy-quality collapse under the same evaluator, or was the historical low score caused by evaluation identity or another source/runtime difference?",
+  "reason": "The CR-PPO-0003 single-factor arms seen so far do not collapse. A generic interaction explanation is insufficient: the historical 6.29M checkpoint and a fresh all-old combined run must be compared under byte-identical evaluation identity.",
+  "hypothesis": "If the old settings have a nonlinear combined effect, both the historical checkpoint and a fresh all-old combined run will score at least 1.0 mean return or 0.10 success rate below the CR-PPO-0003 reference under the same final-256 evaluator.",
+  "falsification": "Reject a reproducible combined-settings collapse if the fresh all-old combined arm remains within both margins of the reference. If only the historical checkpoint is low, investigate historical source/runtime identity or run variance; if its same-metric re-evaluation is not low, attribute the original gap primarily to evaluation identity.",
+  "baseline_id": "CR-PPO-0003",
+  "depends_on": [
+    "CR-PPO-0001",
+    "CR-PPO-0002",
+    "CR-PPO-0003"
+  ],
+  "controlled_variable": {
+    "name": "checkpoint_or_training_recipe",
+    "values": [
+      "CR-PPO-0003 reference checkpoint",
+      "historical CR-PPO-0001 checkpoint at 6,291,456 transitions",
+      "fresh all-old combined settings at 6,291,456 transitions"
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun easy",
+    "framework": "JAX/Flax/Optax",
+    "procgen": "0.10.7",
+    "training_seed": 0,
+    "evaluation_seed": 4242,
+    "evaluation_episodes": 256,
+    "evaluation_start_level": 0,
+    "evaluation_num_levels": 0,
+    "evaluation_policy": "stochastic",
+    "total_environment_steps": 6291456,
+    "num_envs": 64,
+    "rollout_steps": 256,
+    "num_minibatches": 8,
+    "update_epochs": 3
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/coinrun-ppo-collector",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_ppo_combined_control.sh",
+    "runner_sha256": "e5279f5f1b5ecac0ec7081a8d35e0eeefe8b224253db5b2e5d0b8b05310e6634",
+    "component_sha256": {
+      "checkpoint_evaluator": "c6e84087d348a191027bebdcbd21c333648f436be620beb0cf6cde6f33b21cb1",
+      "summarizer": "ddc4f62e65ab9fa12b7c3822325f96584bf7620858d1a3ea52827700366f66ce"
+    },
+    "source_freeze": "Pending the preregistration commit; no historical same-metric or fresh combined result has been observed."
+  },
+  "data": {
+    "historical_checkpoint": "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/checkpoints/env-steps-006291456.msgpack",
+    "reference_metrics": "/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1/arms/reference/final-validation/env-steps-006291456/metrics.json",
+    "dataset_output": null
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "One 256-episode checkpoint re-evaluation plus one fresh 6,291,456-transition arm, expected roughly 20-25 minutes.",
+    "shutdown_policy": "Reuse the same bounded A10 only after CR-PPO-0003 terminates; no concurrent GPU training."
+  },
+  "protocol": {
+    "historical_checkpoint_evaluation": {
+      "episodes": 256,
+      "envs": 16,
+      "start_level": 0,
+      "num_levels": 0,
+      "policy": "stochastic",
+      "seed": 4242,
+      "max_vector_steps": 40000
+    },
+    "fresh_all_old_combined": {
+      "from_scratch": true,
+      "train_num_levels": 500,
+      "reward_normalization_gamma": 0.999,
+      "advantage_normalization": "batch",
+      "backbone_kernel_init": "orthogonal_sqrt2",
+      "total_environment_steps": 6291456
+    },
+    "downstream_scope": {
+      "collect_trajectories": false,
+      "train_dynamics": false,
+      "behavior_cloning": false
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Historical, reference and fresh combined metrics all match 6,291,456 transitions and the same stochastic full-distribution 256-episode evaluation identity."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Call a collapse only when mean return is at least 1.0 lower or success rate at least 0.10 lower than the CR-PPO-0003 reference."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Do not call settings a software bug unless a code or runtime contract violation is independently demonstrated."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No trajectory collection or dynamics training starts."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-ppo-combined-control/logs/coinrun-ppo-combined-control-v1/historical-old-checkpoint-eval/metrics.json",
+    "/mnt/workspace/open-dreamer-ppo-combined-control/logs/coinrun-ppo-combined-control-v1/fresh-all-old-combined/final-validation/env-steps-006291456/metrics.json",
+    "/mnt/workspace/open-dreamer-ppo-combined-control/logs/coinrun-ppo-combined-control-v1/comparison.json"
+  ]
+}

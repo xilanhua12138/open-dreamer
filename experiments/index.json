@@ -146,6 +146,19 @@
         "CR-PPO-0001",
         "CR-PPO-0002"
       ]
+    },
+    {
+      "experiment_id": "CR-PPO-0004",
+      "title": "CoinRun PPO historical re-evaluation and all-old combined control",
+      "path": "experiments/CR-PPO-0004",
+      "execution_status": "queued",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-PPO-0001",
+        "CR-PPO-0002",
+        "CR-PPO-0003"
+      ]
     }
   ]
 }
