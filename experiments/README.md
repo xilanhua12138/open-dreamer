@@ -83,9 +83,11 @@ The clean remote `CR-DYN-0008/0009` execution source remains frozen at commit
 the exclusive poller launched exactly one serial pipeline as PID `929` at
 01:48:23 on 2026-07-31 and set a 12-hour shutdown timer. `final_only-medium`
 completed its exact 20k budget and scored 17.073096 dB mean-frame PSNR with
-0.713450 mean SSIM on 32 held-out videos. `uniform-medium` then reached
-11,190/20,000 updates. The first metric is a baseline only; the frozen mixture
-ranking still awaits uniform and recency-weighted completion.
+0.713450 mean SSIM on 32 held-out videos. `uniform-medium` also completed 20k,
+scoring 16.567942 dB and 0.697699 on the same evaluation. Final-only therefore
+provisionally leads uniform by 0.505154 dB and 0.015751 SSIM.
+`recency_weighted-medium` then reached 16,654/20,000 updates. The frozen
+mixture ranking still awaits that third arm.
 
 Launch and monitoring ownership remains exclusively with the five-minute
 poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes

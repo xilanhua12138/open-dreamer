@@ -67,11 +67,22 @@ The runner then entered `uniform-medium`. Its structured run state reached
 11,190/20,000 updates at 03:06:24 while the A10 remained at 99% utilization
 and 2,364/23,028 MiB. PID `929` remains the sole active pipeline.
 
+`uniform-medium` subsequently completed its exact 20,000-update budget at
+03:26:16. Its aligned 32-video held-out evaluation produced 15.627570 dB
+mean-video PSNR, 16.567942 dB mean-frame PSNR and 0.697699 mean SSIM.
+Horizon 1/3/8/16 PSNR was
+21.918747/19.861178/17.937733/16.567942 dB. Final-only provisionally leads
+uniform by 0.505154 dB mean-frame PSNR and 0.015751 mean SSIM.
+
+The runner then entered `recency_weighted-medium`; at 04:05:48 its structured
+state was 16,654/20,000 updates. PID `929` remained alive and the A10 reported
+99% utilization with 2,370/23,028 MiB allocated.
+
 ## Interpretation
 
-The first held-out arm is now a valid baseline, but one arm cannot answer the
-mixture question. No mixture ranking or scale conclusion is available until
-uniform and recency-weighted finish under the same frozen evaluation.
+Two held-out arms are now valid and final-only is ahead of uniform on every
+frozen selection key. This is descriptive only: the experiment still cannot
+select a mixture or begin the scale sweep until recency-weighted completes.
 
 ## Not established
 

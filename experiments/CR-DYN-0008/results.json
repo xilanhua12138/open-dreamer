@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0008",
-  "record_revision": 6,
+  "record_revision": 7,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T01:48:23+08:00",
   "ended_at": null,
-  "summary": "The frozen serial pipeline is healthy as PID 929. The final_only-medium arm completed exactly 20,000 updates and its 32-video held-out evaluation scored 17.0731 dB mean-frame PSNR, 0.71345 mean SSIM and 17.0731 dB horizon-16 PSNR. The uniform-medium arm then started and reached 11,190/20,000 updates.",
+  "summary": "The frozen serial pipeline is healthy as PID 929. Both final_only-medium and uniform-medium completed exactly 20,000 updates and their aligned 32-video held-out evaluations. Final-only currently leads uniform by 0.5052 dB mean-frame PSNR and 0.01575 mean SSIM, while recency_weighted-medium has reached 16,654/20,000 updates. No mixture is selected before the third arm completes.",
   "observations": [
     {
       "type": "remote_preflight",
@@ -97,9 +97,48 @@
       "gpu_utilization_percent": 99,
       "gpu_memory_used_mib": 2364,
       "gpu_memory_total_mib": 23028
+    },
+    {
+      "type": "arm_completed",
+      "at": "2026-07-31T03:26:16+08:00",
+      "arm": "uniform-medium",
+      "completed_updates": 20000,
+      "last_step": 19999,
+      "num_held_out_videos": 32,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "mean_video_psnr_db": 15.627570213031465,
+      "mean_frame_psnr_db": 16.567942384109152,
+      "mean_ssim": 0.6976992046029975,
+      "horizon_16_psnr_db": 16.567942384109152,
+      "metrics_sha256": "ea5d3fc14ce1a7bca14fc066f0dce32a7388f8cd48810f31ef8ee6d1dece8fd7",
+      "run_state_sha256": "01531062a46cebbaf25d66f5f1f70b4fe49f7dfed871b9d46ac53bb4c999bae4",
+      "config_sha256": "4c75e01ad75ae9545406e0833adc232d9b6cb0c5f4d9066409d6f6220b313e82",
+      "overrides_sha256": "bc44b0837f5abd893b38e8ea9b8fc1ee10601d1880b253252e9ea1efa03532c6"
+    },
+    {
+      "type": "training_progress",
+      "at": "2026-07-31T04:05:48+08:00",
+      "active_arm": "recency_weighted-medium",
+      "completed_updates": 16654,
+      "max_updates": 20000,
+      "gpu_utilization_percent": 99,
+      "gpu_memory_used_mib": 2370,
+      "gpu_memory_total_mib": 23028
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "name": "provisional final_only versus uniform",
+      "status": "descriptive_only_until_all_three_arms_complete",
+      "baseline": "uniform-medium",
+      "candidate": "final_only-medium",
+      "delta_mean_video_psnr_db": 0.537580389561658,
+      "delta_mean_frame_psnr_db": 0.505153677638816,
+      "delta_mean_ssim": 0.0157511697861428,
+      "delta_horizon_16_psnr_db": 0.505153677638816
+    }
+  ],
   "deviations": [],
   "failures": [],
   "conclusion": {
@@ -107,7 +146,9 @@
       "The single frozen pipeline launched as PID 929 after the same A10 reached Running and the temporary ProxyClient credential was refreshed.",
       "All four PPO-checkpoint source pools were collected far enough for the runner to enter final_only-medium training.",
       "The final_only-medium arm completed exactly 20,000 updates and its 32-video held-out evaluation scored 17.073096 dB mean-frame PSNR, 0.713450 mean SSIM and 17.073096 dB horizon-16 PSNR.",
-      "The serial runner then entered uniform-medium; its structured run state reached 11,190/20,000 updates with 99% GPU utilization."
+      "The uniform-medium arm completed exactly 20,000 updates and scored 16.567942 dB mean-frame PSNR, 0.697699 mean SSIM and 16.567942 dB horizon-16 PSNR on the aligned 32-video evaluation.",
+      "Final-only provisionally exceeds uniform by 0.505154 dB mean-frame PSNR and 0.015751 mean SSIM, but the frozen selection cannot run before recency-weighted completes.",
+      "The serial runner entered recency_weighted-medium and its structured run state reached 16,654/20,000 updates with 99% GPU utilization."
     ],
     "interpretation": [],
     "not_established": [
@@ -170,6 +211,54 @@
       "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/final_only-medium/ema_shortcut/pred_000000.mp4",
       "retention": "local task root and DSW persistent storage",
       "sha256": "98c3ab3fd3f557b8a97f971088dbe541b0cb76a15466fbb296d7eed1155cca2b"
+    },
+    {
+      "name": "uniform-medium held-out summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/uniform-medium-eval-summary.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/metrics.json",
+      "retention": "git summary and DSW persistent storage",
+      "source_sha256": "ea5d3fc14ce1a7bca14fc066f0dce32a7388f8cd48810f31ef8ee6d1dece8fd7"
+    },
+    {
+      "name": "uniform-medium run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/uniform-medium-run-state.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/runs/uniform-medium/run-state.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "01531062a46cebbaf25d66f5f1f70b4fe49f7dfed871b9d46ac53bb4c999bae4"
+    },
+    {
+      "name": "uniform-medium Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0008/raw/uniform-medium-overrides.yaml",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/runs/uniform-medium/.hydra/overrides.yaml",
+      "retention": "git and DSW persistent storage",
+      "sha256": "bc44b0837f5abd893b38e8ea9b8fc1ee10601d1880b253252e9ea1efa03532c6"
+    },
+    {
+      "name": "uniform-medium original visual 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/uniform-medium/original_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/ema_shortcut/original_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "11f553ceb6fa6d1f267706c2317f13ef8eff580760df24a2cd74f6ac88e6a803"
+    },
+    {
+      "name": "uniform-medium tokenizer reconstruction 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/uniform-medium/gt_decoded_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/ema_shortcut/gt_decoded_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "9c952fcfe77b0cc2914aba5ec273b33fff27f4e57dffa80e9f7c6351d5205dd2"
+    },
+    {
+      "name": "uniform-medium predicted rollout 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/uniform-medium/pred_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/ema_shortcut/pred_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "639b1f82b73ed11b8e51e7bb50a680345dfb027ed1e2b0d8cff8da6d44803ec0"
     }
   ],
   "revision_history": [
@@ -202,6 +291,11 @@
       "revision": 6,
       "at": "2026-07-31T03:06:24+08:00",
       "reason": "Recorded the exact final_only-medium 20k terminal run state, its first held-out metric and visual evidence, and the subsequent uniform-medium progress."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-31T04:05:48+08:00",
+      "reason": "Recorded uniform-medium terminal metrics and visual evidence, the provisional two-arm delta, and recency_weighted-medium structured progress without selecting early."
     }
   ]
 }
