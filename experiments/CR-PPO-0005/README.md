@@ -88,11 +88,37 @@ evaluation protocol:
 
 Unit-gain orthogonal initialization recovered `53.3333%` of both retained gaps.
 It is therefore a successful partial mitigation, not a full Glorot recovery.
-The depth-scaled arm is running, and zero-last plus SkipInit remain
-unconditional future arms.
+
+At the user's request, the experiment then stopped. The depth-scaled arm has
+only `302/384` recorded updates and no comparable final evaluation. Zero-last
+and SkipInit never started. They are missing comparisons, not negative results.
+The experiment is therefore execution-aborted but scientifically supports the
+bounded internal claim that unqualified orthogonal-√2 initialization caused
+severe initial amplification in this encoder and that gain 1 partially
+recovered policy quality.
 
 Automatic machine evidence currently writes experiment-ledger-only files into
 the execution worktree after each stage. Later runtime identities therefore
 report a dirty tree even though no model, trainer, runner or test file changed;
 the generated patch is retained and this infrastructure coupling will be
 separated after the scientific run.
+
+## Claim boundary after stopping
+
+Observed:
+
+- Orthogonal √2 amplified encoder RMS `26.2468×`, encoder JVP gain `27.5101×`,
+  and synthetic PPO global gradient L2 `776.2791×` versus Glorot.
+- Orthogonal gain 1 reduced those ratios to `1.5875×`, `1.6523×`, and
+  `2.3879×`.
+- Under the frozen one-seed CoinRun protocol, gain 1 passed both preregistered
+  half-gap recovery thresholds.
+
+Not established:
+
+- full parity with Glorot;
+- multi-seed or multi-environment generality;
+- the final-policy effect of depth scaling, zero-last, or SkipInit.
+
+Technical note:
+[Orthogonal √2 is not an architecture-independent default](../../docs/ppo-orthogonal-initialization-note.md).

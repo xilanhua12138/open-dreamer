@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 8,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 9,
+  "execution_status": "aborted",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-30T18:00:15+08:00",
-  "ended_at": null,
-  "summary": "The recorded probe supports the amplification mechanism. Orthogonal gain 1 completed at 6.640625 mean return and 66.40625% success, passing both preregistered half-gap recovery thresholds; the depth-scaled arm is running.",
+  "ended_at": "2026-07-30T18:53:16+08:00",
+  "summary": "The user stopped the experiment after the mechanism probe and orthogonal-gain-1 arm provided sufficient evidence. Orthogonal sqrt(2) amplified signals and gradients dramatically; gain 1 passed both partial-recovery thresholds. Depth scaling stopped at 302/384 updates without final evaluation, and zero-last plus SkipInit never started.",
   "observations": [
     {
       "type": "pipeline_start",
@@ -99,6 +99,18 @@
       "mean_gap_recovery_fraction": 0.5333333333333333,
       "success_gap_recovery_fraction": 0.5333333333333333,
       "checkpoint_sha256": "384cd0aa936b5af990961248f7e831c2de3adf63ef0dc5098710710aa7c27447"
+    },
+    {
+      "type": "user_requested_stop",
+      "at": "2026-07-30T18:53:16+08:00",
+      "active_arm": "orthogonal_sqrt2_depth_scaled",
+      "last_recorded_completed_updates": 302,
+      "max_updates": 384,
+      "has_final_evaluation": false,
+      "remaining_arms_not_started": [
+        "orthogonal_sqrt2_zero_last",
+        "orthogonal_sqrt2_skipinit"
+      ]
     }
   ],
   "comparisons": [],
@@ -145,14 +157,14 @@
       "Orthogonal gain 1 recovered 53.3333% of both retained gaps and passed the preregistered midpoint thresholds, but remained below the Glorot anchor; it is a partial mitigation rather than a complete recovery."
     ],
     "not_established": [
-      "Whether orthogonal matrices or sqrt(2) gain drive the observed gap.",
-      "Whether residual identity-start mitigations improve CoinRun sample efficiency.",
+      "Whether gain 1 fully matches Glorot across multiple training seeds.",
+      "Whether depth scaling, zero-last or SkipInit improve final CoinRun sample efficiency because those arms did not obtain comparable final evaluations.",
       "Whether any result generalizes across seeds, games, encoders or PPO implementations."
     ],
     "decision": [
-      "Freeze source before starting the existing A10.",
-      "Run all four mitigation arms regardless of the zero-update probe result.",
-      "Do not collect trajectories or start dynamics."
+      "Stop the remaining mitigation arms at the user's request and retain the incomplete-arm evidence.",
+      "Use the completed probe plus gain-1 result only as an internal, architecture-specific conclusion.",
+      "Do not present unrun zero-last or SkipInit arms as negative results."
     ]
   },
   "artifacts": [
@@ -203,6 +215,24 @@
       "uri": "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/arms/orthogonal_gain1/checkpoints/env-steps-006291456.msgpack",
       "sha256": "384cd0aa936b5af990961248f7e831c2de3adf63ef0dc5098710710aa7c27447",
       "retention": "remote_persistent_disk"
+    },
+    {
+      "name": "user cancellation marker",
+      "kind": "json",
+      "uri": "experiments/CR-PPO-0005/raw/USER_CANCELLED.json",
+      "sha256": "27e3de2def50a80494c567cc72512dd4cd7219a1b325d04509caf494ba7227ec"
+    },
+    {
+      "name": "depth-scaled partial metrics",
+      "kind": "jsonl",
+      "uri": "experiments/CR-PPO-0005/raw/arms/orthogonal_sqrt2_depth_scaled-partial/metrics.jsonl",
+      "sha256": "b83eae188dbe054be2a7d40c76e393203c7f6ee3b3db65ccbdbb02dc7e1e2b68"
+    },
+    {
+      "name": "depth-scaled interrupted run state",
+      "kind": "json",
+      "uri": "experiments/CR-PPO-0005/raw/arms/orthogonal_sqrt2_depth_scaled-partial/run-state.json",
+      "sha256": "7576b2caa21452049d4e27d3560bb3d05cb30c843c1e5aee58f6415d6f9265fe"
     }
   ],
   "revision_history": [
@@ -245,6 +275,11 @@
       "revision": 8,
       "at": "2026-07-30T18:34:29+08:00",
       "reason": "Recorded the orthogonal-gain-1 final 256-episode evaluation, checkpoint and first successful mitigation decision."
+    },
+    {
+      "revision": 9,
+      "at": "2026-07-30T18:53:16+08:00",
+      "reason": "Closed the experiment as user-aborted, preserving the partial depth-scaled arm and explicitly marking two unstarted arms."
     }
   ]
 }

@@ -1,0 +1,150 @@
+{
+  "accelerator": {
+    "available": true,
+    "cuda_toolkit": null,
+    "gpus": [
+      {
+        "driver_version": "550.163.01",
+        "index": 0,
+        "memory_total_mb": 23028,
+        "name": "NVIDIA A10",
+        "uuid": "GPU-2a2cff74-3c28-6d1a-9754-54e49fa297ed"
+      }
+    ],
+    "jax_devices": [
+      {
+        "device_kind": "NVIDIA A10",
+        "id": 0,
+        "platform": "gpu",
+        "process_index": 0
+      }
+    ]
+  },
+  "attempt_id": "0b11ae81-f909-402a-9846-734df62496f3",
+  "collected_at": "2026-07-30T10:34:35.905777+00:00",
+  "command": [
+    "scripts/experiments/coinrun/train_coinrun_ppo.py",
+    "--run-dir",
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/arms/orthogonal_sqrt2_depth_scaled",
+    "--run-name",
+    "coinrun-ppo-initializer-mitigation-orthogonal_sqrt2_depth_scaled",
+    "--experiment-id",
+    "CR-PPO-0005",
+    "--total-env-steps",
+    "6291456",
+    "--num-envs",
+    "64",
+    "--rollout-steps",
+    "256",
+    "--num-minibatches",
+    "8",
+    "--update-epochs",
+    "3",
+    "--train-start-level",
+    "0",
+    "--train-num-levels",
+    "200",
+    "--reward-normalization-gamma",
+    "0.99",
+    "--advantage-normalization",
+    "minibatch",
+    "--backbone-kernel-init",
+    "orthogonal_sqrt2",
+    "--residual-branch-scale",
+    "0.4082482904638631",
+    "--residual-last-kernel-init",
+    "same",
+    "--eval-start-level",
+    "0",
+    "--eval-num-levels",
+    "0",
+    "--evaluation-policy",
+    "stochastic",
+    "--checkpoint-every-env-steps",
+    "6291456",
+    "--evaluation-every-env-steps",
+    "6291456",
+    "--evaluation-episodes",
+    "128",
+    "--final-evaluation-episodes",
+    "256",
+    "--evaluation-envs",
+    "16",
+    "--evaluation-seed",
+    "4242",
+    "--evaluation-max-vector-steps",
+    "40000",
+    "--visual-episodes",
+    "2",
+    "--visual-max-frames",
+    "256",
+    "--wandb-mode",
+    "offline",
+    "--wandb-group",
+    "CR-PPO-0005"
+  ],
+  "config_sha256": "ddf155b360dbbe0c3cd0c945e79530bd66b9163696606633ab6de6f8e5ac207f",
+  "dependency_files": {
+    "pyproject.toml": "81e4db793c6d682cd1ff7f9c84fbcc78cd3f790660ae08edb37ad180e76cac59",
+    "uv.lock": "795e24f0e9b1ec29a41064721afd40910af73ff0233f4c4114eecd773281f066"
+  },
+  "environment": {
+    "proxy_configured": false,
+    "values": {
+      "WANDB_MODE": "offline",
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+    }
+  },
+  "packages": {
+    "array-record": "0.8.1",
+    "flax": "0.10.2",
+    "grain": "0.2.11",
+    "gym3": "0.3.3",
+    "hydra-core": null,
+    "imageio": "2.36.1",
+    "jax": "0.4.35",
+    "jaxlib": "0.4.34",
+    "jaxlpips": null,
+    "numpy": "2.2.6",
+    "optax": "0.2.4",
+    "orbax-checkpoint": "0.11.5",
+    "procgen": "0.10.7",
+    "wandb": "0.19.7"
+  },
+  "run_id": "ded083b9-1959-42b3-a713-2ea2a3e69f39",
+  "runtime": {
+    "hostname": "dsw-825047-d54ff65d5-dm98v",
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "platform": "Linux-5.10.134-18.0.11.lifsea8.x86_64-x86_64-with-glibc2.35",
+    "python_executable": "/mnt/workspace/open-dreamer-ppo-collector/.venv-ppo/bin/python",
+    "python_version": "3.10.12"
+  },
+  "schema_version": "1.0",
+  "source": {
+    "available": true,
+    "branch": null,
+    "commit": "855981088b3f5674ff1c7f05ef5da829fc4c0509",
+    "dirty": true,
+    "patch": {
+      "bytes": 13566,
+      "sha256": "2891b725cc964b0ed5f840bb3971c269dba8b4dc85a521f9f59d696e64564e26",
+      "uri": "runtime-identities/0b11ae81-f909-402a-9846-734df62496f3.source.patch"
+    },
+    "repository_root": "/mnt/workspace/open-dreamer-ppo-initializer-mitigation-fix1",
+    "reproducible_from_recorded_source": false,
+    "source_fingerprint_sha256": "e8b631d3783d74a4b12e5b741b549c8a8c903e648d978848ac124e0b16f40859",
+    "untracked_files": [
+      {
+        "bytes": 1761,
+        "path": "experiments/CR-PPO-0005/raw/coinrun-ppo-initialization-probe-run-evidence.json",
+        "sha256": "d8273665bdd054876252c2c96f100d2c7e35719c352e43a2e827520399183671"
+      },
+      {
+        "bytes": 3196,
+        "path": "experiments/CR-PPO-0005/raw/coinrun-ppo-initializer-mitigation-orthogonal_gain1-run-evidence.json",
+        "sha256": "71b622dbb2bccdfabcdfab9369c023bebde2270a435afec3d9280561c62aa10e"
+      }
+    ]
+  }
+}

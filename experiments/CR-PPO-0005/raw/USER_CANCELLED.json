@@ -1,0 +1,10 @@
+{
+  "at": "2026-07-30T18:53:16+08:00",
+  "reason": "user_requested_stop_after_sufficient_initialization_evidence",
+  "active_arm": "orthogonal_sqrt2_depth_scaled",
+  "last_recorded_completed_updates": 302,
+  "remaining_arms_not_started": ["orthogonal_sqrt2_zero_last", "orthogonal_sqrt2_skipinit"],
+  "pipeline_pid": 110225,
+  "pipeline_terminated": true,
+  "scientific_code_changed": false
+}
