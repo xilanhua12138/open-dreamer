@@ -1,0 +1,1 @@
+{"at":"2026-07-30T15:56:00+08:00","type":"planned","experiment_id":"CR-PPO-0003","message":"Preregistered five serial one-factor arms before any result; trajectory collection and dynamics remain prohibited.","evidence":["experiments/CR-PPO-0003/manifest.json","scripts/experiments/coinrun/run_coinrun_ppo_bug_screen.sh"]}

@@ -161,6 +161,27 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         self.assertNotIn("collect_coinrun_ppo_records.py", runner)
         self.assertNotIn("train_dynamics.py", runner)
 
+    def test_bug_screen_changes_exactly_one_recipe_factor_per_arm(
+        self,
+    ) -> None:
+        runner = (
+            ROOT / "scripts/experiments/coinrun/run_coinrun_ppo_bug_screen.sh"
+        ).read_text(encoding="utf-8")
+
+        for expected in (
+            "run_arm reference 200 0.99 minibatch glorot_uniform",
+            "run_arm levels500 500 0.99 minibatch glorot_uniform",
+            "run_arm reward_gamma0999 200 0.999 minibatch glorot_uniform",
+            "run_arm batch_advantage 200 0.99 batch glorot_uniform",
+            "run_arm orthogonal_init 200 0.99 minibatch orthogonal_sqrt2",
+            "--total-env-steps",
+            "--final-evaluation-episodes 256",
+            "CR-PPO-0003",
+        ):
+            self.assertIn(expected, runner)
+        self.assertNotIn("collect_coinrun_ppo_records.py", runner)
+        self.assertNotIn("train_dynamics.py", runner)
+
 
 if __name__ == "__main__":
     unittest.main()
