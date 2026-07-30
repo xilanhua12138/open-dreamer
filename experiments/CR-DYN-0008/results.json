@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0008",
-  "record_revision": 4,
-  "execution_status": "blocked",
+  "record_revision": 5,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-31T01:48:23+08:00",
   "ended_at": null,
-  "summary": "Remote frozen source and CPU preflight are ready. The same A10 later reached Running, but the exclusive launch poller could not complete remote preflight because its local ProxyClient STS credential expired. No dynamics launch was attempted and remote GPU/pipeline state is not yet verified.",
+  "summary": "The exclusive poller refreshed the ProxyClient credential, repeated the frozen preflight and launched the single serial CR-DYN-0008/0009 pipeline as PID 929. Source-pool collection and audits completed; final_only-medium is the first active 20k arm.",
   "observations": [
     {
       "type": "remote_preflight",
@@ -48,13 +48,38 @@
       "remote_gpu_status_verified": false,
       "remote_pipeline_status_verified": false,
       "pipeline_started": false
+    },
+    {
+      "type": "training_started",
+      "at": "2026-07-31T01:48:23+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "pipeline_pid": 929,
+      "remote_head": "8711cf8e4100e614ff8f0e406838b72ef8ca02b4",
+      "runner_sha256": "80258b1a02125ef02b0104b7837e626c32db00cc240f2305f115c3f0195abc18",
+      "shutdown_timer_ms": 43200000,
+      "pipeline_started": true
+    },
+    {
+      "type": "training_progress",
+      "at": "2026-07-31T02:01:20+08:00",
+      "active_arm": "final_only-medium",
+      "completed_updates": 3711,
+      "max_updates": 20000,
+      "steps_per_second": 9.25,
+      "gpu_utilization_percent": 99,
+      "gpu_memory_used_mib": 2344,
+      "gpu_memory_total_mib": 23028
     }
   ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
+    "observed": [
+      "The single frozen pipeline launched as PID 929 after the same A10 reached Running and the temporary ProxyClient credential was refreshed.",
+      "All four PPO-checkpoint source pools were collected far enough for the runner to enter final_only-medium training.",
+      "At 3,711/20,000 updates the first arm was live at approximately 9.25 steps/s with 99% GPU utilization."
+    ],
     "interpretation": [],
     "not_established": [
       "Which PPO-checkpoint mixture best predicts final-policy held-out futures.",
@@ -64,6 +89,8 @@
     "decision": [
       "Refresh only the expired local ProxyClient temporary credential from the existing open-dreamer OAuth profile; do not restart the Running instance, change specification, or create another instance.",
       "Keep launch ownership with ai.open-dreamer.dsw-dynamics-poller. After credential recovery, it must repeat the full GPU/PID/source/checkpoint preflight before the single dynamics launch."
+      ,
+      "Continue the unchanged serial runner through all three mixture arms and the dependent scale sweep; do not skip an arm based on interim metrics."
     ]
   },
   "artifacts": [],
@@ -87,6 +114,11 @@
       "revision": 4,
       "at": "2026-07-30T22:17:09+08:00",
       "reason": "Recorded that the same A10 reached Running but the exclusive poller was blocked before remote preflight by an expired local ProxyClient STS credential."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-31T02:01:20+08:00",
+      "reason": "Recorded the successful single pipeline launch, 12-hour shutdown timer and first final_only-medium training progress after credential recovery."
     }
   ]
 }

@@ -19,7 +19,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
-| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | blocked | not evaluated | none |
+| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | running | not evaluated | none |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | queued | not evaluated | none |
@@ -78,18 +78,16 @@ the A10, selects among completed scale checkpoints by held-out mean-frame PSNR
 then SSIM, and requires remote health/step plus a subsequent local-tunnel step.
 User visual acceptance remains a separate final criterion.
 
-The clean remote `CR-DYN-0008/0009` worktree and CPU preflight are ready at
-commit `8711cf8`, but no dynamics process has started. The initial blocker was
-an active `CR-PPO-0005` process. After PPO stopped, exactly one restart request
-for the same A10 failed at 18:55:21 because sales of that resource were
-temporarily suspended. `CR-DYN-0008` remains blocked for a later monitor cycle;
-no replacement instance or specification is allowed.
+The clean remote `CR-DYN-0008/0009` execution source remains frozen at commit
+`8711cf8`. After the PPO, inventory and temporary ProxyClient blockers cleared,
+the exclusive poller launched exactly one serial pipeline as PID `929` at
+01:48:23 on 2026-07-31 and set a 12-hour shutdown timer. The runner entered the
+first `final_only-medium` 20k arm; no held-out mixture result exists yet.
 
-The frequent launch poller subsequently obtained `Running` state for the same
-A10 at 22:11 Asia/Shanghai. It did not launch dynamics because the local
-ProxyClient STS credential expired before remote GPU/PID/source preflight.
-Remote training state remains unverified until that temporary credential is
-refreshed; launch ownership remains exclusively with the poller.
+Launch and monitoring ownership remains exclusively with the five-minute
+poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes
+temporary ProxyClient credentials without logging secrets, and must not launch
+a duplicate process.
 
 ## Creating or closing an experiment
 

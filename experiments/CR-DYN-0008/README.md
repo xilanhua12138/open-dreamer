@@ -35,8 +35,7 @@ The frozen branch is now checked out cleanly at
 16 targeted tests, Python dependency imports and all four PPO plus 16.6M
 tokenizer checkpoint inputs passed CPU preflight.
 
-No source-pool collection, mixture materialization, dynamics update or
-evaluation has started. The first launch check found `CR-PPO-0005` using
+The first launch check found `CR-PPO-0005` using
 12,600 MiB of the A10 at 97% utilization, so this experiment was correctly
 blocked rather than launched concurrently. After PPO stopped, exactly one
 restart request was sent to the same A10; at 18:55:21 Asia/Shanghai the provider
@@ -49,9 +48,17 @@ At 22:11 Asia/Shanghai the frequent launch poller observed the same A10 as
 poller therefore did not attempt a dynamics launch. Until that temporary
 credential is refreshed, remote GPU and pipeline state remain unverified.
 
+At 01:48:23 on 2026-07-31 the poller refreshed the temporary credential,
+repeated the frozen source/checkpoint/GPU preflight and launched exactly one
+serial pipeline as PID `929`. It set a 12-hour shutdown timer. Source-pool
+collection advanced through all four PPO checkpoints and the runner entered
+`final_only-medium`; at 02:01:20 the arm was at `3,711/20,000` updates,
+approximately 9.25 steps/s, 99% GPU utilization and 2,344/23,028 MiB.
+
 ## Interpretation
 
-None yet.
+The execution path is healthy enough to continue, but no held-out mixture
+metric exists yet and therefore no mixture or scale conclusion is available.
 
 ## Not established
 
@@ -61,9 +68,7 @@ None yet.
 
 ## Decision
 
-Do not restart the now-Running instance, change specification, create a
-replacement instance or bypass the exclusive poller. Refresh only the expired
-local ProxyClient temporary credential from the existing `open-dreamer` OAuth
-profile. The poller must then repeat the full GPU/PID/source/checkpoint
-preflight before its single launch. No arm may be skipped based on an interim
-quality result.
+Continue PID `929` through all three mixture arms. Only the frozen complete-arm
+selection may choose the CR-DYN-0009 corpus; no arm may be skipped based on an
+interim quality result. The five-minute poller must recognize the owned PID and
+must not start a second training process.
