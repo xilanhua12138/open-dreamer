@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0005",
+  "retrospective": false,
+  "created_at": "2026-07-30T17:56:08+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO initializer signal-propagation and mitigation ablation",
+  "kind": "controlled_ablation",
+  "question": "Does orthogonal-sqrt2 initialization harm early CoinRun PPO because it amplifies signals and gradients across the six unnormalized IMPALA residual blocks, and which architecture-aware mitigation restores sample efficiency?",
+  "reason": "CR-PPO-0003 isolated orthogonal-sqrt2 backbone initialization as the only tested one-factor change crossing the preregistered collapse threshold. A combined-old-settings run was cancelled before launch in favor of direct mechanism and mitigation evidence.",
+  "hypothesis": "Relative to Glorot and unit-gain orthogonal initialization, orthogonal-sqrt2 will produce larger late-block branch-to-skip RMS, encoder RMS, encoder JVP gain and synthetic PPO gradient norm before training. Reducing gain, depth-scaling residual branches, zero-initializing each residual branch's final convolution, or using SkipInit will reduce those diagnostics; at least one mitigation will recover at least half of both the retained mean-return and success-rate gaps after 6,291,456 transitions.",
+  "falsification": "Reject the proposed amplification mechanism if orthogonal-sqrt2 does not materially increase the preregistered signal/gradient diagnostics. Reject practical mitigation under this budget if none of the four new arms recovers at least half of both retained final-256 gaps. Treat disagreements between zero-step diagnostics and training outcomes as evidence that signal scale alone is insufficient.",
+  "baseline_id": "CR-PPO-0003",
+  "depends_on": [
+    "CR-PPO-0003"
+  ],
+  "controlled_variable": {
+    "name": "backbone_and_residual_initialization",
+    "values": [
+      "glorot_reference_retained_anchor",
+      "orthogonal_sqrt2_retained_anchor",
+      "orthogonal_gain1",
+      "orthogonal_sqrt2_residual_scale_1_over_sqrt6",
+      "orthogonal_sqrt2_residual_last_kernel_zeros",
+      "orthogonal_sqrt2_skipinit_zero_gate"
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun easy",
+    "framework": "JAX/Flax/Optax",
+    "procgen": "0.10.7",
+    "training_seed": 0,
+    "train_start_level": 0,
+    "train_num_levels": 200,
+    "reward_normalization_gamma": 0.99,
+    "advantage_normalization": "minibatch",
+    "total_environment_steps": 6291456,
+    "num_envs": 64,
+    "rollout_steps": 256,
+    "num_minibatches": 8,
+    "update_epochs": 3,
+    "evaluation_seed": 4242,
+    "evaluation_episodes": 256,
+    "evaluation_start_level": 0,
+    "evaluation_num_levels": 0,
+    "evaluation_policy": "stochastic"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/coinrun-ppo-collector",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_ppo_initializer_mitigation.sh",
+    "runner_sha256": "faa1bdcaad3aa5398ed5ea451b235737c64d8d50abad69dc3776ff03394f7e83",
+    "component_sha256": {
+      "initialization_probe": "aee18c111c3c285d91fe32513745d04ad6af7cc62136b758e6452455487fdbe6",
+      "training_entrypoint": "b6a6e1208f3fc2be6ec55bf093967a1cdebea28c4dc216ea174ac3cbc7eac852",
+      "summarizer": "08bbe96edf033437b3b4223387b31b6aeb64b5d995e1d8da6bca64bda8e78c62"
+    },
+    "source_freeze": "Pending a clean preregistration and implementation commit; no CR-PPO-0005 probe or training result has been observed."
+  },
+  "data": {
+    "probe_observations": "32 observations from eight easy-200 CoinRun environments at vector steps 0 through 3, rand_seed 4242; exact SHA256 is written by the probe before interpretation",
+    "retained_anchor": "experiments/CR-PPO-0003/raw/comparison.json",
+    "dataset_output": null
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "One 16-seed zero-update probe plus four serial 6,291,456-transition arms, expected roughly 80-100 minutes.",
+    "shutdown_policy": "Use only the existing idle A10 with a bounded shutdown timer; never create or change instance specification."
+  },
+  "protocol": {
+    "zero_update_probe": {
+      "initialization_seeds": 16,
+      "observation_seed": 4242,
+      "observation_count": 32,
+      "metrics": [
+        "per-block skip, unscaled branch, scaled branch and output RMS",
+        "per-block branch-to-skip and output-to-skip RMS",
+        "encoder, logits and value scale",
+        "policy entropy",
+        "synthetic PPO gradient norms",
+        "encoder JVP RMS gain"
+      ]
+    },
+    "training_arms": {
+      "orthogonal_gain1": {
+        "backbone_kernel_init": "orthogonal_gain1",
+        "residual_branch_scale": 1.0,
+        "residual_last_kernel_init": "same",
+        "residual_skip_init": false
+      },
+      "orthogonal_sqrt2_depth_scaled": {
+        "backbone_kernel_init": "orthogonal_sqrt2",
+        "residual_branch_scale": 0.4082482904638631,
+        "residual_last_kernel_init": "same",
+        "residual_skip_init": false
+      },
+      "orthogonal_sqrt2_zero_last": {
+        "backbone_kernel_init": "orthogonal_sqrt2",
+        "residual_branch_scale": 1.0,
+        "residual_last_kernel_init": "zeros",
+        "residual_skip_init": false
+      },
+      "orthogonal_sqrt2_skipinit": {
+        "backbone_kernel_init": "orthogonal_sqrt2",
+        "residual_branch_scale": 1.0,
+        "residual_last_kernel_init": "same",
+        "residual_skip_init": true
+      }
+    },
+    "retained_anchors": {
+      "glorot_reference": {
+        "mean_return": 7.734375,
+        "success_rate": 0.7734375
+      },
+      "orthogonal_sqrt2_anchor": {
+        "mean_return": 5.390625,
+        "success_rate": 0.5390625
+      }
+    },
+    "downstream_scope": {
+      "collect_trajectories": false,
+      "train_dynamics": false,
+      "behavior_cloning": false
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All six zero-update configurations use the same observation SHA256 and initialization seeds 0 through 15, and every diagnostic is finite."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Every new training arm finishes exactly 6,291,456 transitions and a separate stochastic full-distribution 256-episode evaluation at seed 4242."
+    },
+    {
+      "id": "SC-3",
+      "rule": "A mitigation recovers the retained gap only if mean return reaches at least 6.5625 and success rate reaches at least 0.65625, which are the midpoints between the orthogonal-sqrt2 and Glorot anchors."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No trajectory collection, behavior cloning or dynamics training starts."
+    },
+    {
+      "id": "SC-5",
+      "rule": "One training seed cannot support a general or publication-level claim; broader work requires a new preregistration."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/probe/initialization-probe.json",
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/arms/*/final-validation/env-steps-006291456/metrics.json",
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/comparison.json",
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/comparison.png"
+  ]
+}

@@ -22,6 +22,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | completed | supports hypothesis | internal result |
 | `CR-PPO-0004` | Do the old settings collapse only when combined under an identical evaluator? | aborted | inconclusive | none |
+| `CR-PPO-0005` | Does orthogonal √2 amplify an unnormalized residual encoder, and which mitigation recovers PPO? | queued | not evaluated | none |
 
 ## Important reading of the chain
 
@@ -46,6 +47,8 @@ The first four arms are now durably recorded: 0.17M stayed near 12 dB across all
 `CR-PPO-0003` is the preregistered causal screen requested after that result. It repeats the validated recipe to 6,291,456 transitions and then reverts exactly one training factor in each serial arm: 500 levels, reward-normalizer gamma `0.999`, whole-batch advantage normalization or orthogonal initialization. A factor is independently dominant only if final-256 mean return drops at least 1.0 or success rate drops at least 0.10 versus the same-run reference. No arm may collect trajectories or start dynamics.
 
 `CR-PPO-0004` was preregistered as the required follow-up if all single reverts remained healthy, but the final `orthogonal_init` arm independently crossed the collapse threshold. The user therefore cancelled the combined run before execution; it is retained as an aborted scheduling decision, and no GPU time or new result was produced.
+
+`CR-PPO-0005` replaces that lower-information combined control with a mechanism study. It first measures per-block residual/skip scale, encoder JVP gain and synthetic PPO gradient norms over 16 initialization seeds, then trains four targeted mitigations to the same 6.29M-transition budget. It reuses the byte-retained `CR-PPO-0003` Glorot and orthogonal-√2 anchors, but all new arms still run unconditionally; probe metrics are not a quality gate.
 
 ## Creating or closing an experiment
 

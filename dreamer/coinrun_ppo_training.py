@@ -36,6 +36,9 @@ class PPOTrainConfig:
     reward_normalization_gamma: float = 0.99
     advantage_normalization: str = "minibatch"
     backbone_kernel_init: str = "glorot_uniform"
+    residual_branch_scale: float = 1.0
+    residual_last_kernel_init: str = "same"
+    residual_skip_init: bool = False
     seed: int = 0
     start_level: int = 0
     num_levels: int = 200
@@ -119,11 +122,26 @@ class PPOTrainConfig:
             )
         if self.backbone_kernel_init not in {
             "orthogonal_sqrt2",
+            "orthogonal_gain1",
             "glorot_uniform",
         }:
             raise ValueError(
-                "backbone_kernel_init must be 'orthogonal_sqrt2' or "
-                f"'glorot_uniform', got {self.backbone_kernel_init!r}"
+                "backbone_kernel_init must be 'orthogonal_sqrt2', "
+                "'orthogonal_gain1' or 'glorot_uniform', got "
+                f"{self.backbone_kernel_init!r}"
+            )
+        if (
+            not np.isfinite(self.residual_branch_scale)
+            or self.residual_branch_scale < 0.0
+        ):
+            raise ValueError(
+                "residual_branch_scale must be finite and non-negative, got "
+                f"{self.residual_branch_scale!r}"
+            )
+        if self.residual_last_kernel_init not in {"same", "zeros"}:
+            raise ValueError(
+                "residual_last_kernel_init must be 'same' or 'zeros', got "
+                f"{self.residual_last_kernel_init!r}"
             )
 
     def to_dict(self) -> dict[str, Any]:

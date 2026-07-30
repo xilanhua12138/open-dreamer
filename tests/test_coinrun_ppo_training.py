@@ -23,6 +23,9 @@ class CoinRunPPOTrainingTests(unittest.TestCase):
         self.assertEqual(config.reward_normalization_gamma, 0.99)
         self.assertEqual(config.advantage_normalization, "minibatch")
         self.assertEqual(config.backbone_kernel_init, "glorot_uniform")
+        self.assertEqual(config.residual_branch_scale, 1.0)
+        self.assertEqual(config.residual_last_kernel_init, "same")
+        self.assertFalse(config.residual_skip_init)
 
     def test_config_derives_exact_update_and_minibatch_counts(self) -> None:
         config = PPOTrainConfig(
@@ -62,6 +65,12 @@ class CoinRunPPOTrainingTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "backbone_kernel_init"):
             PPOTrainConfig(backbone_kernel_init="mystery").validate()
+
+        with self.assertRaisesRegex(ValueError, "residual_branch_scale"):
+            PPOTrainConfig(residual_branch_scale=-0.1).validate()
+
+        with self.assertRaisesRegex(ValueError, "residual_last_kernel_init"):
+            PPOTrainConfig(residual_last_kernel_init="mystery").validate()
 
     def test_reward_normalizer_resets_discounted_return_after_terminal(self) -> None:
         normalizer = RewardNormalizer(num_envs=2, gamma=0.9, clip=10.0)

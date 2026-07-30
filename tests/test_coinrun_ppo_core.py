@@ -17,6 +17,7 @@ from dreamer.coinrun_ppo import (
     PPOBatch,
     PPOCoinRunPolicy,
     PPOHyperparameters,
+    ResidualBlock,
     categorical_entropy,
     categorical_log_prob,
     compute_gae,
@@ -310,6 +311,89 @@ class CoinRunPPOCoreTests(unittest.TestCase):
         self.assertEqual(official_kernel.shape, legacy_kernel.shape)
         self.assertFalse(np.array_equal(official_kernel, legacy_kernel))
         self.assertTrue(np.isfinite(official_kernel).all())
+
+    def test_actor_critic_accepts_unit_gain_orthogonal_initialization(
+        self,
+    ) -> None:
+        observations = jnp.zeros((2, 64, 64, 3), dtype=jnp.uint8)
+        unit_gain = CoinRunActorCritic(
+            action_dim=COINRUN_ACTION_DIM,
+            backbone_kernel_init="orthogonal_gain1",
+        )
+
+        params = unit_gain.init(
+            jax.random.PRNGKey(103),
+            observations,
+        )["params"]
+        kernel = np.asarray(
+            params["ImpalaConvSequence_0"]["Conv_0"]["kernel"]
+        )
+
+        self.assertEqual(kernel.shape, (3, 3, 3, 16))
+        self.assertTrue(np.isfinite(kernel).all())
+
+    def test_residual_branch_scale_changes_only_the_residual_contribution(
+        self,
+    ) -> None:
+        inputs = jnp.arange(2 * 8 * 8 * 4, dtype=jnp.float32).reshape(
+            2, 8, 8, 4
+        ) / 100.0
+        full = ResidualBlock(
+            channels=4,
+            backbone_kernel_init="orthogonal_sqrt2",
+            residual_branch_scale=1.0,
+        )
+        scaled = ResidualBlock(
+            channels=4,
+            backbone_kernel_init="orthogonal_sqrt2",
+            residual_branch_scale=0.25,
+        )
+        variables = full.init(jax.random.PRNGKey(104), inputs)
+
+        full_output = full.apply(variables, inputs)
+        scaled_output = scaled.apply(variables, inputs)
+
+        np.testing.assert_allclose(
+            np.asarray(scaled_output - inputs),
+            0.25 * np.asarray(full_output - inputs),
+            rtol=1e-6,
+            atol=1e-6,
+        )
+
+    def test_zero_last_residual_kernel_starts_as_exact_identity(self) -> None:
+        inputs = jnp.arange(2 * 8 * 8 * 4, dtype=jnp.float32).reshape(
+            2, 8, 8, 4
+        ) / 100.0
+        block = ResidualBlock(
+            channels=4,
+            backbone_kernel_init="orthogonal_sqrt2",
+            residual_last_kernel_init="zeros",
+        )
+        variables = block.init(jax.random.PRNGKey(105), inputs)
+
+        output = block.apply(variables, inputs)
+
+        np.testing.assert_array_equal(np.asarray(output), np.asarray(inputs))
+        np.testing.assert_array_equal(
+            np.asarray(variables["params"]["Conv_1"]["kernel"]),
+            np.zeros_like(np.asarray(variables["params"]["Conv_1"]["kernel"])),
+        )
+
+    def test_skip_init_starts_as_identity_with_learnable_zero_gate(self) -> None:
+        inputs = jnp.arange(2 * 8 * 8 * 4, dtype=jnp.float32).reshape(
+            2, 8, 8, 4
+        ) / 100.0
+        block = ResidualBlock(
+            channels=4,
+            backbone_kernel_init="orthogonal_sqrt2",
+            residual_skip_init=True,
+        )
+        variables = block.init(jax.random.PRNGKey(106), inputs)
+
+        output = block.apply(variables, inputs)
+
+        np.testing.assert_array_equal(np.asarray(output), np.asarray(inputs))
+        self.assertEqual(float(variables["params"]["skip_init_gain"]), 0.0)
 
     def test_compiled_minibatch_step_can_be_reused_across_ppo_updates(
         self,

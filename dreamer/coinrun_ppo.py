@@ -372,20 +372,35 @@ def update_ppo(
 def backbone_kernel_initializer(name: str) -> Callable[..., jax.Array]:
     if name == "orthogonal_sqrt2":
         return nn.initializers.orthogonal(np.sqrt(2.0))
+    if name == "orthogonal_gain1":
+        return nn.initializers.orthogonal(1.0)
     if name == "glorot_uniform":
         return nn.initializers.glorot_uniform()
     raise ValueError(
-        "backbone_kernel_init must be 'orthogonal_sqrt2' or "
-        f"'glorot_uniform', got {name!r}"
+        "backbone_kernel_init must be 'orthogonal_sqrt2', "
+        f"'orthogonal_gain1' or 'glorot_uniform', got {name!r}"
     )
 
 
 class ResidualBlock(nn.Module):
     channels: int
     backbone_kernel_init: str = "glorot_uniform"
+    residual_branch_scale: float = 1.0
+    residual_last_kernel_init: str = "same"
+    residual_skip_init: bool = False
+    record_diagnostics: bool = False
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
+        if not np.isfinite(self.residual_branch_scale):
+            raise ValueError("residual_branch_scale must be finite")
+        if self.residual_branch_scale < 0.0:
+            raise ValueError("residual_branch_scale must be non-negative")
+        if self.residual_last_kernel_init not in {"same", "zeros"}:
+            raise ValueError(
+                "residual_last_kernel_init must be 'same' or 'zeros', got "
+                f"{self.residual_last_kernel_init!r}"
+            )
         residual = inputs
         hidden = nn.relu(inputs)
         hidden = nn.Conv(
@@ -401,16 +416,36 @@ class ResidualBlock(nn.Module):
             self.channels,
             kernel_size=(3, 3),
             padding="SAME",
-            kernel_init=backbone_kernel_initializer(
-                self.backbone_kernel_init
+            kernel_init=(
+                nn.initializers.zeros_init()
+                if self.residual_last_kernel_init == "zeros"
+                else backbone_kernel_initializer(self.backbone_kernel_init)
             ),
         )(hidden)
-        return residual + hidden
+        branch_gain: jax.Array | float = self.residual_branch_scale
+        if self.residual_skip_init:
+            branch_gain = branch_gain * self.param(
+                "skip_init_gain",
+                nn.initializers.zeros_init(),
+                (),
+            )
+        scaled_branch = hidden * branch_gain
+        output = residual + scaled_branch
+        if self.record_diagnostics:
+            self.sow("diagnostics", "skip", residual)
+            self.sow("diagnostics", "branch_unscaled", hidden)
+            self.sow("diagnostics", "branch_scaled", scaled_branch)
+            self.sow("diagnostics", "output", output)
+        return output
 
 
 class ImpalaConvSequence(nn.Module):
     channels: int
     backbone_kernel_init: str = "glorot_uniform"
+    residual_branch_scale: float = 1.0
+    residual_last_kernel_init: str = "same"
+    residual_skip_init: bool = False
+    record_diagnostics: bool = False
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
@@ -431,10 +466,18 @@ class ImpalaConvSequence(nn.Module):
         hidden = ResidualBlock(
             self.channels,
             backbone_kernel_init=self.backbone_kernel_init,
+            residual_branch_scale=self.residual_branch_scale,
+            residual_last_kernel_init=self.residual_last_kernel_init,
+            residual_skip_init=self.residual_skip_init,
+            record_diagnostics=self.record_diagnostics,
         )(hidden)
         return ResidualBlock(
             self.channels,
             backbone_kernel_init=self.backbone_kernel_init,
+            residual_branch_scale=self.residual_branch_scale,
+            residual_last_kernel_init=self.residual_last_kernel_init,
+            residual_skip_init=self.residual_skip_init,
+            record_diagnostics=self.record_diagnostics,
         )(hidden)
 
 
@@ -443,6 +486,10 @@ class CoinRunActorCritic(nn.Module):
 
     action_dim: int
     backbone_kernel_init: str = "glorot_uniform"
+    residual_branch_scale: float = 1.0
+    residual_last_kernel_init: str = "same"
+    residual_skip_init: bool = False
+    record_diagnostics: bool = False
 
     @nn.compact
     def __call__(self, observations: jax.Array) -> tuple[jax.Array, jax.Array]:
@@ -459,6 +506,10 @@ class CoinRunActorCritic(nn.Module):
             hidden = ImpalaConvSequence(
                 channels,
                 backbone_kernel_init=self.backbone_kernel_init,
+                residual_branch_scale=self.residual_branch_scale,
+                residual_last_kernel_init=self.residual_last_kernel_init,
+                residual_skip_init=self.residual_skip_init,
+                record_diagnostics=self.record_diagnostics,
             )(hidden)
         hidden = nn.relu(hidden)
         hidden = hidden.reshape((hidden.shape[0], -1))
@@ -470,6 +521,8 @@ class CoinRunActorCritic(nn.Module):
             bias_init=nn.initializers.zeros_init(),
         )(hidden)
         hidden = nn.relu(hidden)
+        if self.record_diagnostics:
+            self.sow("diagnostics", "encoder_features", hidden)
         logits = nn.Dense(
             self.action_dim,
             kernel_init=nn.initializers.orthogonal(0.01),
@@ -612,9 +665,27 @@ class PPOCoinRunPolicy:
             if isinstance(train_config, dict)
             else "orthogonal_sqrt2"
         )
+        residual_branch_scale = (
+            float(train_config.get("residual_branch_scale", 1.0))
+            if isinstance(train_config, dict)
+            else 1.0
+        )
+        residual_last_kernel_init = (
+            str(train_config.get("residual_last_kernel_init", "same"))
+            if isinstance(train_config, dict)
+            else "same"
+        )
+        residual_skip_init = (
+            bool(train_config.get("residual_skip_init", False))
+            if isinstance(train_config, dict)
+            else False
+        )
         model = CoinRunActorCritic(
             action_dim=action_dim,
             backbone_kernel_init=backbone_kernel_init,
+            residual_branch_scale=residual_branch_scale,
+            residual_last_kernel_init=residual_last_kernel_init,
+            residual_skip_init=residual_skip_init,
         )
         return cls(
             model=model,

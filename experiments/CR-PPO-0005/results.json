@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0005",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before the zero-update probe or any mitigation training arm.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether orthogonal matrices or sqrt(2) gain drive the observed gap.",
+      "Whether residual identity-start mitigations improve CoinRun sample efficiency.",
+      "Whether any result generalizes across seeds, games, encoders or PPO implementations."
+    ],
+    "decision": [
+      "Freeze source before starting the existing A10.",
+      "Run all four mitigation arms regardless of the zero-update probe result.",
+      "Do not collect trajectories or start dynamics."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T17:56:08+08:00",
+      "reason": "Preregistered the initializer mechanism and mitigation study before any result."
+    }
+  ]
+}

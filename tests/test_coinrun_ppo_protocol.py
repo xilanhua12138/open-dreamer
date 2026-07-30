@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -12,10 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class CoinRunPPOProtocolTests(unittest.TestCase):
     @staticmethod
-    def _load_training_entrypoint():
-        path = ROOT / "scripts/experiments/coinrun/train_coinrun_ppo.py"
+    def _load_coinrun_script(filename: str, module_name: str):
+        path = ROOT / "scripts/experiments/coinrun" / filename
         spec = importlib.util.spec_from_file_location(
-            "coinrun_ppo_training_entrypoint",
+            module_name,
             path,
         )
         if spec is None or spec.loader is None:
@@ -23,6 +24,13 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
+
+    @classmethod
+    def _load_training_entrypoint(cls):
+        return cls._load_coinrun_script(
+            "train_coinrun_ppo.py",
+            "coinrun_ppo_training_entrypoint",
+        )
 
     def test_planned_experiment_ends_at_world_model_data_collection(self) -> None:
         manifest = json.loads(
@@ -88,6 +96,9 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         self.assertEqual(args.reward_normalization_gamma, 0.99)
         self.assertEqual(args.advantage_normalization, "minibatch")
         self.assertEqual(args.backbone_kernel_init, "glorot_uniform")
+        self.assertEqual(args.residual_branch_scale, 1.0)
+        self.assertEqual(args.residual_last_kernel_init, "same")
+        self.assertFalse(args.residual_skip_init)
 
         with mock.patch("sys.stderr"):
             with self.assertRaises(SystemExit):
@@ -181,6 +192,156 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
             self.assertIn(expected, runner)
         self.assertNotIn("collect_coinrun_ppo_records.py", runner)
         self.assertNotIn("train_dynamics.py", runner)
+
+    def test_initializer_mitigation_runner_probes_before_four_targeted_arms(
+        self,
+    ) -> None:
+        runner = (
+            ROOT
+            / "scripts/experiments/coinrun/run_coinrun_ppo_initializer_mitigation.sh"
+        ).read_text(encoding="utf-8")
+
+        self.assertLess(
+            runner.index("probe_coinrun_ppo_initialization.py"),
+            runner.index("run_arm orthogonal_gain1"),
+        )
+        for expected in (
+            "run_arm orthogonal_gain1 orthogonal_gain1 1.0 same false",
+            'run_arm orthogonal_sqrt2_depth_scaled orthogonal_sqrt2 "${DEPTH_SCALE}" same false',
+            "run_arm orthogonal_sqrt2_zero_last orthogonal_sqrt2 1.0 zeros false",
+            "run_arm orthogonal_sqrt2_skipinit orthogonal_sqrt2 1.0 same true",
+            "--total-env-steps",
+            "--final-evaluation-episodes 256",
+            "CR-PPO-0005",
+        ):
+            self.assertIn(expected, runner)
+        self.assertNotIn("collect_coinrun_ppo_records.py", runner)
+        self.assertNotIn("train_dynamics.py", runner)
+
+    def test_initializer_probe_freezes_six_mechanistically_distinct_configs(
+        self,
+    ) -> None:
+        probe = self._load_coinrun_script(
+            "probe_coinrun_ppo_initialization.py",
+            "coinrun_ppo_initialization_probe",
+        )
+
+        self.assertEqual(set(probe.ARM_CONFIGS), {
+            "glorot_reference",
+            "orthogonal_sqrt2_anchor",
+            "orthogonal_gain1",
+            "orthogonal_sqrt2_depth_scaled",
+            "orthogonal_sqrt2_zero_last",
+            "orthogonal_sqrt2_skipinit",
+        })
+        self.assertAlmostEqual(
+            probe.ARM_CONFIGS[
+                "orthogonal_sqrt2_depth_scaled"
+            ]["residual_branch_scale"],
+            1.0 / (6.0 ** 0.5),
+            places=15,
+        )
+        summary = probe.summarize_scalar_rows(
+            [
+                {"gradient": 2.0, "ratio": 1.0},
+                {"gradient": 4.0, "ratio": 3.0},
+            ]
+        )
+        self.assertEqual(
+            summary,
+            {
+                "gradient": {
+                    "mean": 3.0,
+                    "std": 1.0,
+                    "min": 2.0,
+                    "max": 4.0,
+                },
+                "ratio": {
+                    "mean": 2.0,
+                    "std": 1.0,
+                    "min": 1.0,
+                    "max": 3.0,
+                },
+            },
+        )
+
+    def test_initializer_mitigation_summary_uses_identical_final_evaluator(
+        self,
+    ) -> None:
+        summarizer = self._load_coinrun_script(
+            "summarize_coinrun_ppo_initializer_mitigation.py",
+            "coinrun_ppo_initializer_mitigation_summary",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            anchor = root / "anchor.json"
+            anchor.write_text(
+                json.dumps(
+                    {
+                        "experiment_id": "CR-PPO-0003",
+                        "expected_env_steps": 6_291_456,
+                        "arms": [
+                            {
+                                "arm": "reference",
+                                "final_256": {
+                                    "mean_return": 8.0,
+                                    "success_rate": 0.8,
+                                },
+                            },
+                            {
+                                "arm": "orthogonal_init",
+                                "final_256": {
+                                    "mean_return": 5.0,
+                                    "success_rate": 0.5,
+                                },
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            for index, arm in enumerate(summarizer.NEW_ARMS, start=1):
+                metrics_path = (
+                    root
+                    / "arms"
+                    / arm
+                    / "final-validation"
+                    / "env-steps-006291456"
+                    / "metrics.json"
+                )
+                metrics_path.parent.mkdir(parents=True)
+                metrics_path.write_text(
+                    json.dumps(
+                        {
+                            "completed_env_steps": 6_291_456,
+                            "episodes": 256,
+                            "evaluation_distribution": "full_distribution",
+                            "num_levels": 0,
+                            "policy": "stochastic",
+                            "seed": 4242,
+                            "mean_return": 5.0 + index,
+                            "success_rate": 0.5 + index / 20.0,
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+            payload = summarizer.summarize_mitigations(
+                run_root=root,
+                anchor_comparison_path=anchor,
+                expected_env_steps=6_291_456,
+            )
+            plot = root / "comparison.png"
+            summarizer.render_comparison(payload, plot)
+
+            self.assertEqual(len(payload["arms"]), 6)
+            self.assertAlmostEqual(
+                payload["arms"][2]["recovery_vs_orthogonal_sqrt2"][
+                    "mean_return_fraction_of_gap"
+                ],
+                1.0 / 3.0,
+            )
+            self.assertEqual(plot.read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
 
 
 if __name__ == "__main__":

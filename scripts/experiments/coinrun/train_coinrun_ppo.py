@@ -75,9 +75,16 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--backbone-kernel-init",
-        choices=("orthogonal_sqrt2", "glorot_uniform"),
+        choices=("orthogonal_sqrt2", "orthogonal_gain1", "glorot_uniform"),
         default="glorot_uniform",
     )
+    parser.add_argument("--residual-branch-scale", type=float, default=1.0)
+    parser.add_argument(
+        "--residual-last-kernel-init",
+        choices=("same", "zeros"),
+        default="same",
+    )
+    parser.add_argument("--residual-skip-init", action="store_true")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--train-start-level", type=int, default=0)
     parser.add_argument("--train-num-levels", type=int, default=200)
@@ -285,6 +292,9 @@ def _evaluate(
         model=CoinRunActorCritic(
             action_dim=COINRUN_ACTION_DIM,
             backbone_kernel_init=config.backbone_kernel_init,
+            residual_branch_scale=config.residual_branch_scale,
+            residual_last_kernel_init=config.residual_last_kernel_init,
+            residual_skip_init=config.residual_skip_init,
         ),
         params=state.params,
         metadata={
@@ -398,6 +408,9 @@ def main() -> None:
         reward_normalization_gamma=args.reward_normalization_gamma,
         advantage_normalization=args.advantage_normalization,
         backbone_kernel_init=args.backbone_kernel_init,
+        residual_branch_scale=args.residual_branch_scale,
+        residual_last_kernel_init=args.residual_last_kernel_init,
+        residual_skip_init=args.residual_skip_init,
         seed=args.seed,
         start_level=args.train_start_level,
         num_levels=args.train_num_levels,
@@ -447,6 +460,9 @@ def main() -> None:
     model = CoinRunActorCritic(
         action_dim=COINRUN_ACTION_DIM,
         backbone_kernel_init=config.backbone_kernel_init,
+        residual_branch_scale=config.residual_branch_scale,
+        residual_last_kernel_init=config.residual_last_kernel_init,
+        residual_skip_init=config.residual_skip_init,
     )
     parameter_key, policy_key = jax.random.split(
         jax.random.PRNGKey(config.seed)
