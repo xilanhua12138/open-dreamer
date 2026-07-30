@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0004",
+  "baseline_experiment_id": "CR-TOK-0003",
+  "training_mode": "fixed_optimizer_updates",
+  "candidate": {
+    "name": "n28.7m",
+    "directory": "n28p7m",
+    "depth": 6,
+    "d_model": 384,
+    "expected_parameters": 25564032,
+    "max_steps": 20000,
+    "scaling_flops_budget": 0.0,
+    "scaling_tokens_per_param": 0.0
+  },
+  "heldout_evaluation_completed_updates": [
+    2500,
+    5000,
+    10000,
+    20000
+  ],
+  "checkpoint_steps": [
+    2499,
+    4999,
+    9999,
+    19999
+  ],
+  "recovery_checkpoint_steps": [
+    14999
+  ],
+  "periodic_validation": {
+    "every_steps": 2500,
+    "seed": 4242,
+    "frames": 16,
+    "batch_size": 8,
+    "batches": 2
+  },
+  "wandb_required": true,
+  "wandb_online_requires_authentication": true,
+  "dynamics_authorized": false,
+  "terminal_state": "awaiting_visual_review"
+}

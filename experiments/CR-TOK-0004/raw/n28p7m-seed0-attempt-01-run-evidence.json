@@ -1,0 +1,63 @@
+{
+  "attempt_id": "1953d550-bf9c-4138-9500-f66c867eb4dd",
+  "config_sha256": "3dadc3c455d41e3e262838e04f5a5208b1839ef2f08a81c65af6982ff8b762e4",
+  "experiment_id": "CR-TOK-0004",
+  "generated_at": "2026-07-29T17:01:11.763591+00:00",
+  "input_fingerprint": "dc995bbad41ebc7f6dbce190c3f6b1d6c82841c05d267195a99271449b9b985f",
+  "last_completed_updates": null,
+  "last_metrics": {},
+  "ledger_uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-run-evidence.json",
+  "run_artifacts": [
+    {
+      "bytes": 4355,
+      "sha256": "4e998bbfa5b9f187229afe40bc3eace1b570d92fabb481d7dc8ac5a98d3d5ab2",
+      "uri": "runtime-identity.json"
+    },
+    {
+      "bytes": 613,
+      "sha256": "ee0935f835e4ebb366554739e559ff1df69adafa428e465e9b629da69920832c",
+      "uri": "run-state.json"
+    },
+    {
+      "bytes": 609,
+      "sha256": "a2b9e4202d05c3cd9bb727dcd649a69b4cdbf642975b9b485d562acc0fe03a1e",
+      "uri": "telemetry.jsonl"
+    },
+    {
+      "bytes": 353,
+      "sha256": "574244d718ba3965d8e3a2a74b4f136558a6311b0730aa7d72f49b59ee2fee63",
+      "uri": "artifacts.jsonl"
+    },
+    {
+      "bytes": 234,
+      "sha256": "6f5963d3116090ca39ed86e6e3753f74c16e96dd374c283300f7f5420c62104a",
+      "uri": "wandb-run.json"
+    },
+    {
+      "bytes": 4355,
+      "sha256": "4e998bbfa5b9f187229afe40bc3eace1b570d92fabb481d7dc8ac5a98d3d5ab2",
+      "uri": "runtime-identities/1953d550-bf9c-4138-9500-f66c867eb4dd.json"
+    },
+    {
+      "bytes": 3896,
+      "sha256": "46c88718343d97880b94c7b79e3b4f131f82cc567219c490e340c19e4b23c17a",
+      "uri": ".hydra/config.yaml"
+    },
+    {
+      "bytes": 1625,
+      "sha256": "4d74c707e9487fd8c310cd57feb8c503e8feb1286da7d859f0468788b5dd8aeb",
+      "uri": ".hydra/overrides.yaml"
+    },
+    {
+      "bytes": 6889,
+      "sha256": "c255e810f6ddab8187a279a04057ec898218215e1189b7e23e4f0b4c5113ed55",
+      "uri": ".hydra/hydra.yaml"
+    }
+  ],
+  "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+  "run_name": "n28p7m-seed0",
+  "schema_version": "1.0",
+  "source_commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+  "state": "FAILED",
+  "validation": []
+}

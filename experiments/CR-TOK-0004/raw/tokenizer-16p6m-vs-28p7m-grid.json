@@ -1,0 +1,22 @@
+{
+  "output": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/tokenizer-16p6m-vs-28p7m.png",
+  "shape": [
+    520,
+    512,
+    3
+  ],
+  "rows": [
+    {
+      "name": "n16.6m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 0,
+      "end_row_exclusive": 256
+    },
+    {
+      "name": "n28.7m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 264,
+      "end_row_exclusive": 520
+    }
+  ]
+}

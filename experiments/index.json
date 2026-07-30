@@ -27,9 +27,9 @@
       "experiment_id": "CR-TOK-0003",
       "title": "CoinRun tokenizer quality-first fixed-20k scale sweep",
       "path": "experiments/CR-TOK-0003",
-      "execution_status": "running",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-TOK-0001",
         "CR-TOK-0002",
@@ -40,9 +40,9 @@
       "experiment_id": "CR-TOK-0004",
       "title": "CoinRun tokenizer 28.7M-label fixed-20k extension",
       "path": "experiments/CR-TOK-0004",
-      "execution_status": "queued",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-TOK-0003"
       ]
