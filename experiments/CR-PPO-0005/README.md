@@ -53,5 +53,6 @@ The 349,214-byte probe JSON is retained locally with SHA256
 `04f205d0...d5aec4`; the remote failed attempt and logs remain intact. A precise
 red test reproduced the missing recorder contract, and the fix now makes the
 probe use `RunRecorder`, register its JSON artifact, and require a structured
-completed state before the runner may advance. Recovery is pending a new frozen
-source commit.
+completed state before the runner may advance. Clean pushed recovery source
+`855981088b3f5674ff1c7f05ef5da829fc4c0509` passed all 124 tests and is queued;
+the scientific protocol is unchanged.

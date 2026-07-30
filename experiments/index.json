@@ -164,7 +164,7 @@
       "experiment_id": "CR-PPO-0005",
       "title": "CoinRun PPO initializer signal-propagation and mitigation ablation",
       "path": "experiments/CR-PPO-0005",
-      "execution_status": "failed",
+      "execution_status": "queued",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [
