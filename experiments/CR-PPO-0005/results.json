@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 5,
-  "execution_status": "queued",
+  "record_revision": 6,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-30T18:00:15+08:00",
   "ended_at": null,
-  "summary": "The first attempt completed the 16-seed probe JSON but failed closed before training. Recovery is queued from the clean pushed recorder-fix commit with the scientific protocol unchanged.",
+  "summary": "Recovery is running from the clean pushed recorder-fix commit. The pipeline is re-recording the 16-seed probe before any of the four unconditional training arms.",
   "observations": [
     {
       "type": "pipeline_start",
@@ -22,6 +22,14 @@
       "sha256": "04f205d0851e7ee459461ceb257130f3586d4bb730bbac8909302f2644d5aec4",
       "local_uri": "local-task://ppo-initializer-mitigation/initialization-probe.failed-attempt.json",
       "training_environment_steps": 0
+    },
+    {
+      "type": "recovery_start",
+      "source_commit": "855981088b3f5674ff1c7f05ef5da829fc4c0509",
+      "pid": 110225,
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "initial_stage": "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION",
+      "protocol_changed": false
     }
   ],
   "comparisons": [],
@@ -90,6 +98,11 @@
       "revision": 5,
       "at": "2026-07-30T18:10:56+08:00",
       "reason": "Froze the clean pushed recorder-fix source and queued a new attempt without changing the scientific protocol."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-30T18:14:55+08:00",
+      "reason": "Started one recovery pipeline from the frozen recorder-fix source after confirming no probe or training process was alive."
     }
   ]
 }
