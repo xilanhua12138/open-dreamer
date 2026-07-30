@@ -49,27 +49,57 @@ def validate_record_terminals(
 
 
 def validate_ppo_metadata(metadata: dict[str, Any]) -> list[str]:
-    if metadata.get("action_policy") != "ppo":
+    action_policy = metadata.get("action_policy")
+    if action_policy not in {"ppo", "ppo_mixture"}:
         return []
     errors = []
     policy = metadata.get("policy")
     if not isinstance(policy, dict):
         policy = {}
-    digest = str(policy.get("checkpoint_sha256", ""))
-    if not SHA256.fullmatch(digest):
-        errors.append(
-            "PPO dataset checkpoint_sha256 must be 64 lowercase hex characters"
-        )
-    try:
-        completed_env_steps = int(
-            policy.get("checkpoint_completed_env_steps", 0)
-        )
-    except (TypeError, ValueError):
-        completed_env_steps = 0
-    if completed_env_steps <= 0:
-        errors.append(
-            "PPO dataset checkpoint_completed_env_steps must be positive"
-        )
+    if action_policy == "ppo":
+        digest = str(policy.get("checkpoint_sha256", ""))
+        if not SHA256.fullmatch(digest):
+            errors.append(
+                "PPO dataset checkpoint_sha256 must be 64 lowercase hex characters"
+            )
+        try:
+            completed_env_steps = int(
+                policy.get("checkpoint_completed_env_steps", 0)
+            )
+        except (TypeError, ValueError):
+            completed_env_steps = 0
+        if completed_env_steps <= 0:
+            errors.append(
+                "PPO dataset checkpoint_completed_env_steps must be positive"
+            )
+    else:
+        source_policies = policy.get("source_policies")
+        if not isinstance(source_policies, dict) or not source_policies:
+            errors.append("PPO mixture dataset must declare source_policies")
+        else:
+            for source_name, source in source_policies.items():
+                if not isinstance(source, dict):
+                    errors.append(
+                        f"PPO mixture source {source_name} must be an object"
+                    )
+                    continue
+                digest = str(source.get("checkpoint_sha256", ""))
+                if not SHA256.fullmatch(digest):
+                    errors.append(
+                        f"PPO mixture source {source_name} checkpoint_sha256 "
+                        "must be 64 lowercase hex characters"
+                    )
+                try:
+                    completed_env_steps = int(
+                        source.get("checkpoint_completed_env_steps", 0)
+                    )
+                except (TypeError, ValueError):
+                    completed_env_steps = 0
+                if completed_env_steps <= 0:
+                    errors.append(
+                        f"PPO mixture source {source_name} "
+                        "checkpoint_completed_env_steps must be positive"
+                    )
     alignment = str(metadata.get("transition_alignment", ""))
     if not all(
         marker in alignment

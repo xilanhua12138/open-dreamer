@@ -107,6 +107,23 @@ class CoinRunStageCorpusTests(unittest.TestCase):
         )
         self.assertIn("training and evaluation level ranges overlap", errors)
 
+    def test_accepts_explicit_experiment_id_for_superseding_protocol(
+        self,
+    ) -> None:
+        training = copy.deepcopy(self.training)
+        evaluation = copy.deepcopy(self.evaluation)
+        for metadata_value in [*training.values(), evaluation]:
+            metadata_value["experiment_id"] = "CR-DYN-0008"
+
+        self.assertEqual(
+            validate_stage_corpus(
+                training=training,
+                evaluation=evaluation,
+                expected_experiment_id="CR-DYN-0008",
+            ),
+            [],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

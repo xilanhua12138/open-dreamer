@@ -109,7 +109,7 @@ def main() -> None:
         errors.extend(
             f"record {index}: {message}" for message in action_errors
         )
-        if metadata.get("action_policy") == "ppo":
+        if metadata.get("action_policy") in {"ppo", "ppo_mixture"}:
             if "terminals" not in record:
                 errors.append(f"record {index}: missing terminals")
             else:

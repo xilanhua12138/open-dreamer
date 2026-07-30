@@ -59,6 +59,47 @@ class CoinRunDatasetAuditTests(unittest.TestCase):
             ],
         )
 
+    def test_ppo_mixture_metadata_requires_each_checkpoint_identity(
+        self,
+    ) -> None:
+        metadata = {
+            "action_policy": "ppo_mixture",
+            "policy": {
+                "source_policies": {
+                    "early": {
+                        "checkpoint_sha256": "a" * 64,
+                        "checkpoint_completed_env_steps": 1_048_576,
+                    },
+                    "final": {
+                        "checkpoint_sha256": "b" * 64,
+                        "checkpoint_completed_env_steps": 25_165_824,
+                    },
+                }
+            },
+            "transition_alignment": (
+                "raw_video[t]=observation_t, actions[t]=action_t, "
+                "rewards[t]=reward observed after action_t"
+            ),
+            "episode_boundary_policy": (
+                "records never cross auto-reset boundaries; partial chunks "
+                "are discarded when terminals[t] is true"
+            ),
+            "terminals_in_records": True,
+        }
+
+        self.assertEqual(validate_ppo_metadata(metadata), [])
+
+        metadata["policy"]["source_policies"]["early"][
+            "checkpoint_sha256"
+        ] = "bad"
+        self.assertEqual(
+            validate_ppo_metadata(metadata),
+            [
+                "PPO mixture source early checkpoint_sha256 must be 64 "
+                "lowercase hex characters"
+            ],
+        )
+
     def test_action_range_rejects_negative_and_action_dim_endpoint(self) -> None:
         self.assertEqual(
             validate_action_range(np.asarray([0, 14, -1, 15]), action_dim=15),

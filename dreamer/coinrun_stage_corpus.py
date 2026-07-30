@@ -27,10 +27,11 @@ def _validate_common(
     metadata: Mapping[str, Any],
     expected_records: int,
     expected_seed: int,
+    expected_experiment_id: str,
 ) -> list[str]:
     errors: list[str] = []
     expected = {
-        "experiment_id": "CR-DYN-0006",
+        "experiment_id": expected_experiment_id,
         "env": "coinrun",
         "records": expected_records,
         "frames_per_record": 64,
@@ -72,6 +73,7 @@ def validate_stage_corpus(
     *,
     training: Mapping[str, Mapping[str, Any]],
     evaluation: Mapping[str, Any],
+    expected_experiment_id: str = "CR-DYN-0006",
 ) -> list[str]:
     """Validate a four-stage training corpus and one fixed final-policy eval set."""
 
@@ -93,6 +95,7 @@ def validate_stage_corpus(
                 metadata=metadata,
                 expected_records=2_048,
                 expected_seed=20_240,
+                expected_experiment_id=expected_experiment_id,
             )
         )
         if _level_range(metadata) != (0, 200):
@@ -117,6 +120,7 @@ def validate_stage_corpus(
             metadata=evaluation,
             expected_records=512,
             expected_seed=30_240,
+            expected_experiment_id=expected_experiment_id,
         )
     )
     if _level_range(evaluation) != (10_000, 10_500):
