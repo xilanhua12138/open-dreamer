@@ -1,19 +1,49 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0002",
-  "record_revision": 1,
-  "execution_status": "planned",
+  "record_revision": 3,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-30T14:30:54+08:00",
   "ended_at": null,
-  "summary": "Preregistered before the parity-control GPU run.",
-  "observations": [],
+  "summary": "The preregistered official-recipe parity control is running from clean source a4d2574 on the existing A10 with W&B offline.",
+  "observations": [
+    {
+      "name": "real_cpu_preflight",
+      "observed": "The reused Python 3.10 runtime created Procgen CoinRun with num_levels=0 on CPU, observed shape [1,64,64,3], confirmed action_dim=15, and produced Glorot actor logits [1,15] plus values [1].",
+      "scientific_outcome_observed": false
+    },
+    {
+      "name": "gpu_launch",
+      "observed": "PID 89579 entered RUNNING with max_steps=1536, run ID a079cdb6-2586-4de5-ad1c-512537184308, attempt ID cbd0e8dc-e83a-461a-8023-39ad6864f2c0 and W&B offline. After 20 seconds the A10 used 12,596 MiB at 97% utilization.",
+      "scientific_outcome_observed": false
+    },
+    {
+      "name": "zero_step_full_distribution_baseline",
+      "completed_environment_steps": 0,
+      "episodes": 128,
+      "policy": "stochastic",
+      "num_levels": 0,
+      "mean_return": 3.125,
+      "success_rate": 0.3125,
+      "scientific_outcome_observed": false
+    },
+    {
+      "name": "early_training_progress",
+      "observed": "At 557,056 transitions / 34 PPO updates the PID remained alive, GPU utilization was 99%, and the latest rollout reported mean episode return 6.5870 with finite PPO diagnostics.",
+      "scientific_outcome_observed": false
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
+    "observed": [
+      "Execution source, real Procgen CPU smoke and the single live GPU PID are verified.",
+      "The zero-step 128-episode stochastic full-distribution baseline completed at mean return 3.125 and success rate 31.25%.",
+      "Training advanced to 557,056 transitions without NaN, OOM or process failure."
+    ],
     "interpretation": [],
     "not_established": [
       "Whether the implementation-level reference mismatches explain CR-PPO-0001 underperformance.",
@@ -30,6 +60,16 @@
       "revision": 1,
       "at": "2026-07-30T14:21:27+08:00",
       "reason": "Preregistered the official-recipe parity control before its zero-step baseline or any GPU update."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-30T14:31:29+08:00",
+      "reason": "Recorded the clean execution commit, real CPU preflight, exact run identity and active A10 process after launch."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T14:33:03+08:00",
+      "reason": "Recorded the zero-step stochastic full-distribution baseline and first finite PPO progress."
     }
   ]
 }

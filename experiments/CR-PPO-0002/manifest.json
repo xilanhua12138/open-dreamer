@@ -47,7 +47,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "a4d2574b9b25854b72e0a305d8aa1eb299fb3095",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
@@ -58,7 +58,8 @@
       "ppo_core": "2ad43da162816c041969a3eced034d4d4d5ca2d3d381d140492a86ba2715f8ad",
       "ppo_training_utilities": "aaa29e46724c4a09bc7c07593081fdb24e1687a5a314cdd934144191ce0b8e1d",
       "ppo_evaluation": "7af3a5d9bcdf664f6e9f70d691d28eb4bdf791cc432dfee081678a020eca1581"
-    }
+    },
+    "source_freeze": "The executable implementation was committed and pushed before the GPU launch, then checked out as a clean detached DSW worktree at a4d2574b9b25854b72e0a305d8aa1eb299fb3095. Later ledger edits do not change that running source."
   },
   "data": {
     "training_environment": {
@@ -82,7 +83,7 @@
     "accelerator_count": 1,
     "accelerator_memory_gb": 23,
     "estimated_budget": "25,165,824 environment transitions, 24 periodic 128-episode evaluations, and one final 512-episode evaluation; expected wall time is approximately 80-110 minutes based on CR-PPO-0001.",
-    "shutdown_policy": "Reuse only the existing A10. Keep a bounded instance shutdown timer; do not create another instance or change accelerator type."
+    "shutdown_policy": "Reused only the existing A10. At launch the prior bounded timer was still due at 2026-07-31T00:14:45+08:00 with roughly 9.7 hours remaining, so it was not extended."
   },
   "protocol": {
     "reference": {

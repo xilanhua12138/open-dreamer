@@ -34,7 +34,9 @@ The new switches preserve `CR-PPO-0001` defaults. Only this experiment enables t
 
 ### Observed
 
-No GPU result exists at preregistration time.
+The preregistration was committed before any GPU result. Execution source `a4d2574` then passed a real CPU-only Procgen `num_levels=0` smoke with the 15-action Glorot model and started one A10 PID at `2026-07-30 14:30:54 +08:00`. Run ID is `a079cdb6-2586-4de5-ad1c-512537184308`; W&B is offline.
+
+The zero-step stochastic full-distribution baseline completed on 128 episodes at mean return `3.125` and success rate `31.25%`. Training then reached 557,056 transitions / 34 updates with finite PPO diagnostics and 99% GPU utilization. This early progress is execution evidence, not the final parity result.
 
 ### Interpretation
 
@@ -48,4 +50,4 @@ None.
 
 ### Decision
 
-Run this parity control from scratch on the existing A10. Do not collect trajectories or start dynamics under this experiment.
+Continue the single active parity PID. Do not collect trajectories or start dynamics under this experiment.

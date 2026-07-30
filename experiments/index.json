@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-30T14:21:27+08:00",
+  "updated_at": "2026-07-30T14:31:29+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -128,7 +128,7 @@
       "experiment_id": "CR-PPO-0002",
       "title": "CoinRun PPO official-recipe parity control",
       "path": "experiments/CR-PPO-0002",
-      "execution_status": "planned",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [
