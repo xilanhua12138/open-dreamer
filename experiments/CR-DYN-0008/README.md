@@ -36,9 +36,12 @@ The frozen branch is now checked out cleanly at
 tokenizer checkpoint inputs passed CPU preflight.
 
 No source-pool collection, mixture materialization, dynamics update or
-evaluation has started. At the launch check, `CR-PPO-0005` used 12,600 MiB of
-the A10 at 97% utilization, so this experiment is blocked rather than
-concurrently launched.
+evaluation has started. The first launch check found `CR-PPO-0005` using
+12,600 MiB of the A10 at 97% utilization, so this experiment was correctly
+blocked rather than launched concurrently. After PPO stopped, exactly one
+restart request was sent to the same A10; at 18:55:21 Asia/Shanghai the provider
+reported `Sales of this resource are temporarily suspended in the specified
+zone` and the instance returned to `Failed`.
 
 ## Interpretation
 
@@ -52,5 +55,7 @@ None yet.
 
 ## Decision
 
-Recheck all GPU processes after `CR-PPO-0005` exits, then launch once. No arm
-may be skipped based on an interim quality result.
+Do not repeat start in the same monitor cycle, change specification, or create a
+replacement instance. On a later cycle, start only the same A10 once; after it
+is Running, repeat the full GPU/PID/source/checkpoint preflight immediately
+before launching. No arm may be skipped based on an interim quality result.

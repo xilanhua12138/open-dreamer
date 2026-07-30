@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0008",
-  "record_revision": 2,
+  "record_revision": 3,
   "execution_status": "blocked",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": null,
   "ended_at": null,
-  "summary": "Remote frozen source and CPU preflight are ready, but dynamics remains unstarted because CR-PPO-0005 is actively using the only authorized A10.",
+  "summary": "Remote frozen source and CPU preflight are ready. CR-PPO-0005 no longer uses the GPU, but the single authorized restart attempt for the same A10 failed because sales of that resource were temporarily suspended; dynamics remains unstarted.",
   "observations": [
     {
       "type": "remote_preflight",
@@ -28,6 +28,15 @@
       "gpu_memory_used_mib": 12600,
       "gpu_memory_total_mib": 23028,
       "gpu_utilization_percent": 97
+    },
+    {
+      "type": "compute_blocker",
+      "at": "2026-07-30T18:55:21+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "instance_status": "Failed",
+      "reason": "Sales of this resource are temporarily suspended in the specified zone.",
+      "start_attempts_this_cycle": 1,
+      "pipeline_started": false
     }
   ],
   "comparisons": [],
@@ -42,7 +51,8 @@
       "Whether any trained checkpoint is interactively controllable."
     ],
     "decision": [
-      "Keep the dynamics pipeline unstarted until CR-PPO-0005 and every other unrelated GPU process exit, then recheck GPU occupancy immediately before launch."
+      "Wait for a later monitor cycle; do not repeat start in this cycle, change specification, or create another instance.",
+      "When the same A10 becomes Running, repeat the full GPU/PID/source/checkpoint preflight immediately before the single dynamics launch."
     ]
   },
   "artifacts": [],
@@ -56,6 +66,11 @@
       "revision": 2,
       "at": "2026-07-30T18:32:35+08:00",
       "reason": "Recorded the clean remote worktree and successful CPU preflight, then marked the run blocked because CR-PPO-0005 still occupied the only A10."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T18:55:21+08:00",
+      "reason": "Replaced the resolved PPO blocker with the observed same-A10 inventory blocker after exactly one failed restart attempt."
     }
   ]
 }

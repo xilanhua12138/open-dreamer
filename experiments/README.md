@@ -72,10 +72,11 @@ selected-medium arm is reused. This separates the mixture question from the
 capacity question and keeps both experiments auditable.
 
 The clean remote `CR-DYN-0008/0009` worktree and CPU preflight are ready at
-commit `8711cf8`, but no dynamics process has started. The 2026-07-30 18:31
-launch check found `CR-PPO-0005` actively using 12,600/23,028 MiB at 97% GPU
-utilization, so `CR-DYN-0008` is explicitly blocked until the only authorized
-A10 is free.
+commit `8711cf8`, but no dynamics process has started. The initial blocker was
+an active `CR-PPO-0005` process. After PPO stopped, exactly one restart request
+for the same A10 failed at 18:55:21 because sales of that resource were
+temporarily suspended. `CR-DYN-0008` remains blocked for a later monitor cycle;
+no replacement instance or specification is allowed.
 
 ## Creating or closing an experiment
 
