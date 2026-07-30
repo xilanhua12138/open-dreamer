@@ -1,14 +1,35 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0008",
-  "record_revision": 1,
-  "execution_status": "queued",
+  "record_revision": 2,
+  "execution_status": "blocked",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": null,
   "ended_at": null,
-  "summary": "Preregistered before checkpoint source-pool collection, mixture materialization or dynamics training.",
-  "observations": [],
+  "summary": "Remote frozen source and CPU preflight are ready, but dynamics remains unstarted because CR-PPO-0005 is actively using the only authorized A10.",
+  "observations": [
+    {
+      "type": "remote_preflight",
+      "at": "2026-07-30T18:32:35+08:00",
+      "remote_head": "8711cf8e4100e614ff8f0e406838b72ef8ca02b4",
+      "executable_source_commit": "d22b38b7a774b407777e47c4a95ad120ea7596ed",
+      "runner_sha256": "80258b1a02125ef02b0104b7837e626c32db00cc240f2305f115c3f0195abc18",
+      "tests": "16 targeted remote tests passed; runner syntax and PPO/dynamics dependency imports passed",
+      "checkpoint_inputs": "All four PPO checkpoints and the 16.6M tokenizer checkpoint exist",
+      "pipeline_started": false
+    },
+    {
+      "type": "compute_blocker",
+      "at": "2026-07-30T18:31:22+08:00",
+      "active_experiment": "CR-PPO-0005",
+      "active_arm": "orthogonal_gain1",
+      "pipeline_pid": 110225,
+      "gpu_memory_used_mib": 12600,
+      "gpu_memory_total_mib": 23028,
+      "gpu_utilization_percent": 97
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
@@ -21,7 +42,7 @@
       "Whether any trained checkpoint is interactively controllable."
     ],
     "decision": [
-      "Wait until the existing A10 has no unrelated training PID, then collect and audit all source pools and run all three fixed-medium arms."
+      "Keep the dynamics pipeline unstarted until CR-PPO-0005 and every other unrelated GPU process exit, then recheck GPU occupancy immediately before launch."
     ]
   },
   "artifacts": [],
@@ -30,6 +51,11 @@
       "revision": 1,
       "at": "2026-07-30T18:25:22+08:00",
       "reason": "Preregistered the corrected fixed-record PPO-checkpoint mixture experiment before any new data or metric."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-30T18:32:35+08:00",
+      "reason": "Recorded the clean remote worktree and successful CPU preflight, then marked the run blocked because CR-PPO-0005 still occupied the only A10."
     }
   ]
 }

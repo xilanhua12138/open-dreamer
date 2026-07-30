@@ -30,8 +30,15 @@ horizon-16 PSNR lexicographically.
 
 ## Observed
 
+The frozen branch is now checked out cleanly at
+`/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures`. Runner SHA256,
+16 targeted tests, Python dependency imports and all four PPO plus 16.6M
+tokenizer checkpoint inputs passed CPU preflight.
+
 No source-pool collection, mixture materialization, dynamics update or
-evaluation had occurred at preregistration time.
+evaluation has started. At the launch check, `CR-PPO-0005` used 12,600 MiB of
+the A10 at 97% utilization, so this experiment is blocked rather than
+concurrently launched.
 
 ## Interpretation
 
@@ -45,5 +52,5 @@ None yet.
 
 ## Decision
 
-Run only after the existing A10 has no unrelated training process. No arm may be
-skipped based on an interim quality result.
+Recheck all GPU processes after `CR-PPO-0005` exits, then launch once. No arm
+may be skipped based on an interim quality result.

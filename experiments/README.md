@@ -19,7 +19,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
-| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | queued | not evaluated | none |
+| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | blocked | not evaluated | none |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
@@ -70,6 +70,12 @@ select mean-frame PSNR, then mean SSIM, then horizon-16 PSNR.
 mixture. Tiny, small and large train from scratch while the byte-identical
 selected-medium arm is reused. This separates the mixture question from the
 capacity question and keeps both experiments auditable.
+
+The clean remote `CR-DYN-0008/0009` worktree and CPU preflight are ready at
+commit `8711cf8`, but no dynamics process has started. The 2026-07-30 18:31
+launch check found `CR-PPO-0005` actively using 12,600/23,028 MiB at 97% GPU
+utilization, so `CR-DYN-0008` is explicitly blocked until the only authorized
+A10 is free.
 
 ## Creating or closing an experiment
 

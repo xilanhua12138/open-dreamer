@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-30T18:25:22+08:00",
+  "updated_at": "2026-07-30T18:32:35+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -131,7 +131,7 @@
       "experiment_id": "CR-DYN-0008",
       "title": "CoinRun PPO-checkpoint mixture ablation for dynamics",
       "path": "experiments/CR-DYN-0008",
-      "execution_status": "queued",
+      "execution_status": "blocked",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [
