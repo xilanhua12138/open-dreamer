@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0002",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before the parity-control GPU run.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether the implementation-level reference mismatches explain CR-PPO-0001 underperformance.",
+      "Whether the aligned control reaches the public easy-200 return curve.",
+      "Any strict reproduction claim."
+    ],
+    "decision": [
+      "Run one from-scratch seed on the existing A10 and do not start dynamics or collect replacement trajectories."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T14:21:27+08:00",
+      "reason": "Preregistered the official-recipe parity control before its zero-step baseline or any GPU update."
+    }
+  ]
+}

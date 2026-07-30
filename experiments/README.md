@@ -18,7 +18,8 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
-| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | running | not evaluated | none |
+| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
+| `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | planned | not evaluated | none |
 
 ## Important reading of the chain
 
@@ -36,7 +37,9 @@ The first four arms are now durably recorded: 0.17M stayed near 12 dB across all
 
 `CR-TOK-0004` is preregistered and queued to add the missing published `28.7M` label only after `CR-TOK-0003` terminates. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its execution source is frozen at `3833b34`; it keeps the same fixed-20k recipe and held-out identity, adds structured runtime telemetry plus fixed validation media every 2,500 updates, and remains blocked from dynamics pending visual review.
 
-`CR-PPO-0001` preregisters the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. Its unified Python 3.10/Procgen/JAX runtime passed CPU and A10 smoke checks, and the fixed 25,165,824-transition run is active from clean source `ec97611`. Two zero-update compatibility failures are retained with regression tests. The scope ends at audited dynamics data: it does not train an imitation policy, train a policy inside the learned world, or launch dynamics under the same experiment ID.
+`CR-PPO-0001` completed the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. Its final preregistered deterministic policy missed the 50% threshold at `29.6875%`, even though the `22,020,096`-step milestone briefly reached `51.5625%`. The final frozen checkpoint still produced 4,096 train and 512 eval records with `55.6904% / 65.7534%` completed-episode success and valid split/pair audits. A larger post-hoc stochastic full-distribution evaluation raised the final estimate to `4.9609375` mean return, which showed a measurement bias but remained well below the public easy-200 curve.
+
+`CR-PPO-0002` was therefore preregistered before its GPU run. It preserves the 25,165,824-transition budget and architecture widths but aligns five public-reference details: 200 training levels, reward-normalizer gamma `0.99`, per-minibatch advantage normalization, Glorot IMPALA backbone initialization and stochastic `num_levels=0` evaluation. It is explicitly a one-seed JAX parity control with Procgen-version/framework confounders, not a strict reproduction. Its final target is 512-episode mean return `>= 8.0` and success rate `>= 0.80`; it does not collect trajectories or start dynamics.
 
 ## Creating or closing an experiment
 

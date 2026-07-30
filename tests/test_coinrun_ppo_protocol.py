@@ -76,6 +76,30 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
             ),
         )
 
+    def test_official_parity_runner_freezes_the_public_easy_200_recipe(
+        self,
+    ) -> None:
+        runner = (
+            ROOT
+            / "scripts/experiments/coinrun/run_coinrun_ppo_official_parity.sh"
+        ).read_text(encoding="utf-8")
+
+        for expected in (
+            "--train-num-levels 200",
+            "--eval-num-levels 0",
+            "--evaluation-policy stochastic",
+            "--reward-normalization-gamma 0.99",
+            "--advantage-normalization minibatch",
+            "--backbone-kernel-init glorot_uniform",
+            "--total-env-steps 25165824",
+            "--final-evaluation-episodes 512",
+            "--evaluation-max-vector-steps 40000",
+            "CR-PPO-0002",
+        ):
+            self.assertIn(expected, runner)
+        self.assertNotIn("collect_coinrun_ppo_records.py", runner)
+        self.assertNotIn("train_dynamics.py", runner)
+
 
 if __name__ == "__main__":
     unittest.main()

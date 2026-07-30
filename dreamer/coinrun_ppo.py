@@ -47,6 +47,7 @@ class PPOHyperparameters:
     entropy_coefficient: float = 0.01
     minibatch_size: int = 2_048
     update_epochs: int = 3
+    advantage_normalization: str = "batch"
 
 
 def compute_gae(
@@ -326,10 +327,16 @@ def update_ppo(
         minibatch_size=hyperparameters.minibatch_size,
         update_epochs=hyperparameters.update_epochs,
     )
-    normalized_advantages = (
-        batch.advantages - jnp.mean(batch.advantages)
-    ) / (jnp.std(batch.advantages) + 1e-8)
-    batch = batch._replace(advantages=normalized_advantages)
+    if hyperparameters.advantage_normalization not in {"batch", "minibatch"}:
+        raise ValueError(
+            "advantage_normalization must be 'batch' or 'minibatch', got "
+            f"{hyperparameters.advantage_normalization!r}"
+        )
+    if hyperparameters.advantage_normalization == "batch":
+        normalized_advantages = (
+            batch.advantages - jnp.mean(batch.advantages)
+        ) / (jnp.std(batch.advantages) + 1e-8)
+        batch = batch._replace(advantages=normalized_advantages)
 
     if minibatch_step is None:
         minibatch_step = make_ppo_minibatch_step(
@@ -345,6 +352,11 @@ def update_ppo(
             lambda value: value[minibatch_indices],
             batch,
         )
+        if hyperparameters.advantage_normalization == "minibatch":
+            normalized_advantages = (
+                minibatch.advantages - jnp.mean(minibatch.advantages)
+            ) / (jnp.std(minibatch.advantages) + 1e-8)
+            minibatch = minibatch._replace(advantages=normalized_advantages)
         state, losses = minibatch_step(state, minibatch)
         metric_rows.append(losses)
 
@@ -357,8 +369,20 @@ def update_ppo(
     return state, metrics
 
 
+def backbone_kernel_initializer(name: str) -> Callable[..., jax.Array]:
+    if name == "orthogonal_sqrt2":
+        return nn.initializers.orthogonal(np.sqrt(2.0))
+    if name == "glorot_uniform":
+        return nn.initializers.glorot_uniform()
+    raise ValueError(
+        "backbone_kernel_init must be 'orthogonal_sqrt2' or "
+        f"'glorot_uniform', got {name!r}"
+    )
+
+
 class ResidualBlock(nn.Module):
     channels: int
+    backbone_kernel_init: str = "orthogonal_sqrt2"
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
@@ -368,20 +392,25 @@ class ResidualBlock(nn.Module):
             self.channels,
             kernel_size=(3, 3),
             padding="SAME",
-            kernel_init=nn.initializers.orthogonal(np.sqrt(2.0)),
+            kernel_init=backbone_kernel_initializer(
+                self.backbone_kernel_init
+            ),
         )(hidden)
         hidden = nn.relu(hidden)
         hidden = nn.Conv(
             self.channels,
             kernel_size=(3, 3),
             padding="SAME",
-            kernel_init=nn.initializers.orthogonal(np.sqrt(2.0)),
+            kernel_init=backbone_kernel_initializer(
+                self.backbone_kernel_init
+            ),
         )(hidden)
         return residual + hidden
 
 
 class ImpalaConvSequence(nn.Module):
     channels: int
+    backbone_kernel_init: str = "orthogonal_sqrt2"
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
@@ -389,7 +418,9 @@ class ImpalaConvSequence(nn.Module):
             self.channels,
             kernel_size=(3, 3),
             padding="SAME",
-            kernel_init=nn.initializers.orthogonal(np.sqrt(2.0)),
+            kernel_init=backbone_kernel_initializer(
+                self.backbone_kernel_init
+            ),
         )(inputs)
         hidden = nn.max_pool(
             hidden,
@@ -397,14 +428,21 @@ class ImpalaConvSequence(nn.Module):
             strides=(2, 2),
             padding="SAME",
         )
-        hidden = ResidualBlock(self.channels)(hidden)
-        return ResidualBlock(self.channels)(hidden)
+        hidden = ResidualBlock(
+            self.channels,
+            backbone_kernel_init=self.backbone_kernel_init,
+        )(hidden)
+        return ResidualBlock(
+            self.channels,
+            backbone_kernel_init=self.backbone_kernel_init,
+        )(hidden)
 
 
 class CoinRunActorCritic(nn.Module):
     """IMPALA-style visual encoder with categorical policy and value heads."""
 
     action_dim: int
+    backbone_kernel_init: str = "orthogonal_sqrt2"
 
     @nn.compact
     def __call__(self, observations: jax.Array) -> tuple[jax.Array, jax.Array]:
@@ -418,12 +456,17 @@ class CoinRunActorCritic(nn.Module):
             raise ValueError(f"action_dim must be positive, got {self.action_dim}")
         hidden = observations.astype(jnp.float32) / 255.0
         for channels in (16, 32, 32):
-            hidden = ImpalaConvSequence(channels)(hidden)
+            hidden = ImpalaConvSequence(
+                channels,
+                backbone_kernel_init=self.backbone_kernel_init,
+            )(hidden)
         hidden = nn.relu(hidden)
         hidden = hidden.reshape((hidden.shape[0], -1))
         hidden = nn.Dense(
             256,
-            kernel_init=nn.initializers.orthogonal(np.sqrt(2.0)),
+            kernel_init=backbone_kernel_initializer(
+                self.backbone_kernel_init
+            ),
             bias_init=nn.initializers.zeros_init(),
         )(hidden)
         hidden = nn.relu(hidden)
@@ -560,7 +603,19 @@ class PPOCoinRunPolicy:
         train_state_payload = payload.get("train_state")
         if not isinstance(train_state_payload, dict) or "params" not in train_state_payload:
             raise ValueError("PPO checkpoint is missing train_state.params")
-        model = CoinRunActorCritic(action_dim=action_dim)
+        train_config = metadata.get("train_config")
+        backbone_kernel_init = (
+            train_config.get(
+                "backbone_kernel_init",
+                "orthogonal_sqrt2",
+            )
+            if isinstance(train_config, dict)
+            else "orthogonal_sqrt2"
+        )
+        model = CoinRunActorCritic(
+            action_dim=action_dim,
+            backbone_kernel_init=backbone_kernel_init,
+        )
         return cls(
             model=model,
             params=train_state_payload["params"],

@@ -64,6 +64,27 @@ class CoinRunPPOEvaluationTests(unittest.TestCase):
             eval_num_levels=500,
         )
 
+    def test_full_distribution_evaluation_is_valid_for_official_parity(
+        self,
+    ) -> None:
+        validate_level_split(
+            train_start_level=0,
+            train_num_levels=200,
+            eval_start_level=0,
+            eval_num_levels=0,
+        )
+
+    def test_level_split_rejects_negative_full_distribution_sentinel(
+        self,
+    ) -> None:
+        with self.assertRaisesRegex(ValueError, "non-negative"):
+            validate_level_split(
+                train_start_level=0,
+                train_num_levels=200,
+                eval_start_level=0,
+                eval_num_levels=-1,
+            )
+
     def test_visual_sampling_keeps_episode_endpoints_with_bounded_frames(
         self,
     ) -> None:

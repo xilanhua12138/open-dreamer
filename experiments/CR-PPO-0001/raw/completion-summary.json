@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0001",
+  "status": "COMPLETE PPO_FROZEN TRAJECTORIES_AUDITED WORLD_MODEL_NOT_STARTED",
+  "training": {
+    "completed_environment_steps": 25165824,
+    "completed_ppo_updates": 1536,
+    "checkpoint": "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+    "checkpoint_sha256": "88f3cff15cd46518c14b9add81a913d8a9afcfed1143b234ecabdf8b0b29cbb6"
+  },
+  "preregistered_deterministic_evaluation": {
+    "zero_step": {
+      "episodes": 64,
+      "mean_return": 0.0,
+      "success_rate": 0.0
+    },
+    "best_observed": {
+      "completed_environment_steps": 22020096,
+      "episodes": 64,
+      "mean_return": 5.15625,
+      "success_rate": 0.515625
+    },
+    "final": {
+      "completed_environment_steps": 25165824,
+      "episodes": 64,
+      "mean_return": 2.96875,
+      "success_rate": 0.296875
+    }
+  },
+  "collection": {
+    "train": {
+      "records": 4096,
+      "frames_per_record": 64,
+      "completed_episodes": 659,
+      "mean_episode_return": 5.569044006069802,
+      "success_rate": 0.5569044006069803,
+      "tree_sha256": "42682af1f4c877883dad8b1cf48e95132f8d459a23f9e694df65be9a9072c6ed"
+    },
+    "eval": {
+      "records": 512,
+      "frames_per_record": 64,
+      "completed_episodes": 73,
+      "mean_episode_return": 6.575342465753424,
+      "success_rate": 0.6575342465753424,
+      "tree_sha256": "216a67a0c9cc28e4ad96869809e8687fc2d0ca7827d525db9f93a3375ec956db"
+    },
+    "pair_audit_valid": true,
+    "shared_policy_checkpoint_sha256": "88f3cff15cd46518c14b9add81a913d8a9afcfed1143b234ecabdf8b0b29cbb6"
+  }
+}

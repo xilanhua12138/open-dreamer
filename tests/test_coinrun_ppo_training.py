@@ -23,6 +23,9 @@ class CoinRunPPOTrainingTests(unittest.TestCase):
             rollout_steps=16,
             num_minibatches=4,
             update_epochs=3,
+            reward_normalization_gamma=0.99,
+            advantage_normalization="minibatch",
+            backbone_kernel_init="glorot_uniform",
         )
 
         config.validate()
@@ -31,6 +34,9 @@ class CoinRunPPOTrainingTests(unittest.TestCase):
         self.assertEqual(config.minibatch_size, 32)
         self.assertEqual(config.num_updates, 8)
         self.assertEqual(config.optimizer_minibatches_per_update, 12)
+        self.assertEqual(config.reward_normalization_gamma, 0.99)
+        self.assertEqual(config.advantage_normalization, "minibatch")
+        self.assertEqual(config.backbone_kernel_init, "glorot_uniform")
 
     def test_config_rejects_inexact_environment_step_budget(self) -> None:
         config = PPOTrainConfig(
@@ -41,6 +47,13 @@ class CoinRunPPOTrainingTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "divisible"):
             config.validate()
+
+    def test_config_rejects_unknown_reference_recipe_modes(self) -> None:
+        with self.assertRaisesRegex(ValueError, "advantage_normalization"):
+            PPOTrainConfig(advantage_normalization="global-ish").validate()
+
+        with self.assertRaisesRegex(ValueError, "backbone_kernel_init"):
+            PPOTrainConfig(backbone_kernel_init="mystery").validate()
 
     def test_reward_normalizer_resets_discounted_return_after_terminal(self) -> None:
         normalizer = RewardNormalizer(num_envs=2, gamma=0.9, clip=10.0)

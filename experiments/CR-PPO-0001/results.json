@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0001",
-  "record_revision": 2,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 3,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-30T12:17:05+08:00",
-  "ended_at": null,
-  "summary": "The fixed-budget real-CoinRun PPO run is active on one A10. Two zero-update JAX compatibility failures were retained and fixed with regression tests before the current clean execution source was launched.",
+  "ended_at": "2026-07-30T13:32:16+08:00",
+  "summary": "The full PPO, trajectory collection and pair-audit pipeline completed. The final preregistered deterministic policy missed SC-1 at 29.6875% success, while both stochastic collection splits exceeded their 30% target and all dataset audits passed. Post-hoc larger stochastic evaluation showed that the original metric understated performance but still left a substantial gap to the public easy-200 reference curve.",
   "observations": [
     {
       "name": "cpu_test_status",
@@ -36,9 +36,53 @@
       "mean_return": 0.0,
       "success_rate": 0.0,
       "scientific_outcome_observed": false
+    },
+    {
+      "name": "best_preregistered_deterministic_milestone",
+      "completed_environment_steps": 22020096,
+      "episodes": 64,
+      "mean_return": 5.15625,
+      "success_rate": 0.515625,
+      "scientific_outcome_observed": true
+    },
+    {
+      "name": "final_preregistered_deterministic_milestone",
+      "completed_environment_steps": 25165824,
+      "episodes": 64,
+      "mean_return": 2.96875,
+      "success_rate": 0.296875,
+      "scientific_outcome_observed": true
+    },
+    {
+      "name": "audited_stochastic_collection",
+      "observed": "The final frozen checkpoint produced 4,096 train records and 512 eval records of 64 frames. Train/eval completed-episode success was 55.6904%/65.7534%; both split audits and the pair audit were valid.",
+      "scientific_outcome_observed": true
+    },
+    {
+      "name": "posthoc_full_distribution_evaluation",
+      "observed": "On 512 stochastic full-distribution episodes, the 22,020,096-step checkpoint reached mean return 5.390625 and the final checkpoint reached 4.9609375. The final checkpoint remained materially below the public easy-200 curve.",
+      "scientific_outcome_observed": true
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "name": "preregistered_final_vs_zero_step",
+      "metric": "deterministic held-out success rate",
+      "baseline": 0.0,
+      "candidate": 0.296875,
+      "absolute_change": 0.296875,
+      "criterion": "candidate >= 0.50 and absolute_change >= 0.25",
+      "outcome": "failed final threshold"
+    },
+    {
+      "name": "best_vs_final_checkpoint",
+      "metric": "deterministic held-out success rate",
+      "best_at_22020096": 0.515625,
+      "final_at_25165824": 0.296875,
+      "absolute_change": -0.21875,
+      "outcome": "late-training regression"
+    }
+  ],
   "deviations": [
     {
       "at": "2026-07-30T12:03:00+08:00",
@@ -53,6 +97,14 @@
       "type": "zero_update_logger_compatibility_fix",
       "reason": "The shared logger called jax.distributed.is_initialized(), which is absent in the frozen JAX 0.4.35 API.",
       "change": "Used the already-established optional-API pattern from dreamer.parallel, added a regression test, and relaunched from a clean detached worktree.",
+      "training_budget_consumed": 0,
+      "source_commit": "ec97611f83d676fde41c0d7b7a78fe70365f940b"
+    },
+    {
+      "at": "2026-07-30T13:40:00+08:00",
+      "type": "posthoc_evaluation_diagnosis",
+      "reason": "The final 64-episode deterministic result was unexpectedly low.",
+      "change": "Evaluated peak and final checkpoints with both stochastic sampling and larger samples, including 512 episodes over num_levels=0. No training result or checkpoint was changed.",
       "training_budget_consumed": 0,
       "source_commit": "ec97611f83d676fde41c0d7b7a78fe70365f940b"
     }
@@ -78,18 +130,24 @@
   "conclusion": {
     "observed": [
       "The runtime preflight passed on CPU and on the A10 with the exact 15-action actor interface.",
-      "The active run has a durable run ID and attempt ID, and its structured state is RUNNING.",
-      "Both retained compatibility failures occurred before the first PPO update."
+      "Training completed exactly 25,165,824 environment transitions and froze checkpoint SHA256 88f3cff15cd46518c14b9add81a913d8a9afcfed1143b234ecabdf8b0b29cbb6.",
+      "The final preregistered deterministic success rate was 29.6875%, below the 50% threshold, although the 22,020,096-step milestone reached 51.5625%.",
+      "Both collected datasets exceeded 30% completed-episode success and passed count, action, terminal, checkpoint and split-pair audits.",
+      "A 512-episode stochastic full-distribution diagnostic measured final mean return 4.9609375."
     ],
-    "interpretation": [],
+    "interpretation": [
+      "The deterministic 64-episode metric understated stochastic policy quality, but evaluation protocol alone does not explain the gap to the public easy-200 reference.",
+      "The late drop from the best checkpoint to the final checkpoint and several public-recipe mismatches justify a from-scratch official-recipe parity control before using this collector for a new dynamics run."
+    ],
     "not_established": [
-      "Whether PPO learns a successful CoinRun policy under the frozen budget.",
       "Whether the collected trajectories improve action-conditioned dynamics.",
+      "Which individual recipe mismatch causes the remaining return gap.",
       "Any official reproduction claim."
     ],
     "decision": [
-      "Continue the single active PPO PID under the frozen 25,165,824-transition protocol.",
-      "Do not start dynamics or any imitation-policy stage under this experiment."
+      "Retain the checkpoint and audited data as an internal result but do not authorize dynamics from it yet.",
+      "Run CR-PPO-0002 from scratch with the public easy-200 recipe alignment.",
+      "Do not start dynamics or any imitation-policy stage."
     ]
   },
   "artifacts": [
@@ -114,6 +172,41 @@
       "sha256": "007db0387d6a89be4e1ad62da2cfb336391b800ed4d16acee631fb166f53726e",
       "uri": "local-task://ppo-preflight-sync/runtime-preflight.log",
       "remote_uri": "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/runtime-preflight.log"
+    },
+    {
+      "kind": "json",
+      "name": "Completion, evaluation and collection summary",
+      "retention": "git",
+      "sha256": "ce8fe74a192d5e9b66b316624075e3d0e1aa136caac213fbf30aea8f17f6a561",
+      "uri": "experiments/CR-PPO-0001/raw/completion-summary.json"
+    },
+    {
+      "kind": "json",
+      "name": "Post-hoc policy and evaluation diagnosis",
+      "retention": "git",
+      "sha256": "668677070d611677c051f80783e8c7ddeec506c75717be274f7cb2adaa984ddb",
+      "uri": "experiments/CR-PPO-0001/raw/posthoc-evaluation-diagnosis.json"
+    },
+    {
+      "kind": "checkpoint",
+      "name": "Final frozen PPO checkpoint",
+      "retention": "external",
+      "sha256": "88f3cff15cd46518c14b9add81a913d8a9afcfed1143b234ecabdf8b0b29cbb6",
+      "uri": "/mnt/workspace/open-dreamer-ppo-collector/logs/coinrun-ppo-collector-v1/ppo-train/checkpoints/env-steps-025165824.msgpack"
+    },
+    {
+      "kind": "dataset",
+      "name": "Audited train trajectory tree",
+      "retention": "external",
+      "sha256": "42682af1f4c877883dad8b1cf48e95132f8d459a23f9e694df65be9a9072c6ed",
+      "uri": "/mnt/workspace/datasets/coinrun-ppo-v1/train"
+    },
+    {
+      "kind": "dataset",
+      "name": "Audited eval trajectory tree",
+      "retention": "external",
+      "sha256": "216a67a0c9cc28e4ad96869809e8687fc2d0ca7827d525db9f93a3375ec956db",
+      "uri": "/mnt/workspace/datasets/coinrun-ppo-v1/eval"
     }
   ],
   "revision_history": [
@@ -126,6 +219,11 @@
       "revision": 2,
       "at": "2026-07-30T12:17:54+08:00",
       "reason": "Recorded the exact execution source, retained two zero-update compatibility failures, and marked the fixed-budget PPO run active after CPU and A10 smoke checks passed."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T14:21:27+08:00",
+      "reason": "Closed the completed PPO and collection run, recorded the rejected final policy threshold, retained valid dataset audits, and separated the post-hoc evaluation diagnosis from preregistered results."
     }
   ]
 }

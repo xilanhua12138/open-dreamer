@@ -232,6 +232,85 @@ class CoinRunPPOCoreTests(unittest.TestCase):
         )
         self.assertTrue(any(np.any(np.abs(value) > 0.0) for value in differences))
 
+    def test_official_parity_normalizes_advantages_inside_each_minibatch(
+        self,
+    ) -> None:
+        captured_advantages: list[np.ndarray] = []
+
+        def capture_minibatch(state, minibatch):
+            captured_advantages.append(np.asarray(minibatch.advantages))
+            zero = jnp.asarray(0.0)
+            from dreamer.coinrun_ppo import PPOLosses
+
+            return state, PPOLosses(
+                total_loss=zero,
+                policy_loss=zero,
+                value_loss=zero,
+                entropy=zero,
+                approx_kl=zero,
+                clip_fraction=zero,
+            )
+
+        batch = PPOBatch(
+            observations=jnp.arange(16, dtype=jnp.float32).reshape(8, 2),
+            actions=jnp.zeros((8,), dtype=jnp.int32),
+            old_log_probs=jnp.zeros((8,)),
+            old_values=jnp.zeros((8,)),
+            advantages=jnp.asarray(
+                [-10.0, -3.0, -1.0, 0.0, 2.0, 4.0, 9.0, 20.0]
+            ),
+            returns=jnp.zeros((8,)),
+        )
+
+        update_ppo(
+            state=object(),
+            batch=batch,
+            key=jax.random.PRNGKey(101),
+            hyperparameters=PPOHyperparameters(
+                minibatch_size=4,
+                update_epochs=2,
+                advantage_normalization="minibatch",
+            ),
+            minibatch_step=capture_minibatch,
+        )
+
+        self.assertEqual(len(captured_advantages), 4)
+        for advantages in captured_advantages:
+            self.assertAlmostEqual(float(np.mean(advantages)), 0.0, places=6)
+            self.assertAlmostEqual(float(np.std(advantages)), 1.0, places=6)
+
+    def test_actor_critic_accepts_official_glorot_backbone_initialization(
+        self,
+    ) -> None:
+        observations = jnp.zeros((2, 64, 64, 3), dtype=jnp.uint8)
+        official = CoinRunActorCritic(
+            action_dim=COINRUN_ACTION_DIM,
+            backbone_kernel_init="glorot_uniform",
+        )
+        legacy = CoinRunActorCritic(
+            action_dim=COINRUN_ACTION_DIM,
+            backbone_kernel_init="orthogonal_sqrt2",
+        )
+
+        official_params = official.init(
+            jax.random.PRNGKey(102),
+            observations,
+        )["params"]
+        legacy_params = legacy.init(
+            jax.random.PRNGKey(102),
+            observations,
+        )["params"]
+        official_kernel = np.asarray(
+            official_params["ImpalaConvSequence_0"]["Conv_0"]["kernel"]
+        )
+        legacy_kernel = np.asarray(
+            legacy_params["ImpalaConvSequence_0"]["Conv_0"]["kernel"]
+        )
+
+        self.assertEqual(official_kernel.shape, legacy_kernel.shape)
+        self.assertFalse(np.array_equal(official_kernel, legacy_kernel))
+        self.assertTrue(np.isfinite(official_kernel).all())
+
     def test_compiled_minibatch_step_can_be_reused_across_ppo_updates(
         self,
     ) -> None:

@@ -46,6 +46,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--run-name", default="coinrun-ppo-seed0")
+    parser.add_argument("--experiment-id", default="CR-PPO-0001")
     parser.add_argument("--total-env-steps", type=int, default=25_165_824)
     parser.add_argument("--num-envs", type=int, default=64)
     parser.add_argument("--rollout-steps", type=int, default=256)
@@ -61,6 +62,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--entropy-coefficient", type=float, default=0.01)
     parser.add_argument("--max-grad-norm", type=float, default=0.5)
     parser.add_argument("--reward-clip", type=float, default=10.0)
+    parser.add_argument(
+        "--reward-normalization-gamma",
+        type=float,
+        default=0.999,
+    )
+    parser.add_argument(
+        "--advantage-normalization",
+        choices=("batch", "minibatch"),
+        default="batch",
+    )
+    parser.add_argument(
+        "--backbone-kernel-init",
+        choices=("orthogonal_sqrt2", "glorot_uniform"),
+        default="orthogonal_sqrt2",
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--train-start-level", type=int, default=0)
     parser.add_argument("--train-num-levels", type=int, default=500)
@@ -81,6 +97,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--evaluation-envs", type=int, default=16)
     parser.add_argument("--evaluation-seed", type=int, default=4_242)
     parser.add_argument("--evaluation-max-vector-steps", type=int, default=10_000)
+    parser.add_argument(
+        "--evaluation-policy",
+        choices=("deterministic_argmax", "stochastic"),
+        default="deterministic_argmax",
+    )
+    parser.add_argument(
+        "--final-evaluation-episodes",
+        type=int,
+        default=0,
+        help="Run a separate final evaluation; zero disables it.",
+    )
     parser.add_argument("--visual-episodes", type=int, default=4)
     parser.add_argument("--visual-fps", type=int, default=15)
     parser.add_argument("--visual-max-frames", type=int, default=256)
@@ -243,6 +270,8 @@ def _evaluate(
     completed_env_steps: int,
     run_dir: Path,
     logger: Any,
+    num_episodes: int | None = None,
+    milestone_root: str = "validation",
 ) -> dict[str, Any]:
     evaluation_env = _make_env(
         num_envs=args.evaluation_envs,
@@ -252,7 +281,10 @@ def _evaluate(
         seed=args.evaluation_seed,
     )
     policy = PPOCoinRunPolicy(
-        model=CoinRunActorCritic(action_dim=COINRUN_ACTION_DIM),
+        model=CoinRunActorCritic(
+            action_dim=COINRUN_ACTION_DIM,
+            backbone_kernel_init=config.backbone_kernel_init,
+        ),
         params=state.params,
         metadata={
             "architecture": "impala_cnn",
@@ -261,23 +293,33 @@ def _evaluate(
         },
         num_envs=args.evaluation_envs,
         seed=args.evaluation_seed,
-        deterministic=True,
+        deterministic=args.evaluation_policy == "deterministic_argmax",
     )
     summary, videos = evaluate_policy(
         env=evaluation_env,
         policy=policy,
-        num_episodes=args.evaluation_episodes,
+        num_episodes=(
+            args.evaluation_episodes if num_episodes is None else num_episodes
+        ),
         max_vector_steps=args.evaluation_max_vector_steps,
         max_visual_episodes=args.visual_episodes,
     )
     milestone_dir = (
-        run_dir / "validation" / f"env-steps-{completed_env_steps:09d}"
+        run_dir / milestone_root / f"env-steps-{completed_env_steps:09d}"
+    )
+    evaluation_level_range = (
+        None
+        if args.eval_num_levels == 0
+        else [
+            args.eval_start_level,
+            args.eval_start_level + args.eval_num_levels,
+        ]
     )
     summary.update(
         {
             "schema_version": "1.0",
             "completed_env_steps": completed_env_steps,
-            "policy": "deterministic_argmax",
+            "policy": args.evaluation_policy,
             "seed": args.evaluation_seed,
             "start_level": args.eval_start_level,
             "num_levels": args.eval_num_levels,
@@ -286,10 +328,12 @@ def _evaluate(
                 config.start_level,
                 config.start_level + config.num_levels,
             ],
-            "evaluation_level_range": [
-                args.eval_start_level,
-                args.eval_start_level + args.eval_num_levels,
-            ],
+            "evaluation_level_range": evaluation_level_range,
+            "evaluation_distribution": (
+                "full_distribution"
+                if args.eval_num_levels == 0
+                else "fixed_level_range"
+            ),
         }
     )
     summary_path = milestone_dir / "metrics.json"
@@ -350,6 +394,9 @@ def main() -> None:
         entropy_coefficient=args.entropy_coefficient,
         max_grad_norm=args.max_grad_norm,
         reward_clip=args.reward_clip,
+        reward_normalization_gamma=args.reward_normalization_gamma,
+        advantage_normalization=args.advantage_normalization,
+        backbone_kernel_init=args.backbone_kernel_init,
         seed=args.seed,
         start_level=args.train_start_level,
         num_levels=args.train_num_levels,
@@ -380,6 +427,8 @@ def main() -> None:
         args.visual_max_frames,
     ) <= 0:
         raise ValueError("evaluation counts and visual_fps must be positive")
+    if args.final_evaluation_episodes < 0:
+        raise ValueError("final_evaluation_episodes must be non-negative")
     if args.visual_episodes < 0:
         raise ValueError("visual_episodes must be non-negative")
 
@@ -394,7 +443,10 @@ def main() -> None:
         seed=config.seed,
     )
     adapter = Gym3VectorEnvAdapter(env, action_dim=COINRUN_ACTION_DIM)
-    model = CoinRunActorCritic(action_dim=COINRUN_ACTION_DIM)
+    model = CoinRunActorCritic(
+        action_dim=COINRUN_ACTION_DIM,
+        backbone_kernel_init=config.backbone_kernel_init,
+    )
     parameter_key, policy_key = jax.random.split(
         jax.random.PRNGKey(config.seed)
     )
@@ -415,7 +467,7 @@ def main() -> None:
     )
     reward_normalizer = RewardNormalizer(
         num_envs=config.num_envs,
-        gamma=config.gamma,
+        gamma=config.reward_normalization_gamma,
         clip=config.reward_clip,
     )
     completed_env_steps = 0
@@ -437,7 +489,7 @@ def main() -> None:
         wandb_entity=args.wandb_entity,
         wandb_project=args.wandb_project,
         wandb_group=args.wandb_group,
-        wandb_tags=["coinrun", "ppo", "collector", f"seed{config.seed}"],
+        wandb_tags=["coinrun", "ppo", args.experiment_id, f"seed{config.seed}"],
         wandb_mode="offline" if args.wandb_mode == "disabled" else args.wandb_mode,
         log_every=1,
         max_steps=config.num_updates,
@@ -446,7 +498,7 @@ def main() -> None:
     )
     runtime_config = {
         "schema_version": "1.0",
-        "experiment_id": "CR-PPO-0001",
+        "experiment_id": args.experiment_id,
         "ppo": config.to_dict(),
         "evaluation": {
             "every_env_steps": args.evaluation_every_env_steps,
@@ -455,6 +507,8 @@ def main() -> None:
             "seed": args.evaluation_seed,
             "start_level": args.eval_start_level,
             "num_levels": args.eval_num_levels,
+            "policy": args.evaluation_policy,
+            "final_episodes": args.final_evaluation_episodes,
             "max_vector_steps": args.evaluation_max_vector_steps,
             "visual_episodes": args.visual_episodes,
             "visual_fps": args.visual_fps,
@@ -464,7 +518,9 @@ def main() -> None:
         "resume": str(args.resume.resolve()) if args.resume else None,
         "wandb_mode": args.wandb_mode,
         "downstream_scope": {
-            "collect_action_conditioned_trajectories": True,
+            "collect_action_conditioned_trajectories": (
+                args.experiment_id == "CR-PPO-0001"
+            ),
             "behavior_cloning": False,
             "policy_training_inside_world_model": False,
         },
@@ -476,6 +532,7 @@ def main() -> None:
         entropy_coefficient=config.entropy_coefficient,
         minibatch_size=config.minibatch_size,
         update_epochs=config.update_epochs,
+        advantage_normalization=config.advantage_normalization,
     )
     minibatch_step = make_ppo_minibatch_step(
         apply_fn=state.apply_fn,
@@ -631,6 +688,17 @@ def main() -> None:
                 )
 
         final_update_index = (completed_env_steps // config.batch_size) - 1
+        if args.final_evaluation_episodes:
+            _evaluate(
+                state=state,
+                args=args,
+                config=config,
+                completed_env_steps=completed_env_steps,
+                run_dir=run_dir,
+                logger=logger,
+                num_episodes=args.final_evaluation_episodes,
+                milestone_root="final-validation",
+            )
         final_checkpoint = (
             checkpoint_dir
             / f"env-steps-{completed_env_steps:09d}.msgpack"
@@ -651,8 +719,8 @@ def main() -> None:
                 "completed_env_steps": completed_env_steps,
                 "checkpoint": str(final_checkpoint),
                 "downstream_next_step": (
-                    "Evaluate and freeze this policy, then collect real "
-                    "CoinRun trajectories for dynamics. Do not train BC."
+                    "Compare this frozen policy with the public Procgen "
+                    "CoinRun reference before authorizing downstream use."
                 ),
             },
         )

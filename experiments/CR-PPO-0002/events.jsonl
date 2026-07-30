@@ -1,0 +1,1 @@
+{"at":"2026-07-30T14:21:27+08:00","type":"planned","experiment_id":"CR-PPO-0002","message":"Preregistered a from-scratch public-recipe parity control before GPU execution; dynamics and trajectory collection remain blocked.","evidence":["experiments/CR-PPO-0002/manifest.json","scripts/experiments/coinrun/run_coinrun_ppo_official_parity.sh"]}

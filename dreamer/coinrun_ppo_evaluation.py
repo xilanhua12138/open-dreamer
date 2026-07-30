@@ -72,12 +72,15 @@ def validate_level_split(
     }
     if any(value < 0 for value in values.values()):
         raise ValueError(f"level starts must be non-negative: {values}")
-    sizes = {
-        "train_num_levels": train_num_levels,
-        "eval_num_levels": eval_num_levels,
-    }
-    if any(value <= 0 for value in sizes.values()):
-        raise ValueError(f"level counts must be positive: {sizes}")
+    if train_num_levels <= 0 or eval_num_levels < 0:
+        raise ValueError(
+            "train_num_levels must be positive and eval_num_levels must be "
+            "non-negative: "
+            f"{{'train_num_levels': {train_num_levels}, "
+            f"'eval_num_levels': {eval_num_levels}}}"
+        )
+    if eval_num_levels == 0:
+        return
     train_levels = range(
         train_start_level,
         train_start_level + train_num_levels,

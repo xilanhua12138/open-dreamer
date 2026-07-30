@@ -33,6 +33,9 @@ class PPOTrainConfig:
     entropy_coefficient: float = 0.01
     max_grad_norm: float = 0.5
     reward_clip: float = 10.0
+    reward_normalization_gamma: float = 0.999
+    advantage_normalization: str = "batch"
+    backbone_kernel_init: str = "orthogonal_sqrt2"
     seed: int = 0
     start_level: int = 0
     num_levels: int = 500
@@ -83,6 +86,7 @@ class PPOTrainConfig:
         unit_interval_fields = {
             "gamma": self.gamma,
             "gae_lambda": self.gae_lambda,
+            "reward_normalization_gamma": self.reward_normalization_gamma,
         }
         invalid_fractions = {
             name: value
@@ -108,6 +112,19 @@ class PPOTrainConfig:
             raise ValueError(f"PPO float fields must be positive: {invalid_positive}")
         if self.clip_epsilon < 0.0 or self.value_clip_epsilon < 0.0:
             raise ValueError("PPO clipping radii must be non-negative")
+        if self.advantage_normalization not in {"batch", "minibatch"}:
+            raise ValueError(
+                "advantage_normalization must be 'batch' or 'minibatch', got "
+                f"{self.advantage_normalization!r}"
+            )
+        if self.backbone_kernel_init not in {
+            "orthogonal_sqrt2",
+            "glorot_uniform",
+        }:
+            raise ValueError(
+                "backbone_kernel_init must be 'orthogonal_sqrt2' or "
+                f"'glorot_uniform', got {self.backbone_kernel_init!r}"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)

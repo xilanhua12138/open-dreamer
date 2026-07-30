@@ -1,0 +1,168 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0002",
+  "retrospective": false,
+  "created_at": "2026-07-30T14:21:27+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO official-recipe parity control",
+  "kind": "confirmatory",
+  "question": "Does a from-scratch JAX PPO control aligned to the public Procgen easy-200 recipe recover the approximately 8.7-9.0 mean CoinRun return shown near 25M steps in the official paper?",
+  "reason": "CR-PPO-0001 completed correctly at the systems level but reached only 4.96 mean return on a post-hoc 512-episode stochastic full-distribution evaluation. Source comparison found four training/evaluation implementation deviations from the public reference recipe, so another dynamics dataset must not be authorized until a parity control distinguishes an implementation problem from normal variance.",
+  "hypothesis": "Changing only the reference-recipe mismatches—200 training levels, discounted-return normalization gamma 0.99, per-minibatch advantage normalization, TensorFlow-default Glorot IMPALA backbone initialization, and stochastic full-distribution evaluation—will produce final 512-episode mean return at least 8.0 and success rate at least 0.80.",
+  "falsification": "Reject the parity hypothesis if the final 25,165,824-step checkpoint has full-distribution stochastic mean return below 8.0 or success rate below 0.80; treat the result as partial rather than strict reproduction because the framework and Procgen release still differ from the 2019 TensorFlow reference.",
+  "baseline_id": "CR-PPO-0001",
+  "depends_on": [
+    "CR-PPO-0001"
+  ],
+  "controlled_variable": {
+    "name": "public_reference_recipe_alignment",
+    "values": [
+      "CR-PPO-0001 bespoke recipe",
+      "CR-PPO-0002 official-recipe parity"
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_dim": 15,
+    "training_seed": 0,
+    "distribution_mode": "easy",
+    "total_environment_steps": 25165824,
+    "num_envs": 64,
+    "rollout_steps": 256,
+    "num_minibatches": 8,
+    "update_epochs": 3,
+    "learning_rate": 0.0005,
+    "gamma": 0.999,
+    "gae_lambda": 0.95,
+    "clip_epsilon": 0.2,
+    "value_clip_epsilon": 0.2,
+    "value_coefficient": 0.5,
+    "entropy_coefficient": 0.01,
+    "max_grad_norm": 0.5
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": "feat/coinrun-ppo-collector",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_ppo_official_parity.sh",
+    "runner_sha256": "a9019773dd87785c9f753c701a3cb0b42ceded30ca09ab2ed6c908a8161e9aa8",
+    "component_sha256": {
+      "ppo_training": "64e13bae2cb88e2323cf5c7ec0f936d528ba459977a17c8a642de8b6c4a6b8a8",
+      "ppo_core": "2ad43da162816c041969a3eced034d4d4d5ca2d3d381d140492a86ba2715f8ad",
+      "ppo_training_utilities": "aaa29e46724c4a09bc7c07593081fdb24e1687a5a314cdd934144191ce0b8e1d",
+      "ppo_evaluation": "7af3a5d9bcdf664f6e9f70d691d28eb4bdf791cc432dfee081678a020eca1581"
+    }
+  },
+  "data": {
+    "training_environment": {
+      "start_level": 0,
+      "num_levels": 200,
+      "seed": 0
+    },
+    "evaluation_environment": {
+      "start_level": 0,
+      "num_levels": 0,
+      "meaning": "Procgen full level distribution",
+      "seed": 4242
+    },
+    "dataset_output": null
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "25,165,824 environment transitions, 24 periodic 128-episode evaluations, and one final 512-episode evaluation; expected wall time is approximately 80-110 minutes based on CR-PPO-0001.",
+    "shutdown_policy": "Reuse only the existing A10. Keep a bounded instance shutdown timer; do not create another instance or change accelerator type."
+  },
+  "protocol": {
+    "reference": {
+      "paper": "https://cdn.openai.com/procgen.pdf",
+      "training_code": "https://github.com/openai/train-procgen/blob/master/train_procgen/train.py",
+      "network_code": "https://github.com/openai/baselines/blob/9ee399f5b20cd70ac0a871927a6cf043b478193f/baselines/common/models.py",
+      "ppo_cross_check": "https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo_procgen.py",
+      "target_reading": "The official easy-200 CoinRun test curve is visually approximately 8.7-9.0 mean return near 25M environment steps; the plot-derived value is not a machine-readable exact target."
+    },
+    "model": {
+      "architecture": "IMPALA CNN actor-critic",
+      "conv_channels": [
+        16,
+        32,
+        32
+      ],
+      "residual_blocks_per_stage": 2,
+      "hidden_dim": 256,
+      "backbone_kernel_initializer": "Glorot uniform to match tf.layers defaults used by build_impala_cnn",
+      "policy_head": "15-way categorical",
+      "value_head": "scalar"
+    },
+    "training": {
+      "from_scratch": true,
+      "fault_resume_only": true,
+      "total_environment_steps": 25165824,
+      "training_levels": 200,
+      "reward_normalization": "discounted-return running variance",
+      "reward_normalization_gamma": 0.99,
+      "advantage_normalization": "within each optimizer minibatch",
+      "framework": "JAX 0.4.35, Flax 0.10.2, Optax 0.2.4",
+      "procgen": "0.10.7"
+    },
+    "evaluation": {
+      "every_environment_steps": 1048576,
+      "periodic_episodes": 128,
+      "final_episodes": 512,
+      "fixed_seed": 4242,
+      "num_levels": 0,
+      "distribution": "full Procgen level distribution",
+      "policy": "stochastic categorical sample",
+      "visuals": "Four bounded full-episode GIFs and a contact sheet at every milestone"
+    },
+    "known_confounders": [
+      "The original public reference is TensorFlow/OpenAI Baselines while this control is JAX/Flax/Optax.",
+      "The runtime uses Procgen 0.10.7 rather than the older package revision used for the 2019 paper.",
+      "Only seed 0 is run; the paper curve aggregates multiple runs.",
+      "The numeric reference target is read from a published figure rather than an exported table."
+    ],
+    "downstream_scope": {
+      "collect_trajectories": false,
+      "train_dynamics": false,
+      "behavior_cloning": false,
+      "policy_training_inside_world_model": false
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "The final checkpoint exists after exactly 25,165,824 environment transitions and its structured run evidence records the exact execution commit and runtime identity."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The final stochastic full-distribution evaluation contains exactly 512 episodes, mean_return >= 8.0, and success_rate >= 0.80."
+    },
+    {
+      "id": "SC-3",
+      "rule": "The zero-step baseline, all 24 periodic milestones, and the separate final evaluation retain metrics plus bounded visual evidence."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No trajectory collection, dynamics training, behavior cloning, or policy training inside a learned world is started under this experiment ID."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/run-state.json",
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/metrics.jsonl",
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/telemetry.jsonl",
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/validation",
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/final-validation/env-steps-025165824/metrics.json",
+    "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints/env-steps-025165824.msgpack"
+  ]
+}

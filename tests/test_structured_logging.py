@@ -36,8 +36,10 @@ class StructuredLoggingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             with (
                 mock.patch(
-                    "dreamer.logging.jax.distributed.is_initialized",
-                    return_value=False,
+                    "dreamer.logging.jax.distributed",
+                    new=types.SimpleNamespace(
+                        is_initialized=lambda: False,
+                    ),
                 ),
                 mock.patch.dict("os.environ", {"RANK": "1"}, clear=False),
             ):
