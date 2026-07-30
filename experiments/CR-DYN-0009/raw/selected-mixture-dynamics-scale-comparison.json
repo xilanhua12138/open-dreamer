@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0009",
+  "controlled_variable": "dynamics parameter scale",
+  "selected_by": "CR-DYN-0008",
+  "selected_mixture": "final_only",
+  "source_sha256": "4cdb1a48c01735f468e7347fddb638765801847bcc85b1527ac4e65b5256a961",
+  "rows": [
+    {
+      "scale": "tiny",
+      "parameters": 155840,
+      "mean_video_psnr_db": 12.052888296878745,
+      "mean_frame_psnr_db": 12.669426857753141,
+      "mean_ssim": 0.553508712937673
+    },
+    {
+      "scale": "small",
+      "parameters": 545920,
+      "mean_video_psnr_db": 12.497697711375384,
+      "mean_frame_psnr_db": 13.39664182709815,
+      "mean_ssim": 0.5809076860351521
+    },
+    {
+      "scale": "medium",
+      "parameters": 3931392,
+      "mean_video_psnr_db": 16.165150602593123,
+      "mean_frame_psnr_db": 17.073096061747968,
+      "mean_ssim": 0.7134503743891403
+    },
+    {
+      "scale": "large",
+      "parameters": 12902784,
+      "mean_video_psnr_db": 14.966703119208958,
+      "mean_frame_psnr_db": 15.723735415182656,
+      "mean_ssim": 0.6748125726388758
+    }
+  ]
+}

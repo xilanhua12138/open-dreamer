@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0002",
+  "selected_model": "final_only-medium",
+  "health": {
+    "ok": true,
+    "model": "final_only-medium",
+    "source_sha256": "1c54597fd00a099ec6f5a7345f85af33b1e025ec1db043fd52639bf1126c5318"
+  },
+  "step": {
+    "step": 1,
+    "action_id": 4,
+    "action": "停 / No-op",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "latency_ms": 9846.2,
+    "warmup_ms": 27232.5,
+    "returned_png_data_url": true,
+    "source_sha256": "3a27a914c0eea9d294926f0dac282cb21f4be7ba666cf67ba97de032ccef9799"
+  },
+  "local_tunnel": {
+    "health_passed": false,
+    "subsequent_step_passed": false,
+    "failure": "SSH port-forward attempts timed out or failed the local health-and-step check; localhost:7860 had no listener.",
+    "instance_interruption": "The DSW shutdown timer stopped the instance at 2026-07-31T07:09:00+08:00. The exclusive poller restarted it, but its preflight then blocked on stale demo PID 74923."
+  }
+}

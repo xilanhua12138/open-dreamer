@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0009",
-  "record_revision": 3,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 4,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-31T04:14:05+08:00",
-  "ended_at": null,
-  "summary": "On the frozen final_only corpus, both tiny and small completed exactly 20,000 updates. Small improved over tiny from 12.6694 to 13.3966 dB mean-frame PSNR and from 0.55351 to 0.58091 mean SSIM. The reused medium anchor remains 17.0731/0.71345, and the 12,902,784-parameter large arm has reached 11,207/20,000 updates.",
+  "ended_at": "2026-07-31T06:42:59+08:00",
+  "summary": "All four final_only scale points completed the frozen comparison. Tiny, small and large each trained from scratch for exactly 20,000 updates; medium reused the byte-identical CR-DYN-0008 arm. Quality rose through medium, but large fell below medium: mean-frame PSNR 12.6694/13.3966/17.0731/15.7237 dB and mean SSIM 0.55351/0.58091/0.71345/0.67481. The preregistered monotonic scaling hypothesis is rejected and medium is the held-out-selected checkpoint.",
   "observations": [
     {
       "type": "dependency_satisfied",
@@ -84,6 +84,32 @@
       "gpu_utilization_percent": 99,
       "gpu_memory_used_mib": 4426,
       "gpu_memory_total_mib": 23028
+    },
+    {
+      "type": "arm_completed",
+      "at": "2026-07-31T06:42:03+08:00",
+      "arm": "final_only-large",
+      "parameters": 12902784,
+      "completed_updates": 20000,
+      "last_step": 19999,
+      "num_held_out_videos": 32,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "mean_video_psnr_db": 14.966703119208958,
+      "mean_frame_psnr_db": 15.723735415182656,
+      "mean_ssim": 0.6748125726388758,
+      "horizon_16_psnr_db": 15.723735415182656,
+      "metrics_sha256": "17425849a07165933ff217f6f29090cb410a3a445f06f908448cd8f5f06a7acc",
+      "run_state_sha256": "7ef562923af761599d8a10bf06bf09a792de24d39673f7a8d1f28e2ae376fc7f",
+      "config_sha256": "ca792a344ed9f0a9fb2c495895f1b41e670e62a6d27ef2ad694b4ea446cb6c06",
+      "overrides_sha256": "b937224b4d4b54f3df331481a2dad5d62f983aa3c0d62a79d5197c9d4a0ea622"
+    },
+    {
+      "type": "experiment_completed",
+      "at": "2026-07-31T06:42:59+08:00",
+      "status": "COMPLETE CHECKPOINT_MIXTURE_AND_DYNAMICS_SCALE_ABLATIONS",
+      "selected_scale": "medium",
+      "scale_comparison_sha256": "4cdb1a48c01735f468e7347fddb638765801847bcc85b1527ac4e65b5256a961"
     }
   ],
   "comparisons": [
@@ -105,6 +131,22 @@
       "delta_mean_frame_psnr_db": 0.727214969345009,
       "delta_mean_ssim": 0.0273989730974791,
       "delta_horizon_16_psnr_db": 0.727214969345009
+    },
+    {
+      "name": "medium versus large",
+      "status": "complete_pairwise_observation",
+      "baseline": "final_only-medium",
+      "candidate": "final_only-large",
+      "delta_mean_video_psnr_db": -1.198447483384165,
+      "delta_mean_frame_psnr_db": -1.349360646565312,
+      "delta_mean_ssim": -0.0386378017502645,
+      "delta_horizon_16_psnr_db": -1.349360646565312
+    },
+    {
+      "name": "preregistered monotonic scale criterion",
+      "status": "rejected",
+      "rule": "tiny < small < medium <= large for mean-frame PSNR and mean SSIM",
+      "observed_order": "medium > large > small > tiny"
     }
   ],
   "deviations": [],
@@ -115,20 +157,25 @@
       "The 155,840-parameter tiny arm completed exactly 20,000 updates and scored 12.669427 dB mean-frame PSNR, 0.553509 mean SSIM and 12.669427 dB horizon-16 PSNR.",
       "The 545,920-parameter small arm completed exactly 20,000 updates and scored 13.396642 dB mean-frame PSNR, 0.580908 mean SSIM and 13.396642 dB horizon-16 PSNR.",
       "Small exceeded tiny by 0.727215 dB mean-frame PSNR and 0.027399 mean SSIM.",
-      "The serial runner entered the 12,902,784-parameter large arm and its structured state reached 11,207/20,000 updates with 99% GPU utilization."
+      "The 12,902,784-parameter large arm completed exactly 20,000 updates and scored 15.723735 dB mean-frame PSNR, 14.966703 dB mean-video PSNR and 0.674813 mean SSIM.",
+      "The byte-identical reused 3,931,392-parameter medium arm remained best at 17.073096 dB mean-frame PSNR, 16.165151 dB mean-video PSNR and 0.713450 mean SSIM.",
+      "Large trailed medium by 1.349361 dB mean-frame PSNR, 1.198447 dB mean-video PSNR and 0.038638 mean SSIM.",
+      "The serial pipeline wrote COMPLETE CHECKPOINT_MIXTURE_AND_DYNAMICS_SCALE_ABLATIONS after every required scale result existed."
     ],
     "interpretation": [
-      "The first required monotonic relation, tiny < small, holds for both mean-frame PSNR and mean SSIM.",
-      "The full hypothesis remains unresolved until large completes and is compared with the reused medium result."
+      "Quality improves monotonically from tiny through medium, but the large arm reverses the trend under the same 20,000-update recipe.",
+      "Because the preregistered rule required medium <= large on both primary metrics, the monotonic scaling hypothesis is rejected.",
+      "Medium is the descriptive held-out winner and is therefore the correct checkpoint for CR-DEMO-0002 under the frozen selection rule."
     ],
     "not_established": [
-      "Whether corrected selected-mixture dynamics quality scales monotonically.",
-      "Whether the 12.90M arm exceeds the 3.93M arm.",
+      "Whether the large model is under-optimized at 20,000 updates or intrinsically worse under this architecture and data recipe.",
+      "Whether additional seeds reproduce the medium-over-large reversal.",
       "Whether any resulting model is interactively controllable."
     ],
     "decision": [
       "Use the exact final_only corpus selected by CR-DYN-0008.",
-      "Continue the unchanged serial runner through small, reused medium and large before evaluating the monotonic scale hypothesis."
+      "Select final_only-medium for CR-DEMO-0002 because it leads the complete held-out scale grid.",
+      "Do not infer that capacity is generally harmful; the evidence only rejects monotonic improvement under this fixed-20k one-seed protocol."
     ]
   },
   "artifacts": [
@@ -227,6 +274,62 @@
       "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-small/ema_shortcut/pred_000000.mp4",
       "retention": "local task root and DSW persistent storage",
       "sha256": "4cfdeec9903b024f4371a9ea673575b412ca682c81ba1b20e1bac1384cc564a6"
+    },
+    {
+      "name": "final_only-large held-out summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-large-eval-summary.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-large/metrics.json",
+      "retention": "git summary and DSW persistent storage",
+      "source_sha256": "17425849a07165933ff217f6f29090cb410a3a445f06f908448cd8f5f06a7acc"
+    },
+    {
+      "name": "final_only-large run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-large-run-state.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/runs/final_only-large/run-state.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "7ef562923af761599d8a10bf06bf09a792de24d39673f7a8d1f28e2ae376fc7f"
+    },
+    {
+      "name": "final_only-large Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-large-overrides.yaml",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/runs/final_only-large/.hydra/overrides.yaml",
+      "retention": "git and DSW persistent storage",
+      "sha256": "b937224b4d4b54f3df331481a2dad5d62f983aa3c0d62a79d5197c9d4a0ea622"
+    },
+    {
+      "name": "selected-mixture dynamics scale comparison",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0009/raw/selected-mixture-dynamics-scale-comparison.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/selected-mixture-dynamics-scale-comparison.json",
+      "retention": "git summary and DSW persistent storage",
+      "source_sha256": "4cdb1a48c01735f468e7347fddb638765801847bcc85b1527ac4e65b5256a961"
+    },
+    {
+      "name": "final_only-large original visual 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-large/original_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-large/ema_shortcut/original_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "e6855862c9008b4563d290795e02b2ac0ef0bfe835cff19ea3e4900d1b496bc6"
+    },
+    {
+      "name": "final_only-large tokenizer reconstruction 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-large/gt_decoded_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-large/ema_shortcut/gt_decoded_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "9c952fcfe77b0cc2914aba5ec273b33fff27f4e57dffa80e9f7c6351d5205dd2"
+    },
+    {
+      "name": "final_only-large predicted rollout 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-large/pred_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-large/ema_shortcut/pred_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "ec9895ee65c5ba165273b17ad544f9bfc85dbf71d642409194f31812c9b04c4b"
     }
   ],
   "revision_history": [
@@ -244,6 +347,11 @@
       "revision": 3,
       "at": "2026-07-31T06:07:14+08:00",
       "reason": "Recorded small terminal metrics and visual evidence, confirmed the tiny-to-small monotonic relation, and captured large-arm structured progress."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-31T07:17:43+08:00",
+      "reason": "Recorded the large arm terminal evidence, closed the complete scale grid, rejected the preregistered monotonic rule and selected medium for the dependent demo."
     }
   ]
 }

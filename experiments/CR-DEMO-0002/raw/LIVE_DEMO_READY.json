@@ -1,0 +1,8 @@
+{
+  "latency_ms": 9846.2,
+  "model": "final_only-medium",
+  "schema_version": "1.0",
+  "step": 1,
+  "step_action_id": 4,
+  "verified_at": "2026-07-30T22:52:05.783250+00:00"
+}

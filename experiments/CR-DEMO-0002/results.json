@@ -1,27 +1,116 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0002",
-  "record_revision": 1,
-  "execution_status": "queued",
+  "record_revision": 2,
+  "execution_status": "blocked",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-31T06:46:49+08:00",
   "ended_at": null,
-  "summary": "Queued behind the complete CR-DYN-0008/0009 serial chain.",
-  "observations": [],
+  "summary": "CR-DYN-0009 selected final_only-medium and the remote demo passed health plus one real action-4 inference step. The local SSH tunnel never passed health and the required subsequent step, then the DSW timer stopped the instance at 07:09. The exclusive poller restarted the same A10 but correctly blocked on stale demo PID 74923. localhost:7860 is not available and the experiment remains blocked.",
+  "observations": [
+    {
+      "type": "checkpoint_selected",
+      "at": "2026-07-31T06:46:49+08:00",
+      "model": "final_only-medium",
+      "parameters": 3931392,
+      "mean_frame_psnr_db": 17.073096061747968,
+      "mean_ssim": 0.7134503743891403,
+      "selection_sha256": "055eb3f28c25c967f55003045cbbdad57151a0e7e1be93d8ff8833545045a36d"
+    },
+    {
+      "type": "remote_runtime_verified",
+      "at": "2026-07-31T06:52:05+08:00",
+      "health_ok": true,
+      "step": 1,
+      "action_id": 4,
+      "context_frames": 16,
+      "denoise_steps": 4,
+      "latency_ms": 9846.2,
+      "warmup_ms": 27232.5,
+      "returned_png_data_url": true,
+      "ready_sha256": "ec441e53eee727397af2620df309440fee80dbfa236f5737a61c1ab7f9cd10fa"
+    },
+    {
+      "type": "instance_restarted_after_timer_stop",
+      "at": "2026-07-31T07:16:36+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "status": "Running",
+      "remote_preflight": "PREFLIGHT_BLOCKED stale_demo_pid:74923",
+      "local_listener_7860": false
+    }
+  ],
   "comparisons": [],
   "deviations": [],
-  "failures": [],
+  "failures": [
+    {
+      "at": "2026-07-31T06:52:36+08:00",
+      "stage": "local_ssh_tunnel",
+      "category": "infrastructure",
+      "message": "Three port-forward attempts timed out and a fourth cycle failed the local health-and-step check; localhost:7860 had no listener."
+    },
+    {
+      "at": "2026-07-31T07:09:00+08:00",
+      "stage": "instance_lifecycle",
+      "category": "infrastructure",
+      "message": "The DSW shutdown timer stopped the instance before local verification completed. After the exclusive poller restarted it, the persisted live-demo.pid pointed to dead PID 74923 and preflight blocked without restarting the demo."
+    }
+  ],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "The frozen scale comparison selected final_only-medium, not large.",
+      "The remote server returned ok=true for /health and a real action-4 /api/step returned a PNG data URL as step 1.",
+      "The remote generated step took 9846.2 ms after a 27232.5 ms warmup.",
+      "No local process listened on 127.0.0.1:7860, so neither local health nor the required subsequent local step passed.",
+      "The same A10 restarted after the timer stop, but the exclusive poller reported PREFLIGHT_BLOCKED stale_demo_pid:74923."
+    ],
+    "interpretation": [
+      "Checkpoint loading and one remote inference step are proven, but the user-facing local access path and sustained two-step path are not.",
+      "This is currently an infrastructure/lifecycle blocker rather than evidence that model inference itself failed."
+    ],
     "not_established": [
-      "Runtime readiness, sustained inference and user-perceived controllability are not established before the automatic health and two-step checks complete."
+      "The local-tunnel health check and subsequent real inference step.",
+      "Sustained runtime behavior across two consecutive generated steps.",
+      "User-perceived representation clarity and action responsiveness."
     ],
     "decision": [
-      "Start automatically only after the full dynamics pipeline releases the only A10."
+      "Do not publish http://127.0.0.1:7860 as usable.",
+      "Leave restart ownership with the exclusive poller; do not bypass its stale-PID safety block from the read-only heartbeat.",
+      "Resume scientific evaluation only after remote health/step and local health/subsequent-step all pass."
     ]
   },
-  "artifacts": [],
-  "revision_history": []
+  "artifacts": [
+    {
+      "name": "remote demo ready marker",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0002/raw/LIVE_DEMO_READY.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/LIVE_DEMO_READY.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "ec441e53eee727397af2620df309440fee80dbfa236f5737a61c1ab7f9cd10fa"
+    },
+    {
+      "name": "remote runtime verification summary",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0002/raw/remote-runtime-verification.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo-health.json and live-demo-step.json",
+      "retention": "git summary, local task root and DSW persistent storage",
+      "health_source_sha256": "1c54597fd00a099ec6f5a7345f85af33b1e025ec1db043fd52639bf1126c5318",
+      "step_source_sha256": "3a27a914c0eea9d294926f0dac282cb21f4be7ba666cf67ba97de032ccef9799"
+    },
+    {
+      "name": "selected demo checkpoint",
+      "kind": "json",
+      "uri": "../synced/CR-DEMO-0002/live-demo-selection.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo-selection.json",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "055eb3f28c25c967f55003045cbbdad57151a0e7e1be93d8ff8833545045a36d"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 2,
+      "at": "2026-07-31T07:17:43+08:00",
+      "reason": "Recorded the held-out-selected medium checkpoint, successful remote health/step, failed local tunnel verification, timer stop and stale-demo-PID blocker."
+    }
+  ]
 }

@@ -24,16 +24,33 @@ CR-DEMO-0001 proved only that the old stack could serve frames. The user rejecte
 
 ### Observed
 
-Queued. The automatic launcher cannot run until CR-DYN-0008/0009 release the only A10.
+The complete scale grid selected `final_only-medium`. At 06:46:49 the
+exclusive poller started the remote demo as PID `74923`. The remote server
+became healthy and action `4` returned a real PNG as step 1. That step took
+9846.2 ms after a 27232.5 ms warmup.
+
+The local SSH tunnel did not complete the required verification. Three
+port-forward attempts timed out, the fourth cycle still failed local health
+and step checks, and no process listened on local port 7860. At 07:09 the DSW
+timer stopped the instance. The poller restarted the same A10 without creating
+or changing resources, then safely blocked on persisted stale demo PID
+`74923`.
 
 ### Interpretation
 
-None before runtime and visual evidence exists.
+Remote checkpoint loading and one generated step work. The browser access path
+and sustained two-step path do not yet work, so this is an infrastructure
+blocker rather than a completed interactive evaluation.
 
 ### Not established
 
-Health, sustained inference, latency, visual clarity and action response are not yet established.
+- Local-tunnel health and a subsequent real generated step.
+- Sustained two-step inference.
+- User-perceived visual clarity and action responsiveness.
 
 ### Decision
 
-After the full dynamics chain completes, select the best completed scale by held-out mean-frame PSNR then SSIM, start the demo, verify one remote step and one subsequent local-tunnel step, and then ask the user for visual acceptance.
+Do not advertise `http://127.0.0.1:7860` as usable. Leave restart ownership
+with the exclusive poller and resolve its stale-PID lifecycle blocker before
+repeating the complete remote-health/step plus local-health/subsequent-step
+contract.

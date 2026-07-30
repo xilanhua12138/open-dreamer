@@ -20,9 +20,9 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
-| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | running | not evaluated | none |
+| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
-| `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | queued | not evaluated | none |
+| `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | blocked | not evaluated | none |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
@@ -88,13 +88,21 @@ arms completed their exact 20k budgets. The frozen ordering was
 `0.713450 / 0.701311 / 0.697699`. This rejects the preregistered
 recency-weighted hypothesis and freezes final-only for CR-DYN-0009.
 
-The selected-mixture scale sweep then started without another pipeline. The
-155,840-parameter tiny arm completed 20k and scored 12.669427 dB mean-frame
-PSNR with 0.553509 mean SSIM. The 545,920-parameter small arm completed 20k
-at 13.396642 dB and 0.580908, preserving the first monotonic relation. Medium
-is reused from CR-DYN-0008 at 17.073096/0.713450. The 12,902,784-parameter
-large arm then reached 11,207/20,000 updates; its final comparison remains
-pending.
+The selected-mixture scale sweep then completed without another pipeline. The
+155,840-parameter tiny, 545,920-parameter small and 12,902,784-parameter large
+arms each trained from scratch to exactly 20k updates; medium was the
+byte-identical CR-DYN-0008 arm. Mean-frame PSNR / SSIM was
+`12.669427/0.553509`, `13.396642/0.580908`, `17.073096/0.713450` and
+`15.723735/0.674813` from tiny through large. Large therefore fell below
+medium, rejecting the preregistered monotonic criterion and selecting medium
+for the dependent demo.
+
+CR-DEMO-0002 loaded `final_only-medium` and passed remote `/health` plus one
+real action-4 generated step. The SSH port-forward did not pass local health
+and the required subsequent step. A DSW timer then stopped the instance; the
+exclusive poller restarted the same A10 but blocked safely on the persisted
+stale demo PID. The local URL is not advertised as usable, and user visual
+acceptance remains pending.
 
 Launch and monitoring ownership remains exclusively with the five-minute
 poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes

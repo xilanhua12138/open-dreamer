@@ -27,34 +27,39 @@ Its aligned 32-video evaluation scored 12.052888 dB mean-video PSNR,
 12.669427 dB mean-frame PSNR and 0.553509 mean SSIM. Horizon 1/3/8/16 PSNR
 was 17.875752/15.739125/13.846570/12.669427 dB.
 
-The runner then entered the 545,920-parameter `final_only-small` arm. At
-05:05:49 its structured state was 9,882/20,000 updates, immediately before the
-periodic 10k evaluation. PID `929` remained alive.
-
 `final_only-small` completed its exact budget at 05:22:43. Its aligned
 32-video evaluation scored 12.497698 dB mean-video PSNR, 13.396642 dB
 mean-frame PSNR and 0.580908 mean SSIM. Horizon 1/3/8/16 PSNR was
 19.790742/17.537919/15.080334/13.396642 dB.
 
-The 12,902,784-parameter `final_only-large` arm then started from scratch. At
-06:07:14 its structured state was 11,207/20,000 updates; PID `929` remained
-alive with 99% A10 utilization and 4,426/23,028 MiB allocated.
+The 12,902,784-parameter `final_only-large` arm then trained from scratch to
+exactly 20,000 updates and completed at 06:42:03. Its aligned evaluation
+scored 14.966703 dB mean-video PSNR, 15.723735 dB mean-frame PSNR and
+0.674813 mean SSIM. Horizon 1/3/8/16 PSNR was
+18.045137/17.798596/16.889218/15.723735 dB.
+
+The reused 3,931,392-parameter `final_only-medium` anchor remained best at
+16.165151 dB mean-video PSNR, 17.073096 dB mean-frame PSNR and 0.713450
+mean SSIM. The complete descending order was
+`medium > large > small > tiny`.
 
 ## Interpretation
 
-Small exceeds tiny by 0.727215 dB mean-frame PSNR and 0.027399 mean SSIM, so
-the first required monotonic relation holds. Medium also exceeds small on both
-metrics. The overall scale hypothesis still depends on whether large at least
-matches the reused medium result.
+Small exceeds tiny by 0.727215 dB mean-frame PSNR and 0.027399 mean SSIM, and
+medium exceeds small on both metrics. However, large trails medium by
+1.349361 dB mean-frame PSNR, 1.198447 dB mean-video PSNR and 0.038638 mean
+SSIM. This violates the preregistered requirement
+`tiny < small < medium <= large` on both primary metrics, so the monotonic
+scaling hypothesis is rejected under this fixed-20k recipe.
 
 ## Not established
 
-- Whether the corrected capacity curve is monotonic.
-- Whether large exceeds medium.
+- Whether the large model would recover with a different optimization budget.
+- Whether additional seeds reproduce the medium-over-large reversal.
 - Whether any scale is good enough for interactive control.
 
 ## Decision
 
-Continue the unchanged large arm, reusing the byte-identical selected-medium
-result exactly as preregistered. Do not close the scale hypothesis until the
-large held-out metric exists.
+Select `final_only-medium` for CR-DEMO-0002 using the frozen held-out ordering.
+Do not generalize the result into “larger models are worse”: it only rejects
+monotonic improvement for this one-seed, fixed-20k protocol.
