@@ -1,0 +1,53 @@
+- dataset=coinrun
+- dataset.array_record_path=/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/mixtures/final_only
+- dataset.dataloader_cfg.B=16
+- dataset.dataloader_cfg.short_T=64
+- dataset.dataloader_cfg.long_T=64
+- dataset.dataloader_cfg.long_ratio=0.0
+- dataset.dataloader_cfg.num_workers=4
+- dataset.dataloader_cfg.prefetch_buffer_size=4
+- +dataset.latent_mean=[-0.04036186635494232, 0.10037285834550858, -0.17331477999687195,
+  0.001818921766243875, 0.02179088443517685, -0.0075355092994868755, 0.10696239769458771,
+  0.03950992599129677, 0.05869852378964424, 0.1279653161764145, 0.03354959562420845,
+  0.03694623336195946, -0.06224510818719864, 0.05175282433629036, -0.19422492384910583,
+  -0.036323633044958115]
+- +dataset.latent_std=[0.1695638746023178, 0.1427164226770401, 0.14491721987724304,
+  0.16102583706378937, 0.11693138629198074, 0.13948467373847961, 0.19295012950897217,
+  0.2112843096256256, 0.11646558344364166, 0.13631446659564972, 0.19545838236808777,
+  0.18101245164871216, 0.22589410841464996, 0.2313554733991623, 0.1860392540693283,
+  0.1171155646443367]
+- tokenizer_ckpt=/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints
+- dynamics.d_bottleneck=16
+- dynamics.depth=2
+- dynamics.d_model=128
+- dynamics.n_heads=2
+- dynamics.n_kv_heads=1
+- dynamics.packing_factor=2
+- dynamics.n_register=16
+- dynamics.qk_norm_type=qknorm
+- dynamics.time_every=2
+- dynamics.time_layer_offset=1
+- dynamics.k_max=8
+- dynamics.context_length=64
+- max_steps=20000
+- bootstrap_start=10000
+- bootstrap_fraction=0.25
+- image_fraction=0.0
+- ot.enabled=true
+- ot.pairing=barycentric
+- loss_weighting=v_space
+- scaling_flops_budget=0
+- scaling_tokens_per_param=0
+- ckpt.max_to_keep=5
+- ckpt.save_interval_steps=5000
+- logger.log_every=50
+- use_wandb=true
+- logger.wandb_group=CR-DYN-0009
+- optimizer.optimizer_type=muon
+- optimizer.mup_scaling=false
+- lr_schedule.schedule_type=wsd
+- lr_schedule.lr=0.0003
+- lr_schedule.warmup_ratio=0.05
+- lr_schedule.decay_ratio=0.1
+- write_video_every=2500
+- run_name=coinrun-dynamics-final_only-small

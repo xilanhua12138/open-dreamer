@@ -31,11 +31,21 @@ The runner then entered the 545,920-parameter `final_only-small` arm. At
 05:05:49 its structured state was 9,882/20,000 updates, immediately before the
 periodic 10k evaluation. PID `929` remained alive.
 
+`final_only-small` completed its exact budget at 05:22:43. Its aligned
+32-video evaluation scored 12.497698 dB mean-video PSNR, 13.396642 dB
+mean-frame PSNR and 0.580908 mean SSIM. Horizon 1/3/8/16 PSNR was
+19.790742/17.537919/15.080334/13.396642 dB.
+
+The 12,902,784-parameter `final_only-large` arm then started from scratch. At
+06:07:14 its structured state was 11,207/20,000 updates; PID `929` remained
+alive with 99% A10 utilization and 4,426/23,028 MiB allocated.
+
 ## Interpretation
 
-The tiny result is a valid first scale point and lies 4.403669 dB mean-frame
-PSNR and 0.159942 mean SSIM below the reused medium anchor. This does not yet
-establish monotonicity because small and large are incomplete.
+Small exceeds tiny by 0.727215 dB mean-frame PSNR and 0.027399 mean SSIM, so
+the first required monotonic relation holds. Medium also exceeds small on both
+metrics. The overall scale hypothesis still depends on whether large at least
+matches the reused medium result.
 
 ## Not established
 
@@ -45,6 +55,6 @@ establish monotonicity because small and large are incomplete.
 
 ## Decision
 
-Continue the unchanged serial runner through small and large, reusing the
-byte-identical selected-medium result exactly as preregistered. Do not interpret
-the scale hypothesis until all four points exist.
+Continue the unchanged large arm, reusing the byte-identical selected-medium
+result exactly as preregistered. Do not close the scale hypothesis until the
+large held-out metric exists.

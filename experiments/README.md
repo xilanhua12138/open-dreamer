@@ -90,9 +90,11 @@ recency-weighted hypothesis and freezes final-only for CR-DYN-0009.
 
 The selected-mixture scale sweep then started without another pipeline. The
 155,840-parameter tiny arm completed 20k and scored 12.669427 dB mean-frame
-PSNR with 0.553509 mean SSIM. The 545,920-parameter small arm subsequently
-reached 9,882/20,000 structured updates. Medium is reused from CR-DYN-0008;
-large and the final scale conclusion remain pending.
+PSNR with 0.553509 mean SSIM. The 545,920-parameter small arm completed 20k
+at 13.396642 dB and 0.580908, preserving the first monotonic relation. Medium
+is reused from CR-DYN-0008 at 17.073096/0.713450. The 12,902,784-parameter
+large arm then reached 11,207/20,000 updates; its final comparison remains
+pending.
 
 Launch and monitoring ownership remains exclusively with the five-minute
 poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes
