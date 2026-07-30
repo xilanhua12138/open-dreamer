@@ -17,6 +17,7 @@ fi
   "numpy==2.2.6" \
   "scipy==1.14.1" \
   "jax[cuda12]==0.4.35" \
+  "nvidia-cuda-nvcc-cu12==12.4.131" \
   "flax==0.10.2" \
   "optax==0.2.4" \
   "procgen==0.10.7" \

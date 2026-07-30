@@ -62,6 +62,20 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         self.assertIn("flax==0.10.2", bootstrap)
         self.assertIn("JAX_PLATFORMS=cpu", bootstrap)
 
+    def test_runtime_bootstrap_pins_nvcc_layout_for_jax_0_4_35(self) -> None:
+        bootstrap = (
+            ROOT / "scripts/experiments/coinrun/prepare_coinrun_ppo_runtime.sh"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            '"nvidia-cuda-nvcc-cu12==12.4.131"',
+            bootstrap,
+            (
+                "JAX 0.4.35 imports nvidia.cuda_nvcc.__file__, but the "
+                "unbounded CUDA 12.9 wheel exposes it as a namespace package"
+            ),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
