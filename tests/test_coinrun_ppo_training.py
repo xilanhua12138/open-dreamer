@@ -16,6 +16,14 @@ from dreamer.coinrun_ppo_training import (
 
 
 class CoinRunPPOTrainingTests(unittest.TestCase):
+    def test_validated_official_recipe_is_the_generic_default(self) -> None:
+        config = PPOTrainConfig()
+
+        self.assertEqual(config.num_levels, 200)
+        self.assertEqual(config.reward_normalization_gamma, 0.99)
+        self.assertEqual(config.advantage_normalization, "minibatch")
+        self.assertEqual(config.backbone_kernel_init, "glorot_uniform")
+
     def test_config_derives_exact_update_and_minibatch_counts(self) -> None:
         config = PPOTrainConfig(
             total_env_steps=1_024,

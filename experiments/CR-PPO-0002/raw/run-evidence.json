@@ -1,0 +1,59 @@
+{
+  "attempt_id": "cbd0e8dc-e83a-461a-8023-39ad6864f2c0",
+  "config_sha256": "276cd6a4370df45d43c0727b388b0027a7a320b2c8c515c774f6c43fb406e904",
+  "experiment_id": "CR-PPO-0002",
+  "generated_at": "2026-07-30T07:43:39.751239+00:00",
+  "input_fingerprint": "4a4f0ece246902d2ee7a8ac0f293311ce3492714edb894e4f57223b70b997077",
+  "last_completed_updates": 1536,
+  "last_metrics": {
+    "evaluation/": {
+      "completed_env_steps": 25165824,
+      "environment_transitions": 40768,
+      "episodes": 512,
+      "mean_episode_length": 77.28125,
+      "mean_return": 8.671875,
+      "median_return": 10.0,
+      "num_levels": 0,
+      "return_p05": 0.0,
+      "return_p95": 10.0,
+      "seed": 4242,
+      "start_level": 0,
+      "success_rate": 0.8671875,
+      "successes": 444,
+      "vector_steps": 2548
+    },
+    "train/": {
+      "approx_kl": 0.009867407381534576,
+      "clip_fraction": 0.1157430037856102,
+      "completed_env_steps": 25165824,
+      "entropy": 1.9467682838439941,
+      "environment_steps_per_second": 5785.311915831704,
+      "episode_return_mean": 9.7008547008547,
+      "episode_success_rate": 0.9700854700854701,
+      "episodes_completed_in_rollout": 234,
+      "optimizer_minibatches": 24,
+      "policy_loss": -0.013299311511218548,
+      "raw_reward_mean": 0.1385498046875,
+      "raw_reward_nonzero_fraction": 0.01385498046875,
+      "reward_normalizer_variance": 0.9487732750714377,
+      "total_loss": 0.028477026149630547,
+      "value_loss": 0.12248804420232773
+    }
+  },
+  "ledger_uri": "experiments/CR-PPO-0002/raw/coinrun-ppo-official-parity-seed0-run-evidence.json",
+  "run_artifacts": [
+    {"bytes": 3729, "sha256": "f910466209ecfdd3a034c74e0a1431f3eedf17760bf3d672887a4b76ecfceff4", "uri": "runtime-identity.json"},
+    {"bytes": 471, "sha256": "e52329437212f4d92b7060f8556976f988de1d4dd4614ca6266fada17798f1c9", "uri": "run-state.json"},
+    {"bytes": 1275981, "sha256": "ceb6bf1d3f445ef9beef2e8a90560b14c6f8ea11f343b0fcd73f47ea337f593f", "uri": "metrics.jsonl"},
+    {"bytes": 84088, "sha256": "e1d2c4deb8ee936281f54aca58e728b80b1f214f5247a5751f4a0b8f4c6066b3", "uri": "telemetry.jsonl"},
+    {"bytes": 75917, "sha256": "8e77a9ff7307801f25c6531b11a49d2852734bf58bb67950dc4c13446a5f5f4b", "uri": "artifacts.jsonl"},
+    {"bytes": 236, "sha256": "fde14c53acb1d46c4f7911137d7d9d1daad2fcce21b9f60b9db318280e350da7", "uri": "wandb-run.json"},
+    {"bytes": 3729, "sha256": "f910466209ecfdd3a034c74e0a1431f3eedf17760bf3d672887a4b76ecfceff4", "uri": "runtime-identities/cbd0e8dc-e83a-461a-8023-39ad6864f2c0.json"}
+  ],
+  "run_id": "a079cdb6-2586-4de5-ad1c-512537184308",
+  "run_name": "coinrun-ppo-official-parity-seed0",
+  "schema_version": "1.0",
+  "source_commit": "a4d2574b9b25854b72e0a305d8aa1eb299fb3095",
+  "state": "COMPLETED",
+  "validation": []
+}

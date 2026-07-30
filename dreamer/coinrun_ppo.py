@@ -47,7 +47,7 @@ class PPOHyperparameters:
     entropy_coefficient: float = 0.01
     minibatch_size: int = 2_048
     update_epochs: int = 3
-    advantage_normalization: str = "batch"
+    advantage_normalization: str = "minibatch"
 
 
 def compute_gae(
@@ -382,7 +382,7 @@ def backbone_kernel_initializer(name: str) -> Callable[..., jax.Array]:
 
 class ResidualBlock(nn.Module):
     channels: int
-    backbone_kernel_init: str = "orthogonal_sqrt2"
+    backbone_kernel_init: str = "glorot_uniform"
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
@@ -410,7 +410,7 @@ class ResidualBlock(nn.Module):
 
 class ImpalaConvSequence(nn.Module):
     channels: int
-    backbone_kernel_init: str = "orthogonal_sqrt2"
+    backbone_kernel_init: str = "glorot_uniform"
 
     @nn.compact
     def __call__(self, inputs: jax.Array) -> jax.Array:
@@ -442,7 +442,7 @@ class CoinRunActorCritic(nn.Module):
     """IMPALA-style visual encoder with categorical policy and value heads."""
 
     action_dim: int
-    backbone_kernel_init: str = "orthogonal_sqrt2"
+    backbone_kernel_init: str = "glorot_uniform"
 
     @nn.compact
     def __call__(self, observations: jax.Array) -> tuple[jax.Array, jax.Array]:

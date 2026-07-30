@@ -33,12 +33,12 @@ class PPOTrainConfig:
     entropy_coefficient: float = 0.01
     max_grad_norm: float = 0.5
     reward_clip: float = 10.0
-    reward_normalization_gamma: float = 0.999
-    advantage_normalization: str = "batch"
-    backbone_kernel_init: str = "orthogonal_sqrt2"
+    reward_normalization_gamma: float = 0.99
+    advantage_normalization: str = "minibatch"
+    backbone_kernel_init: str = "glorot_uniform"
     seed: int = 0
     start_level: int = 0
-    num_levels: int = 500
+    num_levels: int = 200
     distribution_mode: str = "easy"
 
     @property

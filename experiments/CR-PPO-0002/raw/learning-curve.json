@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0002",
+  "evaluation_identity": {
+    "periodic_episodes": 128,
+    "final_episodes": 512,
+    "policy": "stochastic",
+    "distribution": "full_distribution",
+    "num_levels": 0,
+    "seed": 4242
+  },
+  "periodic": [
+    {"completed_env_steps": 0, "mean_return": 3.125, "success_rate": 0.3125},
+    {"completed_env_steps": 1048576, "mean_return": 6.71875, "success_rate": 0.671875},
+    {"completed_env_steps": 2097152, "mean_return": 7.890625, "success_rate": 0.7890625},
+    {"completed_env_steps": 3145728, "mean_return": 7.96875, "success_rate": 0.796875},
+    {"completed_env_steps": 4194304, "mean_return": 5.703125, "success_rate": 0.5703125},
+    {"completed_env_steps": 5242880, "mean_return": 7.578125, "success_rate": 0.7578125},
+    {"completed_env_steps": 6291456, "mean_return": 8.203125, "success_rate": 0.8203125},
+    {"completed_env_steps": 7340032, "mean_return": 7.65625, "success_rate": 0.765625},
+    {"completed_env_steps": 8388608, "mean_return": 7.8125, "success_rate": 0.78125},
+    {"completed_env_steps": 9437184, "mean_return": 8.28125, "success_rate": 0.828125},
+    {"completed_env_steps": 10485760, "mean_return": 8.046875, "success_rate": 0.8046875},
+    {"completed_env_steps": 11534336, "mean_return": 8.203125, "success_rate": 0.8203125},
+    {"completed_env_steps": 12582912, "mean_return": 8.59375, "success_rate": 0.859375},
+    {"completed_env_steps": 13631488, "mean_return": 8.75, "success_rate": 0.875},
+    {"completed_env_steps": 14680064, "mean_return": 8.59375, "success_rate": 0.859375},
+    {"completed_env_steps": 15728640, "mean_return": 8.515625, "success_rate": 0.8515625},
+    {"completed_env_steps": 16777216, "mean_return": 8.515625, "success_rate": 0.8515625},
+    {"completed_env_steps": 17825792, "mean_return": 8.4375, "success_rate": 0.84375},
+    {"completed_env_steps": 18874368, "mean_return": 8.671875, "success_rate": 0.8671875},
+    {"completed_env_steps": 19922944, "mean_return": 8.4375, "success_rate": 0.84375},
+    {"completed_env_steps": 20971520, "mean_return": 8.671875, "success_rate": 0.8671875},
+    {"completed_env_steps": 22020096, "mean_return": 8.515625, "success_rate": 0.8515625},
+    {"completed_env_steps": 23068672, "mean_return": 8.59375, "success_rate": 0.859375},
+    {"completed_env_steps": 24117248, "mean_return": 8.359375, "success_rate": 0.8359375},
+    {"completed_env_steps": 25165824, "mean_return": 8.828125, "success_rate": 0.8828125}
+  ],
+  "final": {
+    "completed_env_steps": 25165824,
+    "episodes": 512,
+    "mean_return": 8.671875,
+    "success_rate": 0.8671875
+  }
+}

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Sequence
 import time
 from pathlib import Path
 from typing import Any
@@ -42,11 +43,11 @@ from dreamer.experiment_runtime import atomic_write_json
 from dreamer.logging import build_logger
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--run-name", default="coinrun-ppo-seed0")
-    parser.add_argument("--experiment-id", default="CR-PPO-0001")
+    parser.add_argument("--experiment-id", required=True)
     parser.add_argument("--total-env-steps", type=int, default=25_165_824)
     parser.add_argument("--num-envs", type=int, default=64)
     parser.add_argument("--rollout-steps", type=int, default=256)
@@ -65,23 +66,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--reward-normalization-gamma",
         type=float,
-        default=0.999,
+        default=0.99,
     )
     parser.add_argument(
         "--advantage-normalization",
         choices=("batch", "minibatch"),
-        default="batch",
+        default="minibatch",
     )
     parser.add_argument(
         "--backbone-kernel-init",
         choices=("orthogonal_sqrt2", "glorot_uniform"),
-        default="orthogonal_sqrt2",
+        default="glorot_uniform",
     )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--train-start-level", type=int, default=0)
-    parser.add_argument("--train-num-levels", type=int, default=500)
-    parser.add_argument("--eval-start-level", type=int, default=10_000)
-    parser.add_argument("--eval-num-levels", type=int, default=500)
+    parser.add_argument("--train-num-levels", type=int, default=200)
+    parser.add_argument("--eval-start-level", type=int, default=0)
+    parser.add_argument("--eval-num-levels", type=int, default=0)
     parser.add_argument("--distribution-mode", default="easy")
     parser.add_argument(
         "--checkpoint-every-env-steps",
@@ -93,20 +94,20 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=1_048_576,
     )
-    parser.add_argument("--evaluation-episodes", type=int, default=64)
+    parser.add_argument("--evaluation-episodes", type=int, default=128)
     parser.add_argument("--evaluation-envs", type=int, default=16)
     parser.add_argument("--evaluation-seed", type=int, default=4_242)
-    parser.add_argument("--evaluation-max-vector-steps", type=int, default=10_000)
+    parser.add_argument("--evaluation-max-vector-steps", type=int, default=40_000)
     parser.add_argument(
         "--evaluation-policy",
         choices=("deterministic_argmax", "stochastic"),
-        default="deterministic_argmax",
+        default="stochastic",
     )
     parser.add_argument(
         "--final-evaluation-episodes",
         type=int,
-        default=0,
-        help="Run a separate final evaluation; zero disables it.",
+        default=512,
+        help="Run a separate final evaluation; zero explicitly disables it.",
     )
     parser.add_argument("--visual-episodes", type=int, default=4)
     parser.add_argument("--visual-fps", type=int, default=15)
@@ -116,7 +117,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-project", default="open-dreamer")
     parser.add_argument("--wandb-entity")
     parser.add_argument("--wandb-group", default="CR-PPO-0001")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def _make_env(

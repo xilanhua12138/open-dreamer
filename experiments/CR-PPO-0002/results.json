@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0002",
-  "record_revision": 3,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 4,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "partial_reproduction",
   "started_at": "2026-07-30T14:30:54+08:00",
-  "ended_at": null,
-  "summary": "The preregistered official-recipe parity control is running from clean source a4d2574 on the existing A10 with W&B offline.",
+  "ended_at": "2026-07-30T15:43:39+08:00",
+  "summary": "The one-seed JAX official-recipe parity control completed exactly 25,165,824 transitions and passed its preregistered 512-episode full-distribution thresholds with mean return 8.671875 and success rate 0.8671875.",
   "observations": [
     {
       "name": "real_cpu_preflight",
@@ -33,28 +33,120 @@
       "name": "early_training_progress",
       "observed": "At 557,056 transitions / 34 PPO updates the PID remained alive, GPU utilization was 99%, and the latest rollout reported mean episode return 6.5870 with finite PPO diagnostics.",
       "scientific_outcome_observed": false
+    },
+    {
+      "name": "final_periodic_evaluation",
+      "completed_environment_steps": 25165824,
+      "episodes": 128,
+      "policy": "stochastic",
+      "num_levels": 0,
+      "mean_return": 8.828125,
+      "success_rate": 0.8828125,
+      "scientific_outcome_observed": true
+    },
+    {
+      "name": "independent_final_evaluation",
+      "completed_environment_steps": 25165824,
+      "episodes": 512,
+      "policy": "stochastic",
+      "num_levels": 0,
+      "mean_return": 8.671875,
+      "success_rate": 0.8671875,
+      "mean_episode_length": 77.28125,
+      "successes": 444,
+      "scientific_outcome_observed": true
+    },
+    {
+      "name": "runtime_terminal",
+      "observed": "The recorded attempt completed all 1,536 PPO updates without failure; the outer status is COMPLETE OFFICIAL_RECIPE_PARITY_CONTROL WORLD_MODEL_NOT_STARTED.",
+      "scientific_outcome_observed": false
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "name": "old_final_vs_official_recipe_final",
+      "metric": "stochastic_full_distribution_512_episode_mean_return",
+      "baseline_id": "CR-PPO-0001",
+      "baseline_value": 4.9609375,
+      "candidate_value": 8.671875,
+      "absolute_change": 3.7109375
+    },
+    {
+      "name": "old_final_vs_official_recipe_final",
+      "metric": "stochastic_full_distribution_512_episode_success_rate",
+      "baseline_id": "CR-PPO-0001",
+      "baseline_value": 0.49609375,
+      "candidate_value": 0.8671875,
+      "absolute_change": 0.37109375
+    }
+  ],
   "deviations": [],
   "failures": [],
   "conclusion": {
     "observed": [
       "Execution source, real Procgen CPU smoke and the single live GPU PID are verified.",
       "The zero-step 128-episode stochastic full-distribution baseline completed at mean return 3.125 and success rate 31.25%.",
-      "Training advanced to 557,056 transitions without NaN, OOM or process failure."
+      "Training completed exactly 25,165,824 transitions / 1,536 PPO updates without NaN, OOM or process failure.",
+      "The final periodic 128-episode evaluation reached mean return 8.828125 and success rate 88.28125%.",
+      "The independent final 512-episode evaluation reached mean return 8.671875 and success rate 86.71875%, passing both preregistered thresholds.",
+      "The final checkpoint SHA256 is 8ebfa7a91e5b52ce2d51294fa0a9aa3a520f4bb1f2a6a2d17e5b4e154023e811."
     ],
-    "interpretation": [],
+    "interpretation": [
+      "The combined public-recipe alignment explains a substantial part of CR-PPO-0001 underperformance under the tested seed and runtime.",
+      "This establishes that the old result was not merely a deterministic/fixed-level evaluation artifact, because the old checkpoint had already remained at 4.9609375 under the same 512-episode stochastic full-distribution metric."
+    ],
     "not_established": [
-      "Whether the implementation-level reference mismatches explain CR-PPO-0001 underperformance.",
-      "Whether the aligned control reaches the public easy-200 return curve.",
-      "Any strict reproduction claim."
+      "Which individual recipe difference is causally responsible; this run changed a package of training and evaluation settings.",
+      "That every deviation from the public recipe is a software bug rather than an alternative but weaker configuration.",
+      "A strict paper reproduction across framework, Procgen version and multiple seeds.",
+      "Authorization to collect replacement trajectories or start dynamics."
     ],
     "decision": [
-      "Run one from-scratch seed on the existing A10 and do not start dynamics or collect replacement trajectories."
+      "Treat the aligned recipe as the validated default for future from-scratch PPO runs.",
+      "Add a machine-enforced final-policy quality gate before any trajectory collection.",
+      "Run separately preregistered single-variable controls before assigning the old performance gap to one training bug.",
+      "Do not start dynamics or collect replacement trajectories under CR-PPO-0002."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "kind": "checkpoint",
+      "name": "Final frozen official-recipe parity checkpoint",
+      "retention": "external",
+      "uri": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+      "bytes": 7520613,
+      "sha256": "8ebfa7a91e5b52ce2d51294fa0a9aa3a520f4bb1f2a6a2d17e5b4e154023e811"
+    },
+    {
+      "kind": "final_evaluation",
+      "name": "Independent 512-episode full-distribution evaluation",
+      "retention": "git",
+      "uri": "experiments/CR-PPO-0002/raw/final-evaluation.json",
+      "sha256": "e915469d88fb269950877487c725dca7b60064bfa3bfb721dbb46bbc7c3d2f6d"
+    },
+    {
+      "kind": "learning_curve",
+      "name": "Zero-step plus 24 periodic milestones and final evaluation",
+      "retention": "git",
+      "uri": "experiments/CR-PPO-0002/raw/learning-curve.json",
+      "sha256": "feaa787216e66e7aed431fbfd7c1f80e0a38f494098098320819ad89e187aa83"
+    },
+    {
+      "kind": "run_evidence",
+      "name": "Structured recorded-run terminal evidence",
+      "retention": "git",
+      "uri": "experiments/CR-PPO-0002/raw/run-evidence.json",
+      "sha256": "e4a80272b51d40b5538bbb26c356cdcca9764488aaf05ba6bfa252ecfe945657"
+    },
+    {
+      "kind": "local_visual_archive",
+      "name": "Final and selected milestone contact sheets plus final GIF",
+      "retention": "local task",
+      "uri": "local-task://ppo-official-parity-final",
+      "sha256": "4863143fb02bf4716395f9b9b45fcc2072cddd1a365df701b5e7b738ee05557b",
+      "final_contact_sheet_sha256": "4863143fb02bf4716395f9b9b45fcc2072cddd1a365df701b5e7b738ee05557b"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -70,6 +162,11 @@
       "revision": 3,
       "at": "2026-07-30T14:33:03+08:00",
       "reason": "Recorded the zero-step stochastic full-distribution baseline and first finite PPO progress."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-30T15:43:39+08:00",
+      "reason": "Recorded the exact terminal run identity, 25 periodic milestones, independent 512-episode final evaluation, checkpoint hash and preregistered scientific decision."
     }
   ]
 }
