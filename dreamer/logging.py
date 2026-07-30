@@ -297,7 +297,8 @@ def build_logger(
     dir: Optional[str] = None,
 ) -> Logger:
     def _is_primary_process() -> bool:
-        if jax.distributed.is_initialized():
+        is_initialized = getattr(jax.distributed, "is_initialized", None)
+        if is_initialized is not None and is_initialized():
             return jax.process_index() == 0
         rank_env = (
             os.environ.get("JAX_PROCESS_INDEX")

@@ -13,6 +13,25 @@ from dreamer.logging import Logger, WandbLogger, build_logger
 
 
 class StructuredLoggingTests(unittest.TestCase):
+    def test_primary_process_detection_supports_jax_without_initialized_api(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with (
+                mock.patch(
+                    "dreamer.logging.jax.distributed",
+                    new=types.SimpleNamespace(),
+                ),
+                mock.patch.dict("os.environ", {"RANK": "0"}, clear=False),
+            ):
+                logger = build_logger(
+                    LoggerConfig(use_wandb=False),
+                    config={},
+                    dir=temporary,
+                )
+
+            self.assertIsNotNone(logger.recorder)
+
     def test_non_primary_process_does_not_open_shared_recorder(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             with (
