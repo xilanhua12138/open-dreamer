@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "candidate": {
+    "name": "n28.7m",
+    "directory": "n28p7m",
+    "depth": 6,
+    "d_model": 384,
+    "expected_parameters": 25564032,
+    "parameters": 25564032,
+    "batch_size": 128,
+    "sequence_length": 16,
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "training_mode": "fixed_optimizer_updates",
+    "allocated_steps": 20000,
+    "flops_per_step": 25728028508160,
+    "estimated_training_flops": 514560570163200000
+  }
+}
