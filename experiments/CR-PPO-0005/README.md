@@ -45,6 +45,13 @@ scope.
 
 ## Current status
 
-Running. Clean detached source `09b3fc3` started once on the existing A10 at
-2026-07-30 18:00:15 Asia/Shanghai with pipeline PID `109626`. The zero-update
-probe runs before the four unconditional training arms.
+The first attempt stopped after successfully writing the complete 16-seed probe
+but before any training step. `run_recorded.py` correctly rejected the probe
+because it had not emitted `runtime-identity.json` and `run-state.json`.
+
+The 349,214-byte probe JSON is retained locally with SHA256
+`04f205d0...d5aec4`; the remote failed attempt and logs remain intact. A precise
+red test reproduced the missing recorder contract, and the fix now makes the
+probe use `RunRecorder`, register its JSON artifact, and require a structured
+completed state before the runner may advance. Recovery is pending a new frozen
+source commit.

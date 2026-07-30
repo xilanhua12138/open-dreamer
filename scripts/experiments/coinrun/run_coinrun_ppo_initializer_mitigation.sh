@@ -31,7 +31,17 @@ export PYTHONPATH="${ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
 export XLA_PYTHON_CLIENT_PREALLOCATE="false"
 export PYTHONUNBUFFERED="1"
 
-if [[ ! -s "${RUN_ROOT}/probe/initialization-probe.json" ]]; then
+probe_is_complete() {
+  local probe_root="${RUN_ROOT}/probe"
+  [[ -s "${probe_root}/initialization-probe.json" ]] || return 1
+  [[ -s "${probe_root}/runtime-identity.json" ]] || return 1
+  [[ -s "${probe_root}/run-state.json" ]] || return 1
+  "${PPO_PYTHON}" -c \
+    'import json, pathlib, sys; state=json.loads(pathlib.Path(sys.argv[1]).read_text()); raise SystemExit(0 if state.get("state") == "COMPLETED" else 1)' \
+    "${probe_root}/run-state.json"
+}
+
+if ! probe_is_complete; then
   stage "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION"
   "${PPO_PYTHON}" scripts/experiments/run_recorded.py \
     --experiment-id CR-PPO-0005 \
@@ -47,6 +57,8 @@ if [[ ! -s "${RUN_ROOT}/probe/initialization-probe.json" ]]; then
       --num-initialization-seeds 16
 fi
 test -s "${RUN_ROOT}/probe/initialization-probe.json"
+test -s "${RUN_ROOT}/probe/runtime-identity.json"
+test -s "${RUN_ROOT}/probe/run-state.json"
 
 run_arm() {
   local arm="$1"

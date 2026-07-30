@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import math
+import shutil
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -21,7 +22,7 @@ from dreamer.coinrun_ppo import (
     categorical_entropy,
     categorical_log_prob,
 )
-from dreamer.experiment_runtime import atomic_write_json
+from dreamer.experiment_runtime import RunRecorder, atomic_write_json, sha256_file
 
 
 RESIDUAL_DEPTH = 6
@@ -358,8 +359,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> None:
-    args = parse_args()
+def execute_probe(args: argparse.Namespace) -> None:
     if min(
         args.num_envs,
         args.num_initialization_seeds,
@@ -367,18 +367,68 @@ def main() -> None:
         raise ValueError("probe counts must be positive")
     if args.observation_vector_steps < 0:
         raise ValueError("observation_vector_steps must be non-negative")
-    observations = _collect_observations(
-        num_envs=args.num_envs,
-        vector_steps=args.observation_vector_steps,
-        seed=args.observation_seed,
+    output = Path(args.output).resolve()
+    recorder = RunRecorder(
+        run_dir=output.parent,
+        max_steps=1,
+        progress_interval_seconds=0,
+        system_metrics_interval_seconds=0,
     )
-    atomic_write_json(
-        args.output,
-        run_probe(
+    recorder.start(
+        config={
+            "experiment_id": "CR-PPO-0005",
+            "output": str(output),
+            "num_envs": args.num_envs,
+            "observation_vector_steps": args.observation_vector_steps,
+            "observation_seed": args.observation_seed,
+            "num_initialization_seeds": args.num_initialization_seeds,
+            "arms": ARM_CONFIGS,
+        }
+    )
+    try:
+        if output.is_file():
+            digest = sha256_file(output)
+            retained = (
+                output.parent
+                / "failed-attempts"
+                / f"{digest}.initialization-probe.json"
+            )
+            if not retained.is_file():
+                retained.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(output, retained)
+        observations = _collect_observations(
+            num_envs=args.num_envs,
+            vector_steps=args.observation_vector_steps,
+            seed=args.observation_seed,
+        )
+        payload = run_probe(
             observations=observations,
             seeds=tuple(range(args.num_initialization_seeds)),
-        ),
-    )
+        )
+        atomic_write_json(output, payload)
+        recorder.log_metrics(
+            step=0,
+            prefix="probe/",
+            metrics={
+                "arm_count": len(payload.get("arms", [])),
+                "initialization_seed_count": len(
+                    payload.get("initialization_seeds", [])
+                ),
+            },
+        )
+        recorder.register_artifact(
+            step=0,
+            key="probe/initialization",
+            path=output,
+        )
+    except BaseException as error:
+        recorder.finish(error)
+        raise
+    recorder.finish()
+
+
+def main() -> None:
+    execute_probe(parse_args())
 
 
 if __name__ == "__main__":

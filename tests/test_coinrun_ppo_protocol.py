@@ -4,6 +4,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from types import SimpleNamespace
 from pathlib import Path
 from unittest import mock
 
@@ -205,6 +206,9 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
             runner.index("probe_coinrun_ppo_initialization.py"),
             runner.index("run_arm orthogonal_gain1"),
         )
+        self.assertIn("probe_is_complete", runner)
+        self.assertIn("probe/runtime-identity.json", runner)
+        self.assertIn("probe/run-state.json", runner)
         for expected in (
             "run_arm orthogonal_gain1 orthogonal_gain1 1.0 same false",
             'run_arm orthogonal_sqrt2_depth_scaled orthogonal_sqrt2 "${DEPTH_SCALE}" same false',
@@ -264,6 +268,64 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
                 },
             },
         )
+
+    def test_initializer_probe_materializes_runtime_identity_and_terminal_state(
+        self,
+    ) -> None:
+        probe = self._load_coinrun_script(
+            "probe_coinrun_ppo_initialization.py",
+            "coinrun_ppo_initialization_probe_recording",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            run_dir = Path(directory)
+            output = run_dir / "initialization-probe.json"
+            arguments = SimpleNamespace(
+                output=output,
+                num_envs=2,
+                observation_vector_steps=0,
+                observation_seed=4242,
+                num_initialization_seeds=1,
+            )
+            payload = {
+                "schema_version": "1.0",
+                "experiment_id": "CR-PPO-0005",
+                "arms": [{"arm": "glorot_reference"}],
+            }
+            with (
+                mock.patch.object(
+                    probe,
+                    "_collect_observations",
+                    return_value=b"observations",
+                ),
+                mock.patch.object(probe, "run_probe", return_value=payload),
+                mock.patch(
+                    "dreamer.experiment_runtime.collect_runtime_identity",
+                    return_value={
+                        "schema_version": "1.0",
+                        "run_id": "probe-run",
+                        "attempt_id": "probe-attempt",
+                    },
+                ),
+            ):
+                probe.execute_probe(arguments)
+
+            runtime = json.loads(
+                (run_dir / "runtime-identity.json").read_text(encoding="utf-8")
+            )
+            state = json.loads(
+                (run_dir / "run-state.json").read_text(encoding="utf-8")
+            )
+            artifacts = [
+                json.loads(line)
+                for line in (run_dir / "artifacts.jsonl").read_text(
+                    encoding="utf-8"
+                ).splitlines()
+            ]
+            self.assertEqual(runtime["attempt_id"], "probe-attempt")
+            self.assertEqual(state["state"], "COMPLETED")
+            self.assertEqual(state["last_completed_updates"], 1)
+            self.assertEqual(artifacts[0]["key"], "probe/initialization")
+            self.assertEqual(artifacts[0]["uri"], "initialization-probe.json")
 
     def test_initializer_mitigation_summary_uses_identical_final_evaluator(
         self,

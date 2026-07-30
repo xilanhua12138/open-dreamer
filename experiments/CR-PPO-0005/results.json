@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 3,
-  "execution_status": "running",
+  "record_revision": 4,
+  "execution_status": "failed",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-30T18:00:15+08:00",
-  "ended_at": null,
-  "summary": "The clean frozen pipeline is running its 16-seed zero-update probe before four unconditional mitigation arms.",
+  "ended_at": "2026-07-30T18:01:07+08:00",
+  "summary": "The first attempt completed the 16-seed probe JSON but failed closed before training because the probe did not emit the mandatory runtime identity and terminal run state.",
   "observations": [
     {
       "type": "pipeline_start",
@@ -15,11 +15,41 @@
       "pid": 109626,
       "instance_id": "dsw-ljvgtooejpvpxmhhc6",
       "initial_stage": "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION"
+    },
+    {
+      "type": "failed_attempt_probe_artifact",
+      "bytes": 349214,
+      "sha256": "04f205d0851e7ee459461ceb257130f3586d4bb730bbac8909302f2644d5aec4",
+      "local_uri": "local-task://ppo-initializer-mitigation/initialization-probe.failed-attempt.json",
+      "training_environment_steps": 0
     }
   ],
   "comparisons": [],
-  "deviations": [],
-  "failures": [],
+  "deviations": [
+    {
+      "at": "2026-07-30T18:08:54+08:00",
+      "type": "recorder_contract_fix",
+      "reason": "The standalone probe wrote its scientific output but did not instantiate RunRecorder, violating the fail-closed evidence wrapper contract.",
+      "test_first": {
+        "test": "CoinRunPPOProtocolTests.test_initializer_probe_materializes_runtime_identity_and_terminal_state",
+        "red": "AttributeError: module has no attribute execute_probe",
+        "green": "The probe writes runtime-identity.json, a COMPLETED run-state.json and an artifact record."
+      },
+      "protocol_impact": "No scientific arm, budget, seed, metric or decision rule changed."
+    }
+  ],
+  "failures": [
+    {
+      "attempt_started_at": "2026-07-30T18:00:15+08:00",
+      "attempt_ended_at": "2026-07-30T18:01:07+08:00",
+      "source_commit": "09b3fc3cfe75508a72bfa35cc394e8db235a76a5",
+      "stage": "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION",
+      "error_type": "RuntimeError",
+      "message": "recorded command succeeded without runtime-identity.json and run-state.json",
+      "probe_json_preserved": true,
+      "training_started": false
+    }
+  ],
   "conclusion": {
     "observed": [],
     "interpretation": [],
@@ -50,6 +80,11 @@
       "revision": 3,
       "at": "2026-07-30T18:00:15+08:00",
       "reason": "Recorded the single clean pipeline start on the existing A10."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-30T18:08:54+08:00",
+      "reason": "Preserved the post-probe fail-closed recorder error and the exact red-test-first fix; no training arm had started."
     }
   ]
 }
