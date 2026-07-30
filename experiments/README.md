@@ -17,6 +17,8 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
 | `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
+| `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | queued | not evaluated | none |
+| `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
@@ -46,6 +48,8 @@ All five arms are now durably recorded. Final EMA clean / edge / temporal-change
 `CR-PPO-0003` is the preregistered causal screen requested after that result. It repeats the validated recipe to 6,291,456 transitions and then reverts exactly one training factor in each serial arm: 500 levels, reward-normalizer gamma `0.999`, whole-batch advantage normalization or orthogonal initialization. A factor is independently dominant only if final-256 mean return drops at least 1.0 or success rate drops at least 0.10 versus the same-run reference. No arm may collect trajectories or start dynamics.
 
 `CR-PPO-0004` is the required follow-up if those single reverts remain healthy. It first re-evaluates the retained historical 6.29M checkpoint with the same stochastic full-distribution 256-episode protocol, then trains one fresh arm with all four old settings combined. This distinguishes original evaluation bias from a reproducible nonlinear interaction and from another historical source/runtime or run-variance cause.
+
+`CR-DYN-0006` and `CR-DYN-0007` are the first dynamics experiments after the action contract, representation and trajectory-source fixes. The first changes only the PPO checkpoint used to collect training data while holding a medium dynamics model fixed. The second changes only dynamics capacity on the final-policy corpus. Both use the 16.6M EMA tokenizer chosen by the user, a 15-way CoinRun action space with explicit no-op action 4, 20,000 updates per arm and one fixed final-policy held-out corpus.
 
 ## Creating or closing an experiment
 

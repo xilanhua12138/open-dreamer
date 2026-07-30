@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-30T15:56:00+08:00",
+  "updated_at": "2026-07-30T17:54:47+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -99,6 +99,32 @@
       "claim_level": "internal_result",
       "depends_on": [
         "CR-DYN-0004"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0006",
+      "title": "CoinRun PPO-stage trajectory ablation for dynamics",
+      "path": "experiments/CR-DYN-0006",
+      "execution_status": "queued",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0007",
+      "title": "CoinRun final-policy dynamics fixed-20k scale sweep",
+      "path": "experiments/CR-DYN-0007",
+      "execution_status": "queued",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0006",
+        "CR-TOK-0003",
+        "CR-PPO-0002"
       ]
     },
     {

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0006",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before PPO-stage trajectory collection or dynamics training.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether PPO policy maturity improves dynamics rollout quality.",
+      "Whether any stage effect is monotonic.",
+      "Whether the resulting world model is interactively controllable."
+    ],
+    "decision": [
+      "Collect and audit the four registered policy-stage corpora, then run the fixed-medium dynamics comparison."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T17:54:47+08:00",
+      "reason": "Preregistered the PPO-stage data ablation before collection."
+    }
+  ]
+}

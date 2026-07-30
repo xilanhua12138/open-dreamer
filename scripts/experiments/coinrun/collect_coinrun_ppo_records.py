@@ -8,7 +8,7 @@ import hashlib
 import json
 import pickle
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 import numpy as np
 from array_record.python.array_record_module import ArrayRecordWriter
@@ -22,8 +22,9 @@ from dreamer.experiment_runtime import atomic_write_json, sha256_file
 from dreamer.logging import build_logger
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--experiment-id", default="CR-PPO-0001")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--run-dir", type=Path, required=True)
@@ -40,7 +41,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--exploration-epsilon", type=float, default=0.05)
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--max-vector-steps", type=int)
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def _make_env(args: argparse.Namespace) -> Any:
@@ -148,7 +149,7 @@ def main() -> None:
 
     runtime_config = {
         "schema_version": "1.0",
-        "experiment_id": "CR-PPO-0001",
+        "experiment_id": args.experiment_id,
         "checkpoint": str(checkpoint),
         "checkpoint_sha256": checkpoint_sha256,
         "records": args.records,
@@ -268,6 +269,7 @@ def main() -> None:
         )
         metadata = {
             "schema_version": "2.0",
+            "experiment_id": args.experiment_id,
             "env": "coinrun",
             "records": written,
             "frames_per_record": args.frames,

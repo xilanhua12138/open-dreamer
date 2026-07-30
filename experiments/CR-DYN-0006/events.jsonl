@@ -1,0 +1,1 @@
+{"at":"2026-07-30T17:54:47+08:00","type":"planned","experiment_id":"CR-DYN-0006","message":"Preregistered four PPO checkpoint stages at fixed 16.6M tokenizer and fixed medium dynamics capacity.","evidence":["experiments/CR-DYN-0006/manifest.json"]}

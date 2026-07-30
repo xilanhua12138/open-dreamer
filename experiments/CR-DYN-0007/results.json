@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0007",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before the corrected final-policy dynamics scale sweep.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether corrected final-policy dynamics quality scales monotonically.",
+      "Whether the 12.90M dynamics arm exceeds the 3.93M arm.",
+      "Whether any resulting model is interactively controllable."
+    ],
+    "decision": [
+      "Wait for the CR-DYN-0006 corpus audit and final-policy medium arm, then run tiny, small and large serially."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T17:54:47+08:00",
+      "reason": "Preregistered the corrected fixed-20k dynamics scale sweep."
+    }
+  ]
+}

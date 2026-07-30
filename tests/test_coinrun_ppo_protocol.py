@@ -24,6 +24,22 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         spec.loader.exec_module(module)
         return module
 
+    @staticmethod
+    def _load_collection_entrypoint():
+        path = (
+            ROOT
+            / "scripts/experiments/coinrun/collect_coinrun_ppo_records.py"
+        )
+        spec = importlib.util.spec_from_file_location(
+            "coinrun_ppo_collection_entrypoint",
+            path,
+        )
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"cannot import {path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
     def test_planned_experiment_ends_at_world_model_data_collection(self) -> None:
         manifest = json.loads(
             (ROOT / "experiments/CR-PPO-0001/manifest.json").read_text(
@@ -111,6 +127,50 @@ class CoinRunPPOProtocolTests(unittest.TestCase):
         self.assertIn("PPOCoinRunPolicy.from_checkpoint", collection)
         self.assertIn("CoinRunRecordAccumulator", collection)
         self.assertIn("checkpoint_sha256", collection)
+
+    def test_collection_cli_accepts_and_preserves_experiment_id(self) -> None:
+        entrypoint = self._load_collection_entrypoint()
+        args = entrypoint.parse_args(
+            [
+                "--experiment-id",
+                "CR-DYN-TEST",
+                "--checkpoint",
+                "/tmp/policy.msgpack",
+                "--output-dir",
+                "/tmp/coinrun-stage-data",
+                "--run-dir",
+                "/tmp/coinrun-stage-run",
+                "--run-name",
+                "coinrun-stage-test",
+                "--records",
+                "16",
+                "--start-level",
+                "0",
+                "--num-levels",
+                "200",
+            ]
+        )
+
+        self.assertEqual(args.experiment_id, "CR-DYN-TEST")
+        historical_args = entrypoint.parse_args(
+            [
+                "--checkpoint",
+                "/tmp/policy.msgpack",
+                "--output-dir",
+                "/tmp/coinrun-stage-data",
+                "--run-dir",
+                "/tmp/coinrun-stage-run",
+                "--run-name",
+                "coinrun-stage-test",
+                "--records",
+                "16",
+                "--start-level",
+                "0",
+                "--num-levels",
+                "200",
+            ]
+        )
+        self.assertEqual(historical_args.experiment_id, "CR-PPO-0001")
 
     def test_runtime_bootstrap_builds_one_procgen_and_jax_environment(self) -> None:
         bootstrap = (
