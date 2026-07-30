@@ -64,7 +64,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "d8d7a925d7ff57423f9591551581cb4c39e08bc7",
     "branch": "feat/coinrun-dynamics-stage-scale",
     "dirty": false,
     "patch_sha256": null,
@@ -73,7 +73,7 @@
     "component_sha256": {
       "summarizer": "1d91cb219cf64d15a7c4c8d2f7348d28950e9f32925db3389e1c3099204d4f6f"
     },
-    "source_freeze": "Pending the preregistration commit. No scale-sweep result was observed when this manifest was written."
+    "source_freeze": "Execution code is frozen at d8d7a925d7ff57423f9591551581cb4c39e08bc7. No scale-sweep result was observed before the freeze."
   },
   "data": {
     "environment": "Procgen CoinRun easy",

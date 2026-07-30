@@ -1,1 +1,2 @@
 {"at":"2026-07-30T17:54:47+08:00","type":"planned","experiment_id":"CR-DYN-0006","message":"Preregistered four PPO checkpoint stages at fixed 16.6M tokenizer and fixed medium dynamics capacity.","evidence":["experiments/CR-DYN-0006/manifest.json"]}
+{"at":"2026-07-30T18:08:00+08:00","type":"source_frozen","experiment_id":"CR-DYN-0006","message":"Froze the preregistered collector, corpus audit and dynamics runner before remote execution.","evidence":["git:d8d7a925d7ff57423f9591551581cb4c39e08bc7","sha256:d038c6e305d348aacfcdf5b038077cc732cd3dc0cac327d77d1313987d1b1df0"]}
