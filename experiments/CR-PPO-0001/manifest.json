@@ -72,7 +72,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "2feee2a1c924019298176671e51ee63bd9e31967",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
@@ -84,7 +84,7 @@
       "trajectory_collection": "7a7be25bf1ac60f6743e5d534c1dc745d43d5d78b61d7f8fd9b272eeecf99057",
       "dataset_pair_audit": "0cae95a0ed8e76b0e821cde30d9eeb64c3774927efdb74174aa5bbf58187cf7d"
     },
-    "source_freeze": "The execution commit must be filled and staged in a clean remote worktree before GPU launch."
+    "source_freeze": "The executable implementation is frozen at commit 2feee2a1c924019298176671e51ee63bd9e31967 in a clean detached DSW worktree. This later ledger-only edit records that already-frozen execution identity and does not change the code being executed."
   },
   "data": {
     "training_environment": {
