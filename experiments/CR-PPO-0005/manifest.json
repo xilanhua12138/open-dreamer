@@ -47,7 +47,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "09b3fc3cfe75508a72bfa35cc394e8db235a76a5",
     "branch": "feat/coinrun-ppo-collector",
     "dirty": false,
     "patch_sha256": null,
@@ -58,7 +58,7 @@
       "training_entrypoint": "b6a6e1208f3fc2be6ec55bf093967a1cdebea28c4dc216ea174ac3cbc7eac852",
       "summarizer": "08bbe96edf033437b3b4223387b31b6aeb64b5d995e1d8da6bca64bda8e78c62"
     },
-    "source_freeze": "Pending a clean preregistration and implementation commit; no CR-PPO-0005 probe or training result has been observed."
+    "source_freeze": "The complete preregistration, model changes, probe, four-arm runner, summarizer and 123 passing tests were committed and pushed at 09b3fc3cfe75508a72bfa35cc394e8db235a76a5 before any CR-PPO-0005 probe or training result."
   },
   "data": {
     "probe_observations": "32 observations from eight easy-200 CoinRun environments at vector steps 0 through 3, rand_seed 4242; exact SHA256 is written by the probe before interpretation",

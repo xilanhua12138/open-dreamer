@@ -1,1 +1,2 @@
 {"at":"2026-07-30T17:56:08+08:00","type":"preregistered","message":"Frozen a 16-seed zero-update signal/gradient probe and four serial 6.29M-transition initializer mitigation arms before any CR-PPO-0005 result.","evidence":["experiments/CR-PPO-0005/manifest.json","scripts/experiments/coinrun/run_coinrun_ppo_initializer_mitigation.sh"]}
+{"at":"2026-07-30T17:58:22+08:00","type":"source_frozen","message":"The complete CR-PPO-0005 execution source was committed and pushed before launch.","evidence":["git:09b3fc3cfe75508a72bfa35cc394e8db235a76a5","tests:123_passed"]}
