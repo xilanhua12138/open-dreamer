@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0002",
+  "retrospective": false,
+  "created_at": "2026-07-29T12:33:40+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun tokenizer v2 complete five-scale reconstruction sweep",
+  "kind": "confirmatory",
+  "question": "How do held-out global, edge and temporal-change reconstruction metrics change across five CoinRun tokenizer scales that retain the fixed latent interface required by dynamics?",
+  "reason": "CR-DEMO-0001 was technically runnable but visually unusable. Its 0.17M tokenizer reached only 24.2447 dB held-out EMA clean PSNR and visibly lost small sprites and platform edges, so dynamics scaling must pause until the representation bottleneck is improved.",
+  "hypothesis": "Scaling the tokenizer backbone while holding the latent interface, data and evaluation protocol fixed will improve full-frame and detail-sensitive reconstruction through at least one of the larger scales.",
+  "falsification": "The hypothesis is rejected if the complete five-scale sweep shows no reproducible full-frame, edge or temporal-change improvement over the fresh 0.17M arm, or if the larger tokenizers cannot preserve the 16-latent by 16-channel interface needed by dynamics.",
+  "baseline_id": "CR-TOK-0001",
+  "depends_on": [
+    "CR-TOK-0001",
+    "CR-DEMO-0001"
+  ],
+  "controlled_variable": {
+    "name": "tokenizer_backbone_scale",
+    "values": [
+      "n0.17m",
+      "n1.1m",
+      "n3.7m",
+      "n8.6m",
+      "n16.6m"
+    ]
+  },
+  "constants": {
+    "train_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "eval_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "train_records": 4096,
+    "eval_records": 512,
+    "frames_per_record": 64,
+    "training_clip_frames": 16,
+    "training_batch_size": 128,
+    "primary_training_flops_per_arm": 1e16,
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "patch_size": 8,
+    "optimizer": "muon",
+    "mup_scaling": true,
+    "lpips_weight": 0.2,
+    "heldout_seed": 4242,
+    "heldout_clips": 512
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "dea9d180d2073132ae1dacab1e8550a3d99cc5c4",
+    "initial_execution_commit": "5ad134f914c12afa66eda141afd9e446c51d43e3",
+    "protocol_amendment_commit": "dea9d180d2073132ae1dacab1e8550a3d99cc5c4",
+    "branch": "feat/experiment-ledger",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_scale_v2.sh",
+    "runner_sha256": "24a5d9ff6ccfbd91642eecd0e8af265f2d9517209178b7511333402edbbb01ab"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "policy": "65% goal-directed persistent right/right-jump/no-op macros mixed with 35% balanced persistent left/left-jump/no-op/jump/right/right-jump macros",
+    "train_level_range": [
+      7000,
+      11095
+    ],
+    "eval_level_range": [
+      20000,
+      20511
+    ],
+    "split_overlap": 0,
+    "tree_sha256": {
+      "train": "276af79200604d65bd357ffbc3a4e591fa6aa3f75962719e7c3273bbf18f386f",
+      "eval": "2e7c5db0cabda7645ba10dc41974eb164066864d62e9d7ae40f1cd7e242bbb3f"
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "9e16 FLOPs total: 1e16 for each of n0.17m, n1.1m and n3.7m; 2e16 for n8.6m; 4e16 for n16.6m",
+    "shutdown_policy": "A bounded shutdown timer is created before launch; a monitor stops the existing instance after terminal artifacts are synchronized."
+  },
+  "protocol": {
+    "model_family": {
+      "encoder_decoder_depths_match": true,
+      "head_dimension": 64,
+      "n_kv_heads": 1,
+      "one_temporal_attention_layer_per_stack": true,
+      "latent_interface_fixed": {
+        "n_latents": 16,
+        "d_bottleneck": 16
+      }
+    },
+    "candidates": [
+      {
+        "name": "n0.17m",
+        "depth": 1,
+        "d_model": 64,
+        "expected_parameters": 163392,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n1.1m",
+        "depth": 2,
+        "d_model": 128,
+        "expected_parameters": 1048192,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n3.7m",
+        "depth": 3,
+        "d_model": 192,
+        "expected_parameters": 3342528,
+        "flops_budget": 1e16,
+        "phase": "primary_fixed_flops"
+      },
+      {
+        "name": "n8.6m",
+        "depth": 4,
+        "d_model": 256,
+        "expected_parameters": 7734528,
+        "flops_budget": 2e16,
+        "phase": "unconditional_capacity_sweep"
+      },
+      {
+        "name": "n16.6m",
+        "depth": 5,
+        "d_model": 320,
+        "expected_parameters": 14912320,
+        "flops_budget": 4e16,
+        "phase": "unconditional_capacity_sweep"
+      }
+    ],
+    "training": {
+      "from_scratch": true,
+      "resume_only_after_fault": true,
+      "loss": "mse plus 0.2 LPIPS",
+      "mae_p_max": 0.9,
+      "precision": "bfloat16 compute, float32 parameters"
+    },
+    "evaluation": {
+      "weights": [
+        "online",
+        "ema"
+      ],
+      "conditions": [
+        "clean",
+        "masked"
+      ],
+      "primary_metrics": [
+        "ema_clean_psnr",
+        "ema_masked_psnr",
+        "ema_clean_edge_psnr",
+        "ema_clean_temporal_change_psnr"
+      ],
+      "visual_artifact": "one retained reconstruction grid per scale plus a vertically aligned comparison grid"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All five arms complete their declared from-scratch FLOPs allocations and produce finite held-out metrics on the identical 512 clips."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Report the complete scale curve for EMA clean, masked, edge and temporal-change PSNR without using any threshold to stop or skip a scale."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Train n8.6m at 2e16 FLOPs and n16.6m at 4e16 FLOPs unconditionally after the first three arms."
+    },
+    {
+      "id": "SC-4",
+      "rule": "The selected candidate must retain n_latents=16 and d_bottleneck=16 and later pass a joint tokenizer-plus-medium-dynamics one-step A10 smoke before dynamics training is authorized."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Automatic ranking is descriptive only: dynamics remains blocked until the aligned five-scale reconstruction grid receives explicit visual acceptance for player outline and platform-edge clarity."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/tokenizer-scale-probe.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/train.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/eval.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/*/checkpoints",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/*/heldout_eval.json",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/tokenizer-scale-comparison.png",
+    "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/selection.json"
+  ]
+}

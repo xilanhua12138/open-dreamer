@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0001",
+  "record_revision": 1,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "pipeline_closure",
+  "started_at": "2026-07-28T01:57:31+08:00",
+  "ended_at": "2026-07-28T02:53:08+08:00",
+  "summary": "The action-conditioned CoinRun pipeline completed from data collection through a 16-frame held-out rollout; dynamics training itself took about 11 minutes on one A10.",
+  "observations": [
+    {
+      "name": "dynamics_parameters",
+      "value": 545920,
+      "unit": "parameters"
+    },
+    {
+      "name": "dynamics_training_wall_time",
+      "value": 710,
+      "unit": "seconds",
+      "precision": "approximately"
+    },
+    {
+      "name": "training_rollout_online_diffusion_psnr",
+      "value": {
+        "1": 19.86,
+        "3": 18.07,
+        "8": 16.84
+      },
+      "unit": "dB"
+    },
+    {
+      "name": "training_rollout_ema_diffusion_psnr",
+      "value": {
+        "1": 19.93,
+        "3": 18.26,
+        "8": 16.42
+      },
+      "unit": "dB"
+    },
+    {
+      "name": "training_rollout_online_shortcut_psnr",
+      "value": {
+        "1": 18.68,
+        "3": 16.88,
+        "8": 15.52
+      },
+      "unit": "dB"
+    },
+    {
+      "name": "training_rollout_ema_shortcut_psnr",
+      "value": {
+        "1": 18.68,
+        "3": 17.54,
+        "8": 16.07
+      },
+      "unit": "dB"
+    },
+    {
+      "name": "heldout_mean_dynamics_only_psnr",
+      "value": 16.6342,
+      "unit": "dB",
+      "aggregation": "4 trajectories x 16 predicted frames"
+    },
+    {
+      "name": "heldout_mean_ssim",
+      "value": 0.6513,
+      "unit": "ratio",
+      "aggregation": "4 trajectories x 16 predicted frames"
+    },
+    {
+      "name": "heldout_per_trajectory_psnr",
+      "value": [
+        19.06,
+        16.75,
+        17.28,
+        13.45
+      ],
+      "unit": "dB"
+    }
+  ],
+  "comparisons": [],
+  "deviations": [
+    "The run used random-action data rather than trajectories collected by a trained RL policy.",
+    "Optimal transport was disabled in this minimal pipeline.",
+    "The retrospective manifest was reconstructed after the run."
+  ],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "All pipeline stages completed and produced original, decoded-target, and predicted videos.",
+      "Four held-out rollouts had mean dynamics-only PSNR 16.6342 dB and SSIM 0.6513."
+    ],
+    "interpretation": [
+      "The repository can train and evaluate a small action-conditioned CoinRun latent world model."
+    ],
+    "not_established": [
+      "Official CoinRun dynamics reproduction.",
+      "Playable sandbox quality.",
+      "A trained agent or policy.",
+      "Long-horizon stability."
+    ],
+    "decision": [
+      "Hold the dataset and evaluator fixed and study dynamics capacity/training-budget effects."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "world-model review",
+      "kind": "markdown",
+      "uri": "experiments/CR-DYN-0001/raw/WORLD_MODEL_REVIEW.md",
+      "retention": "git",
+      "sha256": "aed4ced28f637c08075acd0c867c6de0ab19ac8e4da868fe7aefafc9e2d56f9b"
+    },
+    {
+      "name": "dynamics Hydra config",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0001/raw/dynamics-hydra-config.yaml",
+      "retention": "git",
+      "sha256": "e36d144e9a5011fe3c4ede99d14f4277d4beaebea69390079aae35b7bc37c0de"
+    },
+    {
+      "name": "dynamics checkpoint",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer/logs/coinrun-minimal-complete-20260728/dynamics/checkpoints",
+      "retention": "remote_unhashed",
+      "sha256": null
+    },
+    {
+      "name": "held-out rollout triplets",
+      "kind": "mp4 set",
+      "uri": "/mnt/workspace/open-dreamer/logs/coinrun-minimal-complete-20260728/test_videos/ema_shortcut",
+      "retention": "remote_unhashed",
+      "sha256": null
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Retrospective backfill from retained Hydra config, pipeline timestamps, review, and videos."
+    }
+  ]
+}

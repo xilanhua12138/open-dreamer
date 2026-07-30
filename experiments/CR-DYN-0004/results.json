@@ -1,0 +1,207 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0004",
+  "record_revision": 5,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "internal_result",
+  "started_at": "2026-07-29T06:49:24+08:00",
+  "ended_at": "2026-07-29T08:33:43+08:00",
+  "summary": "The 12,902,784-parameter large model completed 20,000 steps and held-out evaluation, but scored below the 3,931,392-parameter medium baseline on both PSNR and SSIM.",
+  "observations": [
+    {
+      "name": "existing_instance_status",
+      "value": "Running",
+      "observed_at": "2026-07-29T06:44:08+08:00"
+    },
+    {
+      "name": "last_provider_modified_time",
+      "value": "2026-07-29T06:44:08+08:00"
+    },
+    {
+      "name": "large_parameters",
+      "value": 12902784,
+      "observed_at": "2026-07-29T06:48:42+08:00"
+    },
+    {
+      "name": "parameter_probe_sha256",
+      "value": "3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f"
+    },
+    {
+      "name": "pipeline_stage",
+      "value": "TRAINING_LARGE",
+      "observed_at": "2026-07-29T06:49:24+08:00"
+    },
+    {
+      "name": "intermediate_checkpoint",
+      "value": {
+        "step": 10000,
+        "remote_uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/large/checkpoints/10000",
+        "checkpoint_root_size": "230M"
+      },
+      "observed_at": "2026-07-29T07:40:40+08:00"
+    },
+    {
+      "candidate": "large",
+      "parameters": 12902784,
+      "optimizer_steps": 20000,
+      "mean_video_psnr_db": 15.113106488605624,
+      "mean_frame_psnr_db": 15.635981656215801,
+      "mean_ssim": 0.5308498203280128,
+      "psnr_by_horizon_db": {
+        "1": 19.234844870119954,
+        "3": 17.611612798075324,
+        "8": 16.15523597850056,
+        "16": 15.635981656215801
+      },
+      "ssim_by_horizon": {
+        "1": 0.6481402507650731,
+        "3": 0.5971366729325331,
+        "8": 0.5478590516825267,
+        "16": 0.5308498203280128
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "left": "medium",
+      "right": "large",
+      "mean_frame_psnr_difference_right_minus_left_db": -0.3809488855128862,
+      "mean_ssim_difference_right_minus_left": -0.011054023662371515
+    }
+  ],
+  "deviations": [
+    "The run was delayed by provider A10 inventory and resumed on the same authorized instance without changing specification.",
+    "This is fixed optimizer steps rather than fixed FLOPs; large consumed more compute than medium.",
+    "Only one held-out seed and eight videos were scored."
+  ],
+  "failures": [
+    {
+      "stage": "instance_start",
+      "type": "blocked_inventory",
+      "message": "Sales of this resource are temporarily suspended.",
+      "resolved_at": "2026-07-29T06:44:08+08:00"
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "The existing requested resource is one NVIDIA A10 and reached Running.",
+      "The environment probe instantiated the large architecture at exactly 12,902,784 parameters.",
+      "Training completed 20,000 optimizer steps with checkpoints at 10,000 and 19,999.",
+      "Large mean-frame PSNR was 15.6360 dB and mean SSIM was 0.53085.",
+      "Medium remained best at 16.0169 dB and 0.54190."
+    ],
+    "interpretation": [
+      "The preregistered hypothesis is rejected: under this small-data fixed-20k protocol, scaling from medium to large did not continue the prior monotonic quality trend.",
+      "The result is consistent with saturation, overfitting, or schedule mismatch, but this single run does not distinguish them."
+    ],
+    "not_established": [
+      "Why large underperformed medium.",
+      "Multi-seed statistical significance.",
+      "Compute-optimal scaling.",
+      "Official CoinRun or Minecraft reproduction."
+    ],
+    "decision": [
+      "Select medium for the controlled context ablation and live demo.",
+      "Do not spend additional GPU time on a still-larger model before testing data scale, regularization, or schedule sensitivity."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "large runner",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/run_coinrun_large_fixed20k.sh",
+      "retention": "git",
+      "sha256": "d12edc641baa6aacf4beec42a57ca0b0f7edf33ec44669e53fa48629fc880225"
+    },
+    {
+      "name": "capacity probe",
+      "kind": "python",
+      "uri": "scripts/experiments/coinrun/probe_coinrun_dynamics_scaling.py",
+      "retention": "git_at_commit",
+      "source_commit": "a4537c0cef5463e8ab5bba343359e0b9a11224da",
+      "sha256": "b263d210094bbaae299cd18dfecbac217038aa1c0104e3bc58cc8ca76c48172e"
+    },
+    {
+      "name": "large parameter probe output",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0004/raw/dynamics_scaling_candidates_with_large.json",
+      "remote_uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/dynamics_scaling_candidates_with_large.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "3aa59f41e39039d56337173ec587da5b79eb525bcd045d7a7d0611a16b73369f"
+    },
+    {
+      "name": "large held-out metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0004/raw/large-metrics.json",
+      "retention": "git",
+      "sha256": "46b678f05f497d04f88ff17f7adedb34b46594c716ec715f4623e276d158435c"
+    },
+    {
+      "name": "large Hydra config",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0004/raw/large-config.yaml",
+      "retention": "git",
+      "sha256": "5a77a1df3684e4fe704bb26bd259735c113ee54aa15bcb9e5cce1b562f5cda15"
+    },
+    {
+      "name": "large Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0004/raw/large-overrides.yaml",
+      "retention": "git",
+      "sha256": "515faef332ef7b122523a90853a722fbc498cf13a672eee69789fd405d1a8afe"
+    },
+    {
+      "name": "large checkpoints",
+      "kind": "orbax checkpoint tree",
+      "uri": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/large/checkpoints",
+      "retention": "DSW persistent storage",
+      "bytes": 289085082,
+      "sha256": "ce2629b7f3962d79fed0ff7f101549f6620068820aa88c7dec9164ef3499015b",
+      "hash_method": "SHA256 over sorted relative-path file SHA256 records"
+    },
+    {
+      "name": "large held-out rollout tree",
+      "kind": "metrics and mp4 tree",
+      "uri": "local-task://extension-final-20260729/eval/large",
+      "retention": "local task archive",
+      "bytes": 111925,
+      "sha256": "64f5bb75ca46af739487727952329d46109d670f02b2af8cfb5800df9bc8c429"
+    },
+    {
+      "name": "extension terminal archive",
+      "kind": "tar.gz",
+      "uri": "local-task://open-dreamer-extension-final-20260729.tar.gz",
+      "retention": "local task archive",
+      "bytes": 7292546,
+      "sha256": "867b0fa9c684b1fd7ccb943260c8857f547fe6ae1a84afdc58539a97378b1d98"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T03:21:51+08:00",
+      "reason": "Backfilled planned protocol and current infrastructure block."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T06:49:24+08:00",
+      "reason": "Recorded successful A10 restart, exact parameter probe, and pipeline start."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T07:40:40+08:00",
+      "reason": "Recorded the persisted step-10,000 checkpoint while the healthy single pipeline continued."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-29T08:33:43+08:00",
+      "reason": "Closed the completed large run with exact held-out metrics, artifact hashes, and rejection of the capacity-extension hypothesis."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-29T12:40:00+08:00",
+      "reason": "Pinned the mutable capacity-probe source artifact to its historical commit before the v2 action-contract implementation changed the working-tree path."
+    }
+  ]
+}

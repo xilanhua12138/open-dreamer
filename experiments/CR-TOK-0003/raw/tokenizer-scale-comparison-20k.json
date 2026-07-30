@@ -1,0 +1,40 @@
+{
+  "output": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/tokenizer-scale-comparison-20k.png",
+  "shape": [
+    1312,
+    512,
+    3
+  ],
+  "rows": [
+    {
+      "name": "n0.17m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n0p17m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 0,
+      "end_row_exclusive": 256
+    },
+    {
+      "name": "n1.1m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n1p1m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 264,
+      "end_row_exclusive": 520
+    },
+    {
+      "name": "n3.7m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n3p7m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 528,
+      "end_row_exclusive": 784
+    },
+    {
+      "name": "n8.6m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n8p6m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 792,
+      "end_row_exclusive": 1048
+    },
+    {
+      "name": "n16.6m",
+      "source": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/milestones/updates-20000/heldout_reconstruction.png",
+      "start_row": 1056,
+      "end_row_exclusive": 1312
+    }
+  ]
+}

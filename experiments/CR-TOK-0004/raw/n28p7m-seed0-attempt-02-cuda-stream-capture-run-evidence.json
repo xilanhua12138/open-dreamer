@@ -1,0 +1,90 @@
+{
+  "attempt_id": "b464af68-9aa7-40fa-826b-70a269172c01",
+  "config_sha256": "3dadc3c455d41e3e262838e04f5a5208b1839ef2f08a81c65af6982ff8b762e4",
+  "experiment_id": "CR-TOK-0004",
+  "generated_at": "2026-07-29T17:58:54.542116+00:00",
+  "input_fingerprint": "482486ee64e48cf7fbaa2b4f6922b6c2535c6362754aac597ff18ee267572869",
+  "last_completed_updates": 1179,
+  "last_metrics": {
+    "train/": {
+      "data_tokens_seen": 150732800,
+      "flops_spent": 29587232784384000,
+      "loss": 0.037765804678201675,
+      "lpips": 0.03341260552406311,
+      "lr": 0.003000000026077032,
+      "mse": 0.031083282083272934,
+      "psnr": 27.570392608642578,
+      "rmse": 0.17630451917648315,
+      "total_tokens_seen": 188416000
+    }
+  },
+  "ledger_uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json",
+  "run_artifacts": [
+    {
+      "bytes": 4355,
+      "sha256": "8db17360e56c36aadb22b41f7f36c031e419cdc4fa9cc2cbc1848a44a31c1760",
+      "uri": "runtime-identity.json"
+    },
+    {
+      "bytes": 700,
+      "sha256": "4a2afdcabe171606badae9a27d3625ad7376c307401c75906e93b9e3b73808c2",
+      "uri": "run-state.json"
+    },
+    {
+      "bytes": 12200,
+      "sha256": "b2285d1d912658133c9a1cc0049f7553ee87fb859b27a9a9cd10398eff10fc1d",
+      "uri": "metrics.jsonl"
+    },
+    {
+      "bytes": 29577,
+      "sha256": "7765a5170ae7b11b02af18d2b2fab68680222ae5fbe7124ff8ac34c96d62f81c",
+      "uri": "telemetry.jsonl"
+    },
+    {
+      "bytes": 706,
+      "sha256": "14e0c672efe158cb1d25857533f853c8e0d05cc7c77fb88a549c3e609526170f",
+      "uri": "artifacts.jsonl"
+    },
+    {
+      "bytes": 277,
+      "sha256": "ba1018311940f7ed5e4979d467a2e961e5f3d5c4df51607ea7800916dfabf529",
+      "uri": "validation-set.json"
+    },
+    {
+      "bytes": 234,
+      "sha256": "6f5963d3116090ca39ed86e6e3753f74c16e96dd374c283300f7f5420c62104a",
+      "uri": "wandb-run.json"
+    },
+    {
+      "bytes": 4355,
+      "sha256": "4e998bbfa5b9f187229afe40bc3eace1b570d92fabb481d7dc8ac5a98d3d5ab2",
+      "uri": "runtime-identities/1953d550-bf9c-4138-9500-f66c867eb4dd.json"
+    },
+    {
+      "bytes": 4355,
+      "sha256": "8db17360e56c36aadb22b41f7f36c031e419cdc4fa9cc2cbc1848a44a31c1760",
+      "uri": "runtime-identities/b464af68-9aa7-40fa-826b-70a269172c01.json"
+    },
+    {
+      "bytes": 3896,
+      "sha256": "46c88718343d97880b94c7b79e3b4f131f82cc567219c490e340c19e4b23c17a",
+      "uri": ".hydra/config.yaml"
+    },
+    {
+      "bytes": 1625,
+      "sha256": "4d74c707e9487fd8c310cd57feb8c503e8feb1286da7d859f0468788b5dd8aeb",
+      "uri": ".hydra/overrides.yaml"
+    },
+    {
+      "bytes": 6889,
+      "sha256": "c255e810f6ddab8187a279a04057ec898218215e1189b7e23e4f0b4c5113ed55",
+      "uri": ".hydra/hydra.yaml"
+    }
+  ],
+  "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+  "run_name": "n28p7m-seed0-attempt-02-cuda-stream-capture",
+  "schema_version": "1.0",
+  "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+  "state": "FAILED",
+  "validation": []
+}

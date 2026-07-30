@@ -1,0 +1,409 @@
+{
+  "artifacts": [
+    {
+      "kind": "json",
+      "name": "attempt 01 generated run evidence",
+      "retention": "git",
+      "sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-01-run-evidence.json"
+    },
+    {
+      "kind": "log",
+      "name": "attempt 01 bootstrap log",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/bootstrap.log",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "c7c8178e7e8bcaf97873ff690b9496a1bfc386b0bf42a1cc213ea494592675e2",
+      "uri": "local-task://tokenizer-28p7-sync/attempt-01/bootstrap.log"
+    },
+    {
+      "kind": "json",
+      "name": "generated run evidence: n28p7m-seed0-attempt-02-cuda-stream-capture",
+      "retention": "git",
+      "sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json"
+    },
+    {
+      "kind": "log",
+      "name": "attempt 02 CUDA stream-capture failure log",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/pipeline.log",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "9b70f4c0f07255c9fc64ec34483b1751e0529d7aa4d101b2eff088dca6e1756a",
+      "uri": "local-task://tokenizer-28p7-sync/attempt-02-cuda-stream-capture/pipeline.log"
+    },
+    {
+      "kind": "json",
+      "name": "periodic validation at 2,500 completed updates",
+      "retention": "git",
+      "sha256": "77fb7fb56614cd67f7d28293bf7c958784af6cafc4ad1a03ae8f5dbc83ecec66",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-02500-periodic-validation.json"
+    },
+    {
+      "kind": "image",
+      "name": "periodic reconstruction grid at 2,500 completed updates",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/validation/updates-00002500/reconstruction.png",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "5b97bade63ccbdd21a864f24c6265f7712807129ba14b739f07af83b1b1e92eb",
+      "uri": "local-task://tokenizer-28p7-sync/milestones/updates-02500-periodic/reconstruction.png"
+    },
+    {
+      "kind": "animation",
+      "name": "periodic reconstruction animation at 2,500 completed updates",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/validation/updates-00002500/reconstruction.gif",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "009fbf650ae4e4b5d7ad8e0290bcfd46f5be5e4a6dae21a97c747b04f34f73a3",
+      "uri": "local-task://tokenizer-28p7-sync/milestones/updates-02500-periodic/reconstruction.gif"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 resolved Hydra config",
+      "retention": "git",
+      "sha256": "46c88718343d97880b94c7b79e3b4f131f82cc567219c490e340c19e4b23c17a",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-config.yaml"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 Hydra overrides",
+      "retention": "git",
+      "sha256": "4d74c707e9487fd8c310cd57feb8c503e8feb1286da7d859f0468788b5dd8aeb",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-overrides.yaml"
+    },
+    {
+      "kind": "config",
+      "name": "attempt 03 Hydra runtime config",
+      "retention": "git",
+      "sha256": "c255e810f6ddab8187a279a04057ec898218215e1189b7e23e4f0b4c5113ed55",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-hydra.yaml"
+    },
+    {
+      "kind": "json",
+      "name": "generated run evidence: n28p7m-seed0-final",
+      "retention": "git",
+      "sha256": "83bea573ca610c353f48b114da4e3fd38a068e13d06a487ac0c7df4d5c8fc0d3",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-final-run-evidence.json"
+    },
+    {
+      "kind": "checkpoint",
+      "name": "final n28p7m tokenizer checkpoint",
+      "bytes": 285094215,
+      "file_count": 47,
+      "retention": "DSW persistent storage",
+      "sha256": "930b975a550887ead0c649165168af4935f07ace8aa6f9b964ac34540ecafb9b",
+      "uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/runs/n28p7m/checkpoints/19999"
+    },
+    {
+      "kind": "json",
+      "name": "aligned n16p6m versus n28p7m comparison",
+      "retention": "git",
+      "sha256": "44115541267360531231db4e8fb379e71002d07ac810598fa053a768899f60a5",
+      "uri": "experiments/CR-TOK-0004/raw/tokenizer-16p6m-vs-28p7m-comparison.json"
+    },
+    {
+      "kind": "image",
+      "name": "aligned n16p6m versus n28p7m final grid",
+      "remote_uri": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729/tokenizer-16p6m-vs-28p7m.png",
+      "retention": "local task and DSW persistent storage",
+      "sha256": "1220078eb4b0dec978ef179f64a307eaa499103f4ebabb7973b14b2c094669fb",
+      "uri": "local-task://tokenizer-28p7-sync/final/tokenizer-16p6m-vs-28p7m.png"
+    },
+    {
+      "kind": "json_series",
+      "name": "four full held-out evaluations",
+      "retention": "git",
+      "sha256": "5258c51d3db988905a30852f2251bd2933d34221d9f3e6f23674b5e15aee331d",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-heldout-series.json",
+      "members": [
+        {
+          "completed_updates": 2500,
+          "sha256": "63d417764ea4739faaf6f6a58fdec888e61836ffbb9c473d7eec87053ecd9d8a",
+          "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-02500-heldout-eval.json"
+        },
+        {
+          "completed_updates": 5000,
+          "sha256": "933e4649b0f10dedaf90f38a0e688d6c18f5e03a71cf69dbad41d300348dc3dd",
+          "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-05000-heldout-eval.json"
+        },
+        {
+          "completed_updates": 10000,
+          "sha256": "fd6976878685e28bf7430820d3510a43c2e60a6c0b2fada4d6ad496934a405e8",
+          "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-10000-heldout-eval.json"
+        },
+        {
+          "completed_updates": 20000,
+          "sha256": "a75ca7d4486e45a98386c0f78c5ae50c2ffa0de81eff43472f11cf1d7738fd52",
+          "uri": "experiments/CR-TOK-0004/raw/n28p7m-updates-20000-heldout-eval.json"
+        }
+      ]
+    }
+  ],
+  "claim_level": "internal_result",
+  "comparisons": [
+    {
+      "baseline": "n16.6m",
+      "baseline_experiment_id": "CR-TOK-0003",
+      "baseline_parameters": 14912320,
+      "candidate": "n28.7m",
+      "candidate_parameters": 25564032,
+      "completed_updates": 20000,
+      "evaluation_identity_match": true,
+      "num_clips": 512,
+      "seed": 4242,
+      "ema_psnr_db": {
+        "clean": {
+          "baseline": 36.16913819313049,
+          "candidate": 36.86565899848938,
+          "delta": 0.6965208053588867
+        },
+        "edge": {
+          "baseline": 26.77392288969308,
+          "candidate": 27.066065545803774,
+          "delta": 0.2921426561106948
+        },
+        "temporal_change": {
+          "baseline": 27.428436051026853,
+          "candidate": 27.659229659292034,
+          "delta": 0.2307936082651807
+        },
+        "masked": {
+          "baseline": 33.615649700164795,
+          "candidate": 34.317572832107544,
+          "delta": 0.701923131942749
+        }
+      },
+      "descriptive_score_delta": 1.2194570697347586,
+      "quality_claim": "awaiting_visual_review"
+    }
+  ],
+  "conclusion": {
+    "decision": [
+      "Retain n28.7m as the numerically strongest tokenizer endpoint under the aligned fixed-20k protocol, pending user visual review.",
+      "Proceed to the separately preregistered real-environment PPO trajectory-collection experiment; do not start dynamics."
+    ],
+    "interpretation": [
+      "The aligned endpoint supports the preregistered hypothesis: increasing from the local n16.6m architecture to the local n28.7m-label architecture improved every final EMA metric used in the comparison.",
+      "The gains are modest relative to the 71.4% parameter increase, so this run establishes a capacity-quality improvement but not cost efficiency."
+    ],
+    "not_established": [
+      "Whether users judge the n28.7m reconstructions visually acceptable.",
+      "Whether the tokenizer is suitable for dynamics."
+    ],
+    "observed": [
+      "A CPU-only architecture probe found 25,564,032 parameters for the local depth-6, d_model-384 implementation of the published 28.7M label.",
+      "The first launch from source commit 3833b34 failed before any optimizer update while materializing a validation DatasetConfig that omitted a defaulted mouse_repr field.",
+      "A regression test reproduced the missing-default failure before the helper was changed to materialize explicit DatasetConfig and DataloaderConfig defaults.",
+      "Attempt 02 reached 1,179 recorder-confirmed completed updates before JAX reported CUDA_ERROR_STREAM_CAPTURE_INVALIDATED; no NVIDIA Xid, kernel OOM or surviving GPU process was observed.",
+      "Attempt 03 restored CR-TOK-0004's own checkpoint step 0 and resumed the unchanged protocol under PID 71283.",
+      "The fixed 16-clip periodic validation at 2,500 completed updates measured online clean PSNR 28.1951 dB and EMA clean PSNR 24.4368 dB on validation-set SHA256 350bd313b4f98d8bd06c06f99c029e2e5a9cb6981e3bcc5d25e9aa749b7a0188.",
+      "Attempt 03 completed exactly 20,000 optimizer updates and all eight periodic validations plus four 512-clip held-out evaluations.",
+      "At 20,000 updates, n28.7m EMA clean, edge and temporal-change PSNR were 36.8657, 27.0661 and 27.6592 dB.",
+      "The aligned n16.6m comparison used the identical dataset path, seed, batch size, frames, batches, clip count and completed-update horizon; n28.7m improved clean, edge and temporal-change PSNR by 0.6965, 0.2921 and 0.2308 dB."
+    ]
+  },
+  "deviations": [
+    {
+      "at": "2026-07-30T01:04:32+08:00",
+      "checkpoint_reused": false,
+      "fix_commit": "c565f0b5c18ef7847853d1988c47afa425951984",
+      "kind": "source_bugfix_before_first_update",
+      "protocol_changed": false,
+      "reason": "The validation helper copied every DatasetConfig dataclass field with direct getattr, but the CoinRun Hydra node omitted mouse_repr and other defaulted fields.",
+      "red_test": "tests.test_tokenizer_validation_runtime.TokenizerValidationRuntimeTests.test_validation_config_materializes_missing_dataclass_defaults",
+      "remote_execution_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6"
+    },
+    {
+      "at": "2026-07-30T01:58:23+08:00",
+      "checkpoint_reused": true,
+      "checkpoint_step": 0,
+      "kind": "fault_recovery_after_cuda_runtime_failure",
+      "protocol_changed": false,
+      "reason": "Attempt 02 exited after a JAX CUDA graph stream-capture invalidation. The GPU was idle and healthy afterward, with no kernel Xid or OOM evidence, so the unchanged runner was restarted from this experiment's own latest durable checkpoint.",
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6"
+    }
+  ],
+  "ended_at": "2026-07-30T08:47:33+08:00",
+  "execution_status": "completed",
+  "experiment_id": "CR-TOK-0004",
+  "failures": [
+    {
+      "at": "2026-07-30T01:01:11+08:00",
+      "error_message": "Key 'mouse_repr' is not in struct; full_key: dataset.mouse_repr",
+      "error_type": "omegaconf.errors.ConfigAttributeError",
+      "evidence_sha256": "49fe847e3a10eeb1689b0f2c70d86cc593a792f5fd8d81cc13026bd338463e62",
+      "exit_code": 1,
+      "last_completed_updates": null,
+      "recoverable": true,
+      "stage": "validation_dataset_initialization"
+    },
+    {
+      "at": "2026-07-30T01:33:15+08:00",
+      "error_message": "Failed to end stream capture: CUDA_ERROR_STREAM_CAPTURE_INVALIDATED",
+      "error_type": "jax.errors.JaxRuntimeError",
+      "evidence_sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "exit_code": 1,
+      "last_completed_updates": 1179,
+      "recoverable": true,
+      "stage": "tokenizer_training"
+    }
+  ],
+  "observations": [
+    {
+      "d_model": 384,
+      "depth": 6,
+      "device": "CPU parameter/FLOPs construction only",
+      "estimated_training_flops": 514560570163200000,
+      "flops_per_step": 25728028508160,
+      "label": "n28.7m",
+      "name": "pretraining_architecture_probe",
+      "parameters": 25564032,
+      "scientific_outcome_observed": false
+    },
+    {
+      "commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "name": "frozen_execution_source",
+      "remote_run_root": "/mnt/workspace/open-dreamer-tokenizer-28p7/logs/coinrun-tokenizer-28p7-fixed20k-20260729",
+      "remote_worktree": "/mnt/workspace/open-dreamer-tokenizer-28p7",
+      "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_28p7_fixed20k.sh",
+      "runner_sha256": "6f8c0f538fd384856ac52145f80d8ebd29f4ae4a03ea397dc6dddcafd35a7db5",
+      "started": true
+    },
+    {
+      "attempt_id": "1953d550-bf9c-4138-9500-f66c867eb4dd",
+      "failure": "omegaconf.errors.ConfigAttributeError: Key 'mouse_repr' is not in struct",
+      "last_completed_updates": null,
+      "name": "attempt_01_failure",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "scientific_outcome_observed": false,
+      "source_commit": "3833b34b46358b0443bb3571a5745c013eb7a7e7",
+      "wandb_mode": "offline"
+    },
+    {
+      "checkpoint_reused": false,
+      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
+      "name": "attempt_02_recovery_launch",
+      "pipeline_pid": 68104,
+      "shutdown_due_at": "2026-07-30T13:01:15+08:00",
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "started_at": "2026-07-30T01:07:25+08:00",
+      "wandb_mode": "offline"
+    },
+    {
+      "last_completed_updates": 1179,
+      "name": "generated_run_evidence:n28p7m-seed0-attempt-02-cuda-stream-capture",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "sha256": "42d67118ba3c0dcbeb0fbe7a1830104fb4e72271b385250d3442c76df5a2180c",
+      "state": "FAILED",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-attempt-02-cuda-stream-capture-run-evidence.json"
+    },
+    {
+      "attempt_id": "fa4474bb-38a2-4f5c-a40d-3c5de1dcdbe6",
+      "checkpoint_reused": true,
+      "checkpoint_step": 0,
+      "initial_status": "TRAINING_TOKENIZER_N28P7M_TO_20000",
+      "name": "attempt_03_fault_recovery_launch",
+      "pipeline_pid": 71283,
+      "source_commit": "b3eb2afd37ece2880c60c34762e5cfa427ee19f6",
+      "started_at": "2026-07-30T01:58:23+08:00",
+      "wandb_mode": "offline"
+    },
+    {
+      "completed_updates": 2500,
+      "ema_clean_mse": 0.0036001275293529034,
+      "ema_clean_psnr_db": 24.43682114701251,
+      "name": "periodic_validation_updates_02500",
+      "num_clips": 16,
+      "online_clean_mse": 0.0015152764196197193,
+      "online_clean_psnr_db": 28.19508135105426,
+      "validation_set_sha256": "350bd313b4f98d8bd06c06f99c029e2e5a9cb6981e3bcc5d25e9aa749b7a0188"
+    },
+    {
+      "name": "heldout_learning_curve",
+      "num_clips_per_milestone": 512,
+      "seed": 4242,
+      "milestones": [
+        {
+          "completed_updates": 2500,
+          "ema_clean_psnr_db": 25.68200957775116,
+          "ema_edge_psnr_db": 20.248983849225578,
+          "ema_temporal_change_psnr_db": 20.84963216286299
+        },
+        {
+          "completed_updates": 5000,
+          "ema_clean_psnr_db": 32.34052658081055,
+          "ema_edge_psnr_db": 24.326483516155516,
+          "ema_temporal_change_psnr_db": 25.158183401657524
+        },
+        {
+          "completed_updates": 10000,
+          "ema_clean_psnr_db": 34.867759227752686,
+          "ema_edge_psnr_db": 26.09875497681582,
+          "ema_temporal_change_psnr_db": 26.84597415423507
+        },
+        {
+          "completed_updates": 20000,
+          "ema_clean_psnr_db": 36.86565899848938,
+          "ema_edge_psnr_db": 27.066065545803774,
+          "ema_temporal_change_psnr_db": 27.659229659292034
+        }
+      ]
+    },
+    {
+      "last_completed_updates": 20000,
+      "name": "generated_run_evidence:n28p7m-seed0-final",
+      "run_id": "3d478ca3-6f1d-4068-8d36-6139b28b3a1c",
+      "sha256": "83bea573ca610c353f48b114da4e3fd38a068e13d06a487ac0c7df4d5c8fc0d3",
+      "state": "COMPLETED",
+      "uri": "experiments/CR-TOK-0004/raw/n28p7m-seed0-final-run-evidence.json"
+    }
+  ],
+  "record_revision": 9,
+  "revision_history": [
+    {
+      "at": "2026-07-29T20:38:34+08:00",
+      "reason": "Preregistered the missing 28.7M-label fixed-20k extension before any candidate training or held-out evaluation.",
+      "revision": 1
+    },
+    {
+      "at": "2026-07-29T20:42:15+08:00",
+      "reason": "Bound the runner to source commit 3833b34, verified remote runtime dependencies and queued the detached worktree behind CR-TOK-0003 without starting GPU work.",
+      "revision": 2
+    },
+    {
+      "at": "2026-07-30T01:04:32+08:00",
+      "reason": "Preserved the zero-update failed launch, exact runtime evidence and ConfigAttributeError; recorded the red-test-first default-materialization fix and the resulting execution-source deviation without changing the scientific protocol.",
+      "revision": 3
+    },
+    {
+      "at": "2026-07-30T01:07:25+08:00",
+      "reason": "Restarted the unchanged n28.7m protocol from zero on execution commit b3eb2af after the regression fix; recorded PID, offline W&B mode and shutdown guard while retaining attempt-01 failure evidence.",
+      "revision": 4
+    },
+    {
+      "at": "2026-07-29T17:58:54.542116+00:00",
+      "reason": "Materialized machine-owned runtime, telemetry, metric and validation evidence for n28p7m-seed0-attempt-02-cuda-stream-capture.",
+      "revision": 5
+    },
+    {
+      "at": "2026-07-30T01:58:23+08:00",
+      "reason": "Retained attempt-02 CUDA stream-capture failure evidence and recorded an unchanged-protocol fault recovery from CR-TOK-0004's own step-0 checkpoint.",
+      "revision": 6
+    },
+    {
+      "at": "2026-07-30T02:56:38+08:00",
+      "reason": "Recorded the first fixed-set periodic validation, its immutable validation identity and local visual artifacts after attempt 03 passed 2,500 completed updates.",
+      "revision": 7
+    },
+    {
+      "at": "2026-07-30T03:25:17.732211+00:00",
+      "reason": "Materialized machine-owned runtime, telemetry, metric and validation evidence for n28p7m-seed0-final.",
+      "revision": 8
+    },
+    {
+      "at": "2026-07-30T11:25:58+08:00",
+      "reason": "Closed the completed fixed-20k run with all held-out milestones, aligned n16.6m comparison, final checkpoint tree identity and visual-review guard.",
+      "revision": 9
+    }
+  ],
+  "schema_version": "1.0",
+  "scientific_status": "supports_hypothesis",
+  "started_at": "2026-07-30T01:01:06+08:00",
+  "summary": "The local 25,564,032-parameter n28.7m-label tokenizer completed the aligned 20,000-update protocol after two retained recoverable failures. It improved final EMA clean, edge and temporal-change PSNR over n16.6m by 0.6965, 0.2921 and 0.2308 dB; visual acceptance remains pending and dynamics remains blocked."
+}

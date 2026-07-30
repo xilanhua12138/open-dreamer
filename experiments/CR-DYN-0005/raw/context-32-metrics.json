@@ -1,0 +1,21 @@
+{
+  "metric_source": "raw uint8 arrays before MP4 encoding",
+  "num_videos": 8,
+  "context_frames": 32,
+  "predicted_frames": 16,
+  "mean_video_psnr_db": 16.00021146611325,
+  "mean_frame_psnr_db": 17.01505326084585,
+  "mean_ssim": 0.5885515430392311,
+  "psnr_by_horizon_db": {
+    "1": 22.43740167720719,
+    "3": 20.510938962811572,
+    "8": 18.53759309860938,
+    "16": 17.01505326084585
+  },
+  "ssim_by_horizon": {
+    "1": 0.7265040095582466,
+    "3": 0.6738973569103274,
+    "8": 0.6380690332577883,
+    "16": 0.5885515430392311
+  }
+}

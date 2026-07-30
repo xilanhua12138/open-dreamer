@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0001",
+  "record_revision": 1,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "partial_reproduction",
+  "started_at": "2026-07-28T12:30:44+08:00",
+  "ended_at": "2026-07-28T13:25:30+08:00",
+  "summary": "The 163,392-parameter tokenizer completed the repository's native 1e16 FLOPs allocation on one A10 and produced finite held-out clean and masked reconstructions.",
+  "observations": [
+    {
+      "name": "exact_parameters",
+      "value": 163392,
+      "unit": "parameters"
+    },
+    {
+      "name": "allocated_optimizer_steps",
+      "value": 56928,
+      "unit": "steps"
+    },
+    {
+      "name": "training_wall_time",
+      "value": 3262,
+      "unit": "seconds"
+    },
+    {
+      "name": "native_final_training_psnr",
+      "value": 25.0045,
+      "unit": "dB",
+      "aggregation": "final observed training batch"
+    },
+    {
+      "name": "heldout_online_clean_psnr",
+      "value": 24.248812437057495,
+      "unit": "dB",
+      "aggregation": "256 held-out clips"
+    },
+    {
+      "name": "heldout_online_masked_psnr",
+      "value": 20.286422729492188,
+      "unit": "dB",
+      "aggregation": "256 held-out clips"
+    },
+    {
+      "name": "heldout_ema_clean_psnr",
+      "value": 24.24467635154724,
+      "unit": "dB",
+      "aggregation": "256 held-out clips"
+    },
+    {
+      "name": "heldout_ema_masked_psnr",
+      "value": 20.335304975509644,
+      "unit": "dB",
+      "aggregation": "256 held-out clips"
+    },
+    {
+      "name": "peak_device_memory",
+      "value": 9326919680,
+      "unit": "bytes",
+      "source": "native results.csv row"
+    }
+  ],
+  "comparisons": [
+    {
+      "reference": "released CoinRun scaling SVG",
+      "reference_value": 21.24,
+      "reference_unit": "dB",
+      "reference_precision": "visual plot estimate",
+      "local_value": 20.335304975509644,
+      "local_metric": "heldout_ema_masked_psnr",
+      "validity": "directional only; dataset and unreleased recipe details differ"
+    }
+  ],
+  "deviations": [
+    "The official CoinRun training data and full sweep recipe were not released; local random-action trajectories were used.",
+    "The approximately 21.24 dB public value was estimated from an SVG rather than an exact table.",
+    "This retrospective manifest was reconstructed after the run."
+  ],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "The native schedule completed 56,928 steps on one A10.",
+      "Held-out EMA masked PSNR was 20.3353 dB and EMA clean PSNR was 24.2447 dB."
+    ],
+    "interpretation": [
+      "The smallest released parameter point and FLOPs scheduler are operational in the local setup."
+    ],
+    "not_established": [
+      "Strict reproduction of the published scaling point.",
+      "World-model dynamics quality.",
+      "The previously discussed 29.94 dB value, which has no retained authoritative held-out source."
+    ],
+    "decision": [
+      "Freeze this tokenizer checkpoint for the first CoinRun dynamics capacity experiments."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "heldout metrics",
+      "kind": "json",
+      "uri": "experiments/CR-TOK-0001/raw/heldout_eval.json",
+      "retention": "git",
+      "sha256": "d51e6470d43f4d729045da2a8bff13f8b6e216d994399ec27baccda39f0f49ea"
+    },
+    {
+      "name": "Hydra config",
+      "kind": "yaml",
+      "uri": "experiments/CR-TOK-0001/raw/hydra-config.yaml",
+      "retention": "git",
+      "sha256": "1271309b3e97596d53f3875c446006711adbd0016aa54a902e2bafc0ded6e464"
+    },
+    {
+      "name": "final checkpoint",
+      "kind": "orbax checkpoint",
+      "uri": "/mnt/workspace/open-dreamer/logs/coinrun-official-min-n0.17m-c1e16-20260728/checkpoints/56927",
+      "retention": "remote_unhashed",
+      "sha256": null
+    },
+    {
+      "name": "held-out reconstruction grid",
+      "kind": "png",
+      "uri": "/mnt/workspace/open-dreamer/logs/coinrun-official-min-n0.17m-c1e16-20260728/heldout_reconstruction.png",
+      "retention": "remote_unhashed",
+      "sha256": null
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Retrospective backfill from retained config, metrics, logs, and paths."
+    }
+  ]
+}

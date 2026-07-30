@@ -1,0 +1,20 @@
+{
+  "completed_updates": 12500,
+  "layout": {
+    "columns": [
+      "target",
+      "online",
+      "ema"
+    ],
+    "rows": 4
+  },
+  "metrics": {
+    "ema_clean_mse": 0.0006115274542632202,
+    "ema_clean_psnr": 32.13584040725205,
+    "num_clips": 16,
+    "online_clean_mse": 0.0006471866896996895,
+    "online_clean_psnr": 31.889704231779533
+  },
+  "schema_version": "1.0",
+  "validation_set_sha256": "350bd313b4f98d8bd06c06f99c029e2e5a9cb6981e3bcc5d25e9aa749b7a0188"
+}

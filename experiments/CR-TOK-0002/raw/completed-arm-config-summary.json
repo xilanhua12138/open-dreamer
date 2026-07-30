@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "common": {
+    "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "training_batch_size": 128,
+    "training_clip_frames": 16,
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "mae_p_max": 0.9,
+    "tokenizer_loss_type": "mse",
+    "lpips_weight": 0.2,
+    "optimizer": "muon",
+    "mup_scaling": true,
+    "ema_decay": 0.999,
+    "scaling_mode": "declared_flops_budget"
+  },
+  "arms": [
+    {
+      "name": "n0.17m",
+      "parameters": 163392,
+      "depth": 1,
+      "d_model": 64,
+      "allocated_steps": 62675,
+      "full_config_uri": "experiments/CR-TOK-0002/raw/n0p17m-config.yaml",
+      "full_config_sha256": "0437aa69eb70d26d46767c78e5bdaa195203ffca84606d91fa238e3d4154a7bf"
+    },
+    {
+      "name": "n1.1m",
+      "parameters": 1048192,
+      "depth": 2,
+      "d_model": 128,
+      "allocated_steps": 9358,
+      "full_config_uri": "local-task://v2-sync/n1p1m/config.yaml",
+      "full_config_sha256": "183f47749671b35fca689444d070f153ecd8ee350362d2a499aade44b9ac9bae"
+    },
+    {
+      "name": "n3.7m",
+      "parameters": 3342528,
+      "depth": 3,
+      "d_model": 192,
+      "allocated_steps": 2938,
+      "full_config_uri": "local-task://v2-sync/n3p7m/config.yaml",
+      "full_config_sha256": "717b857916820b005f3c951a8e42896d9dd955c0944e812ab1be72b379c59e73"
+    }
+  ]
+}

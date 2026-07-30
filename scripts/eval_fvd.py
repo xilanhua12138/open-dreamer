@@ -123,7 +123,11 @@ def generate_videos(cfg):
             else:
                 val_data = batch["videos"]
             val_actions = batch["actions"]
-            val_actions = shift_actions(val_actions, cfg.dataset.categorical_action_dim)
+            val_actions = shift_actions(
+                val_actions,
+                cfg.dataset.categorical_action_dim,
+                cfg.dataset.categorical_noop_action,
+            )
 
             B_batch = val_data.shape[0]
 

@@ -1,0 +1,223 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0003",
+  "retrospective": false,
+  "created_at": "2026-07-29T14:38:09+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun tokenizer quality-first fixed-20k scale sweep",
+  "kind": "confirmatory",
+  "question": "At the same 20,000 optimizer updates, how do held-out reconstruction quality and convergence change across the complete five-scale CoinRun tokenizer ladder?",
+  "reason": "CR-TOK-0002 allocated 62,675 / 9,358 / 2,938 / 2,550 / 2,656 updates as capacity increased. That schedule is useful for compute-efficiency diagnostics but confounds tokenizer capacity with optimization maturity. The n3.7m endpoint already showed a 3.0971 dB online-versus-EMA clean-PSNR gap after only 2,938 updates, so a fixed-update experiment is required before selecting a representation.",
+  "hypothesis": "With identical data, latent interface, optimizer, loss and 20,000-update horizon, increasing tokenizer backbone capacity beyond n0.17m will improve at least clean, edge or temporal-change held-out reconstruction, and milestone curves will distinguish persistent capacity limits from short-run optimization lag.",
+  "falsification": "The hypothesis is rejected if none of the four larger scales improves final EMA clean, edge or temporal-change PSNR over n0.17m, or if larger scales fail to produce finite metrics at all four preregistered milestones while retaining the 16-latent by 16-channel interface.",
+  "baseline_id": "CR-TOK-0002",
+  "depends_on": [
+    "CR-TOK-0001",
+    "CR-TOK-0002",
+    "CR-DEMO-0001"
+  ],
+  "controlled_variable": {
+    "name": "tokenizer_backbone_scale",
+    "values": [
+      "n0.17m",
+      "n1.1m",
+      "n3.7m",
+      "n8.6m",
+      "n16.6m"
+    ]
+  },
+  "constants": {
+    "train_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "eval_dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "train_records": 4096,
+    "eval_records": 512,
+    "frames_per_record": 64,
+    "training_clip_frames": 16,
+    "training_batch_size": 128,
+    "optimizer_updates_per_arm": 20000,
+    "evaluation_completed_updates": [
+      2500,
+      5000,
+      10000,
+      20000
+    ],
+    "checkpoint_steps_zero_based": [
+      2499,
+      4999,
+      9999,
+      19999
+    ],
+    "recovery_checkpoint_steps_zero_based": [
+      14999
+    ],
+    "n_latents": 16,
+    "d_bottleneck": 16,
+    "patch_size": 8,
+    "optimizer": "muon",
+    "mup_scaling": true,
+    "lpips_weight": 0.2,
+    "ema_decay": 0.999,
+    "heldout_seed": 4242,
+    "heldout_clips_per_milestone": 512
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "26d9a1290dc7e1a42a98cea62284fe7787bbe4e6",
+    "branch": "feat/experiment-ledger",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_tokenizer_quality_first_20k.sh",
+    "runner_sha256": "0b1a6f0b3cde9db49d94b88487268fdd0a299fb2430494f56f9a6987e7a9288d"
+  },
+  "data": {
+    "environment": "Procgen CoinRun",
+    "observation_shape": [
+      64,
+      64,
+      3
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "policy": "Reuse the immutable CR-TOK-0002 structured dataset: 65% goal-directed persistent right/right-jump/no-op macros mixed with 35% balanced persistent macros.",
+    "train_level_range": [
+      7000,
+      11095
+    ],
+    "eval_level_range": [
+      20000,
+      20511
+    ],
+    "split_overlap": 0,
+    "tree_sha256": {
+      "train": "276af79200604d65bd357ffbc3a4e591fa6aa3f75962719e7c3273bbf18f386f",
+      "eval": "2e7c5db0cabda7645ba10dc41974eb164066864d62e9d7ae40f1cd7e242bbb3f"
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "100,000 total optimizer updates and approximately 5.506e17 model-estimated FLOPs across the five arms; wall time is expected to be dominated by n8.6m and n16.6m.",
+    "shutdown_policy": "Use only the existing A10. Maintain a bounded timer beyond the estimated remaining run time, renew only when needed, and stop the instance after terminal artifacts and the ledger are synchronized."
+  },
+  "protocol": {
+    "model_family": {
+      "encoder_decoder_depths_match": true,
+      "head_dimension": 64,
+      "n_kv_heads": 1,
+      "one_temporal_attention_layer_per_stack": true,
+      "latent_interface_fixed": {
+        "n_latents": 16,
+        "d_bottleneck": 16
+      }
+    },
+    "candidates": [
+      {
+        "name": "n0.17m",
+        "depth": 1,
+        "d_model": 64,
+        "expected_parameters": 163392,
+        "max_steps": 20000
+      },
+      {
+        "name": "n1.1m",
+        "depth": 2,
+        "d_model": 128,
+        "expected_parameters": 1048192,
+        "max_steps": 20000
+      },
+      {
+        "name": "n3.7m",
+        "depth": 3,
+        "d_model": 192,
+        "expected_parameters": 3342528,
+        "max_steps": 20000
+      },
+      {
+        "name": "n8.6m",
+        "depth": 4,
+        "d_model": 256,
+        "expected_parameters": 7734528,
+        "max_steps": 20000
+      },
+      {
+        "name": "n16.6m",
+        "depth": 5,
+        "d_model": 320,
+        "expected_parameters": 14912320,
+        "max_steps": 20000
+      }
+    ],
+    "training": {
+      "from_scratch": true,
+      "resume_only_after_fault": true,
+      "training_mode": "fixed_optimizer_updates",
+      "scaling_flops_budget": 0.0,
+      "scaling_tokens_per_param": 0.0,
+      "loss": "mse plus 0.2 LPIPS",
+      "mae_p_max": 0.9,
+      "precision": "bfloat16 compute, float32 parameters",
+      "checkpoint_policy": "Retain exact evaluation steps 2,499 / 4,999 / 9,999 / 19,999, corresponding to 2,500 / 5,000 / 10,000 / 20,000 completed updates, plus step 14,999 for bounded fault recovery."
+    },
+    "evaluation": {
+      "weights": [
+        "online",
+        "ema"
+      ],
+      "conditions": [
+        "clean",
+        "masked"
+      ],
+      "primary_metrics": [
+        "ema_clean_psnr",
+        "ema_masked_psnr",
+        "ema_clean_edge_psnr",
+        "ema_clean_temporal_change_psnr"
+      ],
+      "milestone_count": 4,
+      "expected_metric_rows": 20,
+      "visual_artifact": "one retained reconstruction grid per scale and milestone plus a vertically aligned final-20k comparison grid",
+      "selection_rule": "Descriptive ranking by the unweighted sum of final-20k EMA clean, edge and temporal-change PSNR; no candidate is skipped."
+    },
+    "downstream_guard": {
+      "dynamics_authorized": false,
+      "release_condition": "Explicit user visual acceptance of the aligned final-20k grid, followed by a tokenizer-plus-dynamics interface smoke test."
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All five arms complete exactly 20,000 optimizer updates from scratch or from fault-only resume, without a scaling helper overriding max_steps."
+    },
+    {
+      "id": "SC-2",
+      "rule": "Every arm produces finite held-out online/EMA clean/masked, edge and temporal-change metrics on the identical 512 clips at 2,500, 5,000, 10,000 and 20,000 completed updates."
+    },
+    {
+      "id": "SC-3",
+      "rule": "The final report contains all 20 milestone rows, the complete five-scale final grid and a descriptive ranking with no quality-gate eligibility filter."
+    },
+    {
+      "id": "SC-4",
+      "rule": "Every exact candidate retains n_latents=16 and d_bottleneck=16."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Dynamics remains blocked after technical completion until explicit visual review accepts player outline and platform-edge clarity."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/plan.json",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/tokenizer-quality-first-probe.json",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/*/checkpoints/{0,2499,4999,9999,14999,19999}",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/*/milestones/*/heldout_eval.json",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/learning-curves.json",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/tokenizer-scale-comparison-20k.png",
+    "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/selection.json"
+  ]
+}

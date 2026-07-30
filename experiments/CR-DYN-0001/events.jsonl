@@ -1,0 +1,7 @@
+{"at":"2026-07-28T01:57:31+08:00","type":"started","message":"Started minimal complete CoinRun pipeline with data generation.","evidence":["pipeline.log stage GENERATING_DATA"]}
+{"at":"2026-07-28T01:57:41+08:00","type":"stage","message":"Started tokenizer training.","evidence":["pipeline.log stage TRAINING_TOKENIZER"]}
+{"at":"2026-07-28T02:40:28+08:00","type":"stage","message":"Started latent-statistics computation.","evidence":["pipeline.log stage COMPUTING_LATENT_STATS"]}
+{"at":"2026-07-28T02:40:43+08:00","type":"stage","message":"Started 15,000-step action-conditioned dynamics training.","evidence":["pipeline.log stage TRAINING_DYNAMICS"]}
+{"at":"2026-07-28T02:52:33+08:00","type":"stage","message":"Started held-out rollout generation.","evidence":["pipeline.log stage GENERATING_TEST_VIDEOS"]}
+{"at":"2026-07-28T02:53:08+08:00","type":"completed","message":"Minimal end-to-end world-model pipeline completed.","evidence":["WORLD_MODEL_REVIEW.md","test_videos/ema_shortcut"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"backfilled","message":"Added the run to the repository experiment ledger.","evidence":["Git-retained review SHA256 aed4ced28f637c08075acd0c867c6de0ab19ac8e4da868fe7aefafc9e2d56f9b"]}

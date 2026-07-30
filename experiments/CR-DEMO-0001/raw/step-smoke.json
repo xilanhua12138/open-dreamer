@@ -1,0 +1,20 @@
+{
+  "verified_at": "2026-07-29T08:43:23+08:00",
+  "transport": "SSH local port forward to 127.0.0.1:7860",
+  "request": {
+    "action": 7,
+    "repeat": 1
+  },
+  "response": {
+    "model": "medium",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "step": 1,
+    "action_id": 7,
+    "action": "右",
+    "latency_ms": 7412.4,
+    "warmup_ms": 24014.2,
+    "frame_data_url_prefix": "data:image/png;base64,iVBORw0K"
+  },
+  "generated_frame_returned": true
+}

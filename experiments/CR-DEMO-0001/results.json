@@ -1,0 +1,314 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0001",
+  "record_revision": 7,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "smoke_test",
+  "started_at": "2026-07-29T08:35:09+08:00",
+  "ended_at": "2026-07-29T11:54:50+08:00",
+  "summary": "The runtime smoke now passes, but the user evaluation rejected the demo as usable: tokenizer reconstructions were unclear and action-conditioned dynamics did not respond correctly. A follow-up audit found that the live Procgen environment exposes 15 actions while the CoinRun config declares 16, and the shared shift helper therefore prepends action 8 even though Procgen no-op is action 4. The current checkpoint is a pipeline smoke artifact, not evidence of visual quality or controllability.",
+  "observations": [
+    {
+      "name": "remote_health",
+      "value": {
+        "ok": true,
+        "model": "medium"
+      },
+      "observed_at": "2026-07-29T08:42:19+08:00"
+    },
+    {
+      "name": "local_tunnel_health",
+      "url": "http://127.0.0.1:7860/health",
+      "value": {
+        "ok": true,
+        "model": "medium"
+      },
+      "observed_at": "2026-07-29T08:43:15+08:00"
+    },
+    {
+      "name": "real_step",
+      "request": {
+        "action": 7,
+        "repeat": 1
+      },
+      "response": {
+        "model": "medium",
+        "context_frames": 16,
+        "denoise_steps": 4,
+        "step": 1,
+        "action_id": 7,
+        "action": "右",
+        "latency_ms": 7412.4,
+        "warmup_ms": 24014.2,
+        "generated_png": true
+      },
+      "observed_at": "2026-07-29T08:43:23+08:00"
+    },
+    {
+      "name": "shutdown_timer_due",
+      "value": "2026-07-29T11:45:24+08:00",
+      "policy": "three-hour user evaluation window after verified readiness"
+    },
+    {
+      "name": "sustained_step_failure",
+      "value": {
+        "first_step_status": 200,
+        "second_step_status": 400,
+        "error": "lax.dynamic_update_slice requires arguments to have the same dtypes, got float32, bfloat16."
+      },
+      "observed_at": "2026-07-29T11:41:00+08:00"
+    },
+    {
+      "name": "two_step_recovery",
+      "value": {
+        "health_ok": true,
+        "steps": [
+          {
+            "step": 1,
+            "action_id": 7,
+            "latency_ms": 670.9,
+            "generated_png": true
+          },
+          {
+            "step": 2,
+            "action_id": 8,
+            "latency_ms": 668.1,
+            "generated_png": true
+          }
+        ]
+      },
+      "observed_at": "2026-07-29T11:54:50+08:00"
+    },
+    {
+      "name": "recovery_shutdown_timer_due",
+      "value": "2026-07-29T12:41:17+08:00",
+      "policy": "one-hour fault-recovery and user-verification window"
+    },
+    {
+      "name": "final_user_window_shutdown_timer_due",
+      "value": "2026-07-29T15:04:13+08:00",
+      "policy": "three-hour user evaluation window after verified two-step recovery"
+    },
+    {
+      "name": "user_quality_evaluation",
+      "value": {
+        "overall": "unusable",
+        "tokenizer_reconstruction": "visually unclear",
+        "action_conditioning": "predicted dynamics did not respond correctly to actions"
+      },
+      "observed_at": "2026-07-29T12:13:16+08:00"
+    },
+    {
+      "name": "action_contract_audit",
+      "value": {
+        "live_procgen_action_space": "D15[]",
+        "repository_categorical_action_dim": 16,
+        "shifted_start_action_id": 8,
+        "procgen_noop_action_id": 4,
+        "action_id_8": "RIGHT+UP",
+        "training_calls_shift_actions": true
+      },
+      "observed_at": "2026-07-29T12:13:16+08:00"
+    }
+  ],
+  "comparisons": [],
+  "deviations": [
+    "The first demo process failed because ThreadPrefetchIterDataset was iterable but not an iterator; commit 58758e5 wrapped it with iter and restarted only the demo process.",
+    "The training and evaluation pipeline, selected checkpoint, and context metrics were not rerun or changed during demo recovery.",
+    "The original success criterion required only one real step. That was insufficient because the dtype drift appeared only after the generated latent was written back into context.",
+    "The fault-only recovery cast the generated latent to the existing context dtype before concatenation; it did not change weights, checkpoint selection, context length, actions, or denoise schedule.",
+    "The demo readiness protocol was API-centric and did not require a user-visible reconstruction threshold or a controlled action-response test.",
+    "The CoinRun action configuration reused a generic categorical no-op convention that was written for centered Minecraft mouse bins, not the Procgen action table."
+  ],
+  "failures": [
+    {
+      "stage": "dependency",
+      "type": "blocked_dependency",
+      "message": "Model selection and DSW availability were initially unresolved.",
+      "resolved_at": "2026-07-29T08:35:09+08:00"
+    },
+    {
+      "stage": "demo_startup",
+      "type": "runtime_type_error",
+      "message": "'ThreadPrefetchIterDataset' object is not an iterator",
+      "resolved_at": "2026-07-29T08:41:47+08:00",
+      "recovery_commit": "58758e581945715445f42856c53130e08d978ec6"
+    },
+    {
+      "stage": "sustained_interaction",
+      "type": "dtype_state_drift",
+      "message": "The second generated step failed because a float32 generated latent promoted the retained bfloat16 context, yielding float32 cache buffers and bfloat16 model updates.",
+      "resolved_at": "2026-07-29T11:54:50+08:00",
+      "recovery_patch_sha256": "115db40695e90250d92f5f3077d086617bdb7a6993c9b6c53972b93771e655ed",
+      "recovery_commit": "3827a10902813309aee977f11e54d23c16ddc420"
+    },
+    {
+      "stage": "action_conditioning",
+      "type": "categorical_action_contract_mismatch",
+      "message": "The live Procgen CoinRun action space has 15 categories, but the repository config declares 16 and shift_actions prepends categorical_action_dim // 2. Under the current config this inserts action 8 (RIGHT+UP) instead of Procgen no-op action 4 in every training sequence.",
+      "resolved_at": null
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "The selected medium checkpoint loaded and GET /health passed remotely and through the local SSH tunnel.",
+      "The original one-step POST /api/step returned a generated PNG, but a second step failed with a float32/bfloat16 dynamic_update_slice error.",
+      "After preserving the bfloat16 context dtype, reset followed by action 7 and action 8 returned steps 1 and 2 with generated PNGs.",
+      "The recovered process warmed up in 2.8 seconds from the persistent compilation cache; the two verified cached steps took 670.9 ms and 668.1 ms.",
+      "The user judged the resulting demo unusable because the tokenizer output was unclear and the predicted dynamics did not respond correctly to actions.",
+      "The live Procgen environment reported D15[], while configs/dataset/coinrun.yaml declares categorical_action_dim=16.",
+      "The training path calls shift_actions, whose generic categorical start value is categorical_action_dim // 2; this inserts action 8 even though the Procgen action table defines no-op as action 4."
+    ],
+    "interpretation": [
+      "The functional two-step demo smoke test establishes runtime continuity only; it does not establish usable visual quality or controllability.",
+      "The visual failure has two measured layers: the 0.17M tokenizer has a weak held-out reconstruction ceiling, and the dynamics model adds substantial error relative to tokenizer-decoded targets.",
+      "Action-response quality from the current checkpoint cannot be treated as a valid control-fidelity result because the training action contract is inconsistent with Procgen.",
+      "The low-latency and usable-control hypotheses are both rejected for this implementation and checkpoint."
+    ],
+    "not_established": [
+      "Whether correcting the CoinRun action cardinality and true no-op ID is sufficient to recover control fidelity after retraining.",
+      "Whether a larger tokenizer produces subjectively clear CoinRun sprites and edges.",
+      "Autoregressive stability beyond the two-step regression sequence.",
+      "A trained policy or agent."
+    ],
+    "decision": [
+      "Do not present the current live demo as usable or action-controllable; retain it only as a runtime smoke artifact.",
+      "Before another dynamics run, correct the Procgen action contract and add a same-context, same-randomness counterfactual action test.",
+      "Evaluate a larger tokenizer separately with foreground/player-region metrics and visual grids before spending additional compute on larger dynamics.",
+      "Replace or augment uniformly random trajectories with behavior that contains sustained running and jumping before interpreting action conditioning."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "live demo server",
+      "kind": "python",
+      "uri": "scripts/experiments/coinrun/live_coinrun_demo.py",
+      "retention": "git_at_commit",
+      "source_commit": "a4537c0cef5463e8ab5bba343359e0b9a11224da",
+      "sha256": "c8bdfd9a0b43ca01c6b419121a95bb9f7f177e5d651666fdadfd8e4d1fb57263"
+    },
+    {
+      "name": "live demo launcher",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/run_coinrun_live_demo.sh",
+      "retention": "git",
+      "sha256": "5e831d5836bc29849e080bde2dfc58cd3a6c44289fa91bd292eecee62cf729fa"
+    },
+    {
+      "name": "startup failure evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/startup-failure.json",
+      "retention": "git",
+      "sha256": "8b5a292caea0ae6e249e7b30d7acb4d4e590c78aa537eee3646f49b5ec01a121"
+    },
+    {
+      "name": "demo readiness",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/LIVE_DEMO_READY.json",
+      "retention": "git",
+      "sha256": "4a4766c69b0cc393812a82216191c308e39caf7952a0a84dcdf22218ea1337fe"
+    },
+    {
+      "name": "health response",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/health.json",
+      "retention": "git",
+      "sha256": "cb86b281240481b43f353693483f9ebe51f9ecedc4d5ee88b3708d590e757a3c"
+    },
+    {
+      "name": "real step smoke",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/step-smoke.json",
+      "retention": "git",
+      "sha256": "88f4f7732ed6e0216be2781206f6732d19e33e51005a34e77f65eabd54aa9210"
+    },
+    {
+      "name": "verified live demo log",
+      "kind": "log",
+      "uri": "experiments/CR-DEMO-0001/raw/live-demo.log",
+      "retention": "git",
+      "sha256": "4c5141af9ca48ac7b4d8a48e7b48b95ceab482465223ba646645340b084bd24d"
+    },
+    {
+      "name": "extension terminal archive",
+      "kind": "tar.gz",
+      "uri": "local-task://open-dreamer-extension-final-20260729.tar.gz",
+      "retention": "local task archive",
+      "bytes": 7292546,
+      "sha256": "867b0fa9c684b1fd7ccb943260c8857f547fe6ae1a84afdc58539a97378b1d98"
+    },
+    {
+      "name": "two-step live-demo smoke",
+      "kind": "shell",
+      "uri": "scripts/experiments/coinrun/smoke_live_coinrun_demo.sh",
+      "retention": "git",
+      "sha256": "2af064095a851d31e833bcbc61c1d64c84bc58a4759bb8903ad047f9c9fef1e0"
+    },
+    {
+      "name": "context dtype regression unit test",
+      "kind": "python",
+      "uri": "tests/test_live_coinrun_demo.py",
+      "retention": "git",
+      "sha256": "d1d167fbccde5a54bada64f7b72560a31365eaa3aefda0bf75ee0bccc00ffb39"
+    },
+    {
+      "name": "sustained-step failure evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/sustained-step-failure.json",
+      "retention": "git",
+      "sha256": "4ca975a96cf963eb3fb46efaf47aec244462ba62f937f8db9ff8c86355a0e745"
+    },
+    {
+      "name": "two-step recovery evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/sustained-step-recovery.json",
+      "retention": "git",
+      "sha256": "3344d780bcbc5ba8de72d39d1ac2b6814acdf805d66def863897b28b8c458987"
+    },
+    {
+      "name": "user quality evaluation and action contract audit",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0001/raw/user-quality-evaluation.json",
+      "retention": "git",
+      "sha256": "30d2b51f68e903f58223937c98c0d4ccd36db5da360b82461bc6b1665cb82734"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-29T00:00:00+08:00",
+      "reason": "Backfilled planned demo protocol and dependency block."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-29T08:43:23+08:00",
+      "reason": "Closed the recovered demo with remote and tunneled health, one real inference step, latency evidence, and a three-hour user window."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-29T11:54:50+08:00",
+      "reason": "Corrected the one-step readiness boundary after the second step exposed latent-context dtype drift; retained the failure, added two-step regression coverage, and recorded the verified recovery."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-29T12:01:37+08:00",
+      "reason": "Linked the verified dirty-patch recovery to its durable source commit and refreshed the raw recovery artifact hash."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-29T12:04:13+08:00",
+      "reason": "Recorded the final three-hour user evaluation timer after code, runtime and CI validation."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-29T12:13:16+08:00",
+      "reason": "Recorded the user's qualitative rejection of the demo and the subsequent Procgen action-cardinality/no-op contract audit."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-29T12:40:00+08:00",
+      "reason": "Pinned the mutable live-demo source artifact to its historical commit before the v2 action-contract implementation changed the working-tree path."
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{"at":"2026-07-28T12:30:44+08:00","type":"started","message":"Started the 163,392-parameter CoinRun tokenizer with native scaling_flops_budget=1e16.","evidence":["pipeline.log stage TRAINING_TOKENIZER_N0.17M_C1E16"]}
+{"at":"2026-07-28T13:25:14+08:00","type":"stage","message":"Training finished; started held-out tokenizer PSNR evaluation.","evidence":["pipeline.log stage EVALUATING_HELDOUT_TOKENIZER_PSNR"]}
+{"at":"2026-07-28T13:25:30+08:00","type":"completed","message":"Held-out evaluation and result writing completed.","evidence":["heldout_eval.json","RESULTS.txt","native results.csv row"]}
+{"at":"2026-07-29T00:00:00+08:00","type":"backfilled","message":"Added the run to the repository experiment ledger from retained artifacts.","evidence":["SHA256 d51e6470d43f4d729045da2a8bff13f8b6e216d994399ec27baccda39f0f49ea"]}

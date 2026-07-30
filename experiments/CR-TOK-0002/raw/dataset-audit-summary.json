@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-07-29T12:50:03+08:00",
+  "train": {
+    "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/train",
+    "valid": true,
+    "records": 4096,
+    "frames_per_record": 64,
+    "level_range": [
+      7000,
+      11095
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "observed_actions": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      8
+    ],
+    "action_counts": {
+      "1": 32979,
+      "2": 37547,
+      "4": 46622,
+      "5": 35814,
+      "7": 76680,
+      "8": 177334
+    },
+    "completed_episodes": 4065,
+    "successful_episodes": 2289,
+    "success_rate": 0.56309963099631,
+    "macro_persistence_ratio": 0.9066220238095238,
+    "metadata_sha256": "f446746308f2d4883c6282d46d8cf783aa00f09463f5f6f415cd41652ed35fdb",
+    "tree_sha256": "276af79200604d65bd357ffbc3a4e591fa6aa3f75962719e7c3273bbf18f386f"
+  },
+  "eval": {
+    "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "valid": true,
+    "records": 512,
+    "frames_per_record": 64,
+    "level_range": [
+      20000,
+      20511
+    ],
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "observed_actions": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      8
+    ],
+    "action_counts": {
+      "1": 3995,
+      "2": 4861,
+      "4": 5942,
+      "5": 4707,
+      "7": 8958,
+      "8": 21169
+    },
+    "completed_episodes": 464,
+    "successful_episodes": 256,
+    "success_rate": 0.5517241379310345,
+    "macro_persistence_ratio": 0.9056919642857143,
+    "metadata_sha256": "5ab3f19c601ef29632138f9be410cb606a96f0af5a97b1d841382d7a4d0ba213",
+    "tree_sha256": "2e7c5db0cabda7645ba10dc41974eb164066864d62e9d7ae40f1cd7e242bbb3f"
+  },
+  "split_overlap": 0,
+  "remote_audits": {
+    "train": {
+      "uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/train.json",
+      "sha256": "33c1ee2565bcd1eaf2b657baa3c02bfbc3229f93116b91def373f228f2c070c9"
+    },
+    "eval": {
+      "uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/audit/eval.json",
+      "sha256": "b9567816f643287286f40cd42ec8af756e27db3dc583740e1999c94b19f1ee71"
+    }
+  }
+}
