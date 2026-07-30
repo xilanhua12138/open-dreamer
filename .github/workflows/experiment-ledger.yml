@@ -55,7 +55,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install lightweight test dependencies
-        run: python -m pip install numpy "jax[cpu]" flax imageio omegaconf
+        run: python -m pip install numpy "jax[cpu]" flax imageio omegaconf array-record
       - name: Validate machine-readable records and hashes
         run: python scripts/validate_experiments.py
       - name: Test validator happy, edge, and failure paths
