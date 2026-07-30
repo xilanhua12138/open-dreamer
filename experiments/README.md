@@ -22,7 +22,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | completed | supports hypothesis | internal result |
 | `CR-PPO-0004` | Do the old settings collapse only when combined under an identical evaluator? | aborted | inconclusive | none |
-| `CR-PPO-0005` | Does orthogonal √2 amplify an unnormalized residual encoder, and which mitigation recovers PPO? | queued | not evaluated | none |
+| `CR-PPO-0005` | Does orthogonal √2 amplify an unnormalized residual encoder, and which mitigation recovers PPO? | running | not evaluated | none |
 
 ## Important reading of the chain
 

@@ -1,14 +1,22 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 2,
-  "execution_status": "queued",
+  "record_revision": 3,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-30T18:00:15+08:00",
   "ended_at": null,
-  "summary": "Preregistered before the zero-update probe or any mitigation training arm.",
-  "observations": [],
+  "summary": "The clean frozen pipeline is running its 16-seed zero-update probe before four unconditional mitigation arms.",
+  "observations": [
+    {
+      "type": "pipeline_start",
+      "source_commit": "09b3fc3cfe75508a72bfa35cc394e8db235a76a5",
+      "pid": 109626,
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "initial_stage": "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION"
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
@@ -37,6 +45,11 @@
       "revision": 2,
       "at": "2026-07-30T17:58:22+08:00",
       "reason": "Recorded the pushed clean execution source before any CR-PPO-0005 process."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T18:00:15+08:00",
+      "reason": "Recorded the single clean pipeline start on the existing A10."
     }
   ]
 }

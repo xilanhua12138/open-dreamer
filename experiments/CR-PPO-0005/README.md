@@ -45,4 +45,6 @@ scope.
 
 ## Current status
 
-Queued. No CR-PPO-0005 GPU process or zero-update probe has started.
+Running. Clean detached source `09b3fc3` started once on the existing A10 at
+2026-07-30 18:00:15 Asia/Shanghai with pipeline PID `109626`. The zero-update
+probe runs before the four unconditional training arms.
