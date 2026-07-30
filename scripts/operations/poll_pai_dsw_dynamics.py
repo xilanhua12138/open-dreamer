@@ -65,6 +65,8 @@ class Config:
     start_wait_seconds: int = 90
     status_poll_seconds: int = 10
     command_timeout_seconds: int = 45
+    aliyun_config_path: Path | None = None
+    proxyclient_config_path: Path | None = None
 
 
 CommandRunner = Callable[[Sequence[str], str | None, int], CommandResult]
@@ -232,7 +234,79 @@ class Poller:
         else:
             self.emit("shutdown_timer_retained", remaining_ms=remaining)
 
+    def refresh_proxyclient_credentials(self) -> None:
+        aliyun_config_path = (
+            self.config.aliyun_config_path
+            or Path.home() / ".aliyun" / "config.json"
+        )
+        proxyclient_config_path = (
+            self.config.proxyclient_config_path
+            or Path.home() / ".proxyclientconfig"
+        )
+        try:
+            aliyun_config = json.loads(
+                aliyun_config_path.read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            raise PollerError(
+                f"cannot read Aliyun profile config: {aliyun_config_path}"
+            ) from exc
+
+        profile = next(
+            (
+                item
+                for item in aliyun_config.get("profiles", [])
+                if item.get("name") == PROFILE
+            ),
+            None,
+        )
+        if profile is None:
+            raise PollerError(f"Aliyun profile {PROFILE!r} is missing")
+
+        required_fields = (
+            "access_key_id",
+            "access_key_secret",
+            "sts_token",
+        )
+        missing = [
+            field for field in required_fields if not profile.get(field)
+        ]
+        if missing:
+            raise PollerError(
+                "Aliyun profile is missing refreshed STS fields: "
+                + ", ".join(missing)
+            )
+        profile_region = str(profile.get("region_id") or REGION)
+        if profile_region != REGION:
+            raise PollerError(
+                f"Aliyun profile region mismatch: {profile_region!r}"
+            )
+
+        credential_input = "\n".join(
+            [
+                str(profile["access_key_id"]),
+                str(profile["access_key_secret"]),
+                str(profile["sts_token"]),
+                profile_region,
+                "",
+            ]
+        )
+        self.run_command(
+            [
+                "proxyclient",
+                "config",
+                "--config-file",
+                str(proxyclient_config_path),
+            ],
+            input_text=credential_input,
+        )
+        self.emit(
+            "proxy_credentials_refreshed",
+            sts_expiration=profile.get("sts_expiration"),
+        )
+
     def remote_preflight_and_launch(self) -> str:
+        self.refresh_proxyclient_credentials()
         result = self.run_command(
             [
                 "ssh",

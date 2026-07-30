@@ -56,10 +56,30 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
     def make_poller(self, fake_runner):
         temp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(temp_dir.cleanup)
+        temp_path = Path(temp_dir.name)
+        aliyun_config_path = temp_path / "aliyun-config.json"
+        aliyun_config_path.write_text(
+            json.dumps(
+                {
+                    "profiles": [
+                        {
+                            "name": poller_module.PROFILE,
+                            "access_key_id": "test-access-key-id",
+                            "access_key_secret": "test-access-key-secret",
+                            "sts_token": "test-sts-token",
+                            "region_id": poller_module.REGION,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
         config = poller_module.Config(
-            state_dir=Path(temp_dir.name),
+            state_dir=temp_path,
             start_wait_seconds=0,
             status_poll_seconds=0,
+            aliyun_config_path=aliyun_config_path,
+            proxyclient_config_path=temp_path / "proxyclient-config",
         )
         return poller_module.Poller(
             config,
@@ -150,6 +170,10 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
                     ),
                 ),
                 (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
                     "ssh",
                     poller_module.CommandResult(
                         20, "PREFLIGHT_BLOCKED gpu_busy:123\n", ""
@@ -175,6 +199,10 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
                     ),
                 ),
                 (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
+                ),
+                (
                     "ssh",
                     poller_module.CommandResult(
                         0, "DYNAMICS_STARTED pid=4321\n", ""
@@ -194,6 +222,21 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
         outcome = self.make_poller(fake).run_cycle()
 
         self.assertEqual(outcome, "started")
+        proxy_call = next(
+            call for call in fake.calls if "proxyclient" in call[0]
+        )
+        self.assertEqual(
+            proxy_call[1],
+            "\n".join(
+                [
+                    "test-access-key-id",
+                    "test-access-key-secret",
+                    "test-sts-token",
+                    poller_module.REGION,
+                    "",
+                ]
+            ),
+        )
         timer_call = next(
             call
             for call in fake.calls
@@ -210,6 +253,10 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
                     poller_module.CommandResult(
                         0, instance_payload("Running"), ""
                     ),
+                ),
+                (
+                    "proxyclient config",
+                    poller_module.CommandResult(0, "", ""),
                 ),
                 (
                     "ssh",
@@ -233,6 +280,43 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
                 for call in fake.calls
             )
         )
+
+    def test_missing_sts_token_blocks_before_proxyclient_or_ssh(self):
+        fake = FakeRunner(
+            [
+                (
+                    "get-instance",
+                    poller_module.CommandResult(
+                        0, instance_payload("Running"), ""
+                    ),
+                )
+            ]
+        )
+        monitor = self.make_poller(fake)
+        assert monitor.config.aliyun_config_path is not None
+        monitor.config.aliyun_config_path.write_text(
+            json.dumps(
+                {
+                    "profiles": [
+                        {
+                            "name": poller_module.PROFILE,
+                            "access_key_id": "test-access-key-id",
+                            "access_key_secret": "test-access-key-secret",
+                            "sts_token": "",
+                            "region_id": poller_module.REGION,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            poller_module.PollerError, "missing refreshed STS fields: sts_token"
+        ):
+            monitor.run_cycle()
+
+        self.assertEqual(len(fake.calls), 1)
 
     def test_remote_script_contains_all_frozen_inputs_and_atomic_pid(self):
         script = poller_module.remote_launch_script()
