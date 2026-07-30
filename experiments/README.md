@@ -17,8 +17,10 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
 | `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
-| `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | queued | not evaluated | none |
-| `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
+| `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
+| `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
+| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | queued | not evaluated | none |
+| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
@@ -49,7 +51,25 @@ All five arms are now durably recorded. Final EMA clean / edge / temporal-change
 
 `CR-PPO-0004` is the required follow-up if those single reverts remain healthy. It first re-evaluates the retained historical 6.29M checkpoint with the same stochastic full-distribution 256-episode protocol, then trains one fresh arm with all four old settings combined. This distinguishes original evaluation bias from a reproducible nonlinear interaction and from another historical source/runtime or run-variance cause.
 
-`CR-DYN-0006` and `CR-DYN-0007` are the first dynamics experiments after the action contract, representation and trajectory-source fixes. The first changes only the PPO checkpoint used to collect training data while holding a medium dynamics model fixed. The second changes only dynamics capacity on the final-policy corpus. Both use the 16.6M EMA tokenizer chosen by the user, a 15-way CoinRun action space with explicit no-op action 4, 20,000 updates per arm and one fixed final-policy held-out corpus.
+`CR-DYN-0006` and `CR-DYN-0007` preserve a rejected preregistration rather than
+silently rewriting it. They proposed isolated PPO-checkpoint corpora followed
+by a final-only scale sweep, but the user clarified before any collection or
+GPU execution that the intended variable was the within-corpus mixture ratio.
+Both IDs are therefore aborted with no scientific result.
+
+`CR-DYN-0008` is the corrected fixed-record mixture experiment. It always runs
+all three 2,048-record arms: final-only `0/0/0/2048`, uniform
+`512/512/512/512`, and recency-weighted `256/256/512/1024` over the
+`1.05M/6.29M/12.58M/25.17M` PPO checkpoints. Mixtures reuse byte-identical
+source shards selected by stable nested prefixes. The 16.6M EMA tokenizer,
+3.93M medium dynamics model, 20,000 updates and final-policy held-out futures
+stay fixed. Only after every arm finishes does a frozen lexicographic rule
+select mean-frame PSNR, then mean SSIM, then horizon-16 PSNR.
+
+`CR-DYN-0009` is a preregistered sequential scale sweep on that selected
+mixture. Tiny, small and large train from scratch while the byte-identical
+selected-medium arm is reused. This separates the mixture question from the
+capacity question and keeps both experiments auditable.
 
 ## Creating or closing an experiment
 

@@ -1,27 +1,38 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0007",
-  "record_revision": 1,
-  "execution_status": "queued",
-  "scientific_status": "not_evaluated",
+  "record_revision": 2,
+  "execution_status": "aborted",
+  "scientific_status": "inconclusive",
   "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Preregistered before the corrected final-policy dynamics scale sweep.",
-  "observations": [],
+  "started_at": "2026-07-30T17:54:47+08:00",
+  "ended_at": "2026-07-30T18:25:22+08:00",
+  "summary": "Aborted before GPU execution because its fixed final-only training corpus was superseded by the preregistered checkpoint-mixture selection.",
+  "observations": [
+    {
+      "type": "pre_execution_abort",
+      "value": "No scale arm, checkpoint or evaluation was produced under CR-DYN-0007."
+    }
+  ],
   "comparisons": [],
-  "deviations": [],
+  "deviations": [
+    {
+      "at": "2026-07-30T18:25:22+08:00",
+      "type": "design_superseded",
+      "reason": "Capacity must be measured on the mixture selected by the corrected all-arms mixture experiment, not hard-coded final-only data.",
+      "replacement_experiment_id": "CR-DYN-0009"
+    }
+  ],
   "failures": [],
   "conclusion": {
     "observed": [],
     "interpretation": [],
     "not_established": [
-      "Whether corrected final-policy dynamics quality scales monotonically.",
-      "Whether the 12.90M dynamics arm exceeds the 3.93M arm.",
+      "Any corrected capacity trend under checkpoint-mixture data.",
       "Whether any resulting model is interactively controllable."
     ],
     "decision": [
-      "Wait for the CR-DYN-0006 corpus audit and final-policy medium arm, then run tiny, small and large serially."
+      "Do not execute this runner. Run CR-DYN-0008 first, then CR-DYN-0009 on its preregistered selected mixture."
     ]
   },
   "artifacts": [],
@@ -30,6 +41,11 @@
       "revision": 1,
       "at": "2026-07-30T17:54:47+08:00",
       "reason": "Preregistered the corrected fixed-20k dynamics scale sweep."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-30T18:25:22+08:00",
+      "reason": "Aborted before execution because the training-corpus rule changed from final-only to the mixture selected by CR-DYN-0008."
     }
   ]
 }

@@ -1,0 +1,279 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0008",
+  "retrospective": false,
+  "created_at": "2026-07-30T18:25:22+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO-checkpoint mixture ablation for dynamics",
+  "kind": "confirmatory",
+  "question": "At fixed total records, tokenizer, medium dynamics architecture, optimizer budget and held-out futures, how does mixing trajectories from four PPO checkpoints affect CoinRun rollout quality?",
+  "reason": "OpenDreamer only states that a simple RL agent collected better CoinRun trajectories; it does not publish a PPO-checkpoint mixture recipe. The user clarified that the desired experiment is a within-corpus checkpoint mixture rather than four isolated checkpoint datasets, so CR-DYN-0006 was aborted before execution.",
+  "hypothesis": "The recency-weighted mixture will preserve substantial final-policy behavior while adding earlier and intermediate state-action coverage, improving final-policy held-out mean-frame PSNR or long-horizon stability over both final-only and uniform mixtures.",
+  "falsification": "Reject the recency-weighted hypothesis if it is not first under the preregistered lexicographic selection rule: mean-frame PSNR, then mean SSIM, then horizon-16 PSNR on the fixed final-policy held-out futures.",
+  "baseline_id": "CR-DYN-0004",
+  "depends_on": [
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DEMO-0001",
+    "CR-DYN-0006"
+  ],
+  "controlled_variable": {
+    "name": "ppo_checkpoint_mixture_records_by_stage",
+    "stage_completed_env_steps": [
+      1048576,
+      6291456,
+      12582912,
+      25165824
+    ],
+    "values": [
+      {
+        "name": "final_only",
+        "records": [
+          0,
+          0,
+          0,
+          2048
+        ]
+      },
+      {
+        "name": "uniform",
+        "records": [
+          512,
+          512,
+          512,
+          512
+        ]
+      },
+      {
+        "name": "recency_weighted",
+        "records": [
+          256,
+          256,
+          512,
+          1024
+        ]
+      }
+    ]
+  },
+  "constants": {
+    "tokenizer_name": "n16.6m",
+    "tokenizer_parameters": 14912320,
+    "tokenizer_completed_updates": 20000,
+    "tokenizer_weights": "EMA",
+    "tokenizer_n_latents": 16,
+    "tokenizer_d_bottleneck": 16,
+    "ppo_source_experiment": "CR-PPO-0002",
+    "source_records_per_checkpoint": 2048,
+    "mixture_records_per_arm": 2048,
+    "records_per_shard": 256,
+    "frames_per_record": 64,
+    "collection_seed": 20240,
+    "mixture_selection_seed": 40240,
+    "collection_level_range": [
+      0,
+      200
+    ],
+    "collection_temperature": 1.0,
+    "collection_exploration_epsilon": 0.05,
+    "dynamics_name": "medium",
+    "dynamics_parameters": 3931392,
+    "dynamics_depth": 4,
+    "dynamics_d_model": 256,
+    "dynamics_n_heads": 4,
+    "dynamics_n_register": 32,
+    "batch_size": 16,
+    "sequence_length": 64,
+    "optimizer_updates": 20000,
+    "evaluation_dataset": "fixed final-policy held-out corpus",
+    "evaluation_records": 512,
+    "evaluation_level_range": [
+      10000,
+      10500
+    ],
+    "evaluation_seed": 4242,
+    "evaluation_videos": 32,
+    "evaluation_context_frames": 16,
+    "evaluation_horizon": 16
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "d22b38b7a774b407777e47c4a95ad120ea7596ed",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_checkpoint_mixtures.sh",
+    "runner_sha256": "80258b1a02125ef02b0104b7837e626c32db00cc240f2305f115c3f0195abc18",
+    "component_sha256": {
+      "collector": "309565750a1cb7ca9eb041ef688f5fd41eafc92cd21ded88c63f3218e5269241",
+      "mixture_protocol": "52749c971da93a11a530d110300778d91398c782109e1fccaa3de6a84ac2d839",
+      "mixture_builder": "f290ffebf5826d76b524c8a2b28b2727549e0e05fd060e72323e566c766e2b58",
+      "mixture_verifier": "f282a2aea4b25c0bbc1a0f8e6c1084e75f7e41369dc716660f1c733180105e94",
+      "selection_rule": "3c8c696bedcdf84be2dad8a2567565f3f455b53d792181e143ff551d41347df3",
+      "summarizer": "9dd20cd13a1c716a97290444fe5607def41d458647772d01597c41d8d6e6183f"
+    },
+    "source_freeze": "Execution code is frozen at d22b38b7a774b407777e47c4a95ad120ea7596ed. No CR-DYN-0008 corpus, metric or dynamics result was observed before this preregistration."
+  },
+  "data": {
+    "environment": "Procgen CoinRun easy",
+    "ppo_checkpoint_root": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints",
+    "source_pool_root": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/source-pools/train",
+    "mixture_root": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/mixtures",
+    "eval_root": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/eval-final-policy",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "transition_alignment": "raw_video[t]=observation_t, actions[t]=action_t, rewards[t]=reward observed after action_t",
+    "episode_boundary_policy": "discard partial chunk on terminal; no record crosses reset",
+    "materialization": "Each mixture is a set of symlinks to byte-identical source ArrayRecord shards. A stable per-stage permutation and nested prefixes make overlapping stages reuse the same records.",
+    "audit": "All four source pools, the fixed evaluation corpus and all three mixtures must pass ArrayRecord, checkpoint identity, ratio and tree-hash audits before dynamics starts."
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "Three serial medium 20k dynamics arms plus collection and evaluation, approximately 8-12 A10-hours.",
+    "shutdown_policy": "Use only the existing A10 after all unrelated GPU PIDs are absent. Never overlap PPO and dynamics; refresh a bounded timer only when less than four hours remain."
+  },
+  "protocol": {
+    "collection": {
+      "stages": {
+        "ppo01p05m": 1048576,
+        "ppo06p29m": 6291456,
+        "ppo12p58m": 12582912,
+        "ppo25p17m": 25165824
+      },
+      "source_records_per_stage": 2048,
+      "eval_records": 512,
+      "frames": 64,
+      "stochastic_policy": true
+    },
+    "mixtures": {
+      "final_only": {
+        "shards": [
+          0,
+          0,
+          0,
+          8
+        ],
+        "records": [
+          0,
+          0,
+          0,
+          2048
+        ]
+      },
+      "uniform": {
+        "shards": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "records": [
+          512,
+          512,
+          512,
+          512
+        ]
+      },
+      "recency_weighted": {
+        "shards": [
+          1,
+          1,
+          2,
+          4
+        ],
+        "records": [
+          256,
+          256,
+          512,
+          1024
+        ]
+      }
+    },
+    "model": {
+      "tokenizer_checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints/19999",
+      "dynamics": {
+        "depth": 4,
+        "d_model": 256,
+        "n_heads": 4,
+        "n_kv_heads": 1,
+        "packing_factor": 2,
+        "n_register": 32,
+        "qk_norm_type": "qknorm",
+        "time_every": 2,
+        "time_layer_offset": 1,
+        "k_max": 8,
+        "context_length": 64
+      }
+    },
+    "training": {
+      "max_steps": 20000,
+      "bootstrap_start": 10000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "ot_pairing": "barycentric",
+      "loss_weighting": "v_space",
+      "periodic_training_rollout_every_steps": 2500,
+      "checkpoint_every_steps": 5000
+    },
+    "evaluation": {
+      "rollout_type": "ema_shortcut",
+      "fixed_policy_checkpoint_completed_env_steps": 25165824,
+      "num_videos": 32,
+      "context_frames": 16,
+      "horizon": 16,
+      "seed": 4242,
+      "primary_target": "tokenizer_decoded_ground_truth",
+      "metrics": [
+        "mean_frame_psnr_db",
+        "mean_video_psnr_db",
+        "mean_ssim",
+        "psnr_by_horizon_db@1,@3,@8,@16"
+      ]
+    },
+    "selection": {
+      "all_arms_required": true,
+      "rule": "Descending mean-frame PSNR, then descending mean SSIM, then descending horizon-16 PSNR, then mixture name.",
+      "consumer": "CR-DYN-0009"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All four source pools contain exactly 2,048 episode-safe records from their registered PPO checkpoints and preserve the 15-action/no-op-4 contract."
+    },
+    {
+      "id": "SC-2",
+      "rule": "All three mixtures contain exactly 2,048 byte-identical source records with the preregistered counts and valid source/tree hashes."
+    },
+    {
+      "id": "SC-3",
+      "rule": "All three medium arms complete exactly 20,000 updates from scratch and are evaluated against the same 32 final-policy held-out futures."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No mixture arm may be skipped based on an interim metric. The selected mixture is computed only after all three evaluations by the frozen lexicographic rule."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Support the recency-weighted hypothesis only if recency_weighted ranks first; otherwise reject it and retain the complete descriptive ordering."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-corpus-audit.json",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/latent-stats-n16p6m.json",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/runs",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-comparison.json",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-selection.json"
+  ]
+}

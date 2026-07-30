@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0009",
+  "retrospective": false,
+  "created_at": "2026-07-30T18:25:22+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun selected-mixture dynamics fixed-20k scale sweep",
+  "kind": "confirmatory",
+  "question": "On the PPO-checkpoint mixture selected by CR-DYN-0008, how does CoinRun dynamics rollout quality change from 0.16M to 12.90M parameters at fixed 20,000 updates?",
+  "reason": "The previous scale curve used a small tokenizer, random-action data and the wrong action contract. Capacity should be re-measured with the 16.6M EMA tokenizer and the checkpoint mixture selected by a complete fixed-record ablation rather than hard-coding final-policy-only data.",
+  "hypothesis": "With corrected representation, action semantics and selected PPO-mixture data, held-out mean-frame PSNR and SSIM improve from tiny to small to medium; the large model should at least match medium under equal 20,000-update budgets.",
+  "falsification": "Reject the monotonic scale hypothesis if small does not exceed tiny, medium does not exceed small, or large falls below medium on either mean-frame PSNR or mean SSIM.",
+  "baseline_id": "CR-DYN-0004",
+  "depends_on": [
+    "CR-DYN-0008",
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DYN-0007"
+  ],
+  "controlled_variable": {
+    "name": "dynamics_parameter_scale_at_fixed_selected_mixture_and_20k_updates",
+    "values": [
+      {
+        "name": "tiny",
+        "parameters": 155840
+      },
+      {
+        "name": "small",
+        "parameters": 545920
+      },
+      {
+        "name": "medium",
+        "parameters": 3931392
+      },
+      {
+        "name": "large",
+        "parameters": 12902784
+      }
+    ]
+  },
+  "constants": {
+    "tokenizer_name": "n16.6m",
+    "tokenizer_parameters": 14912320,
+    "tokenizer_completed_updates": 20000,
+    "tokenizer_weights": "EMA",
+    "training_mixture_selection": "CR-DYN-0008 frozen lexicographic rule after all three arms complete",
+    "training_records": 2048,
+    "frames_per_record": 64,
+    "training_level_range": [
+      0,
+      200
+    ],
+    "batch_size": 16,
+    "optimizer_updates": 20000,
+    "bootstrap_start": 10000,
+    "evaluation_records": 512,
+    "evaluation_level_range": [
+      10000,
+      10500
+    ],
+    "evaluation_seed": 4242,
+    "evaluation_videos": 32,
+    "evaluation_context_frames": 16,
+    "evaluation_horizon": 16
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "d22b38b7a774b407777e47c4a95ad120ea7596ed",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_checkpoint_mixtures.sh",
+    "runner_sha256": "80258b1a02125ef02b0104b7837e626c32db00cc240f2305f115c3f0195abc18",
+    "component_sha256": {
+      "selection_rule": "3c8c696bedcdf84be2dad8a2567565f3f455b53d792181e143ff551d41347df3",
+      "summarizer": "9dd20cd13a1c716a97290444fe5607def41d458647772d01597c41d8d6e6183f"
+    },
+    "source_freeze": "Execution code is frozen at d22b38b7a774b407777e47c4a95ad120ea7596ed. CR-DYN-0009 starts only after CR-DYN-0008 writes a valid complete-arm selection artifact."
+  },
+  "data": {
+    "environment": "Procgen CoinRun easy",
+    "train_uri_rule": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/mixtures/<CR-DYN-0008 selected_mixture>",
+    "eval_uri": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/eval-final-policy",
+    "selection_artifact": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-selection.json",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "provenance": "The exact train corpus, source checkpoint counts and tree hash are fixed by the valid CR-DYN-0008 selection artifact before any CR-DYN-0009 non-reused arm starts."
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "Tiny, small and large 20k arms run serially after CR-DYN-0008; the selected medium arm is reused, approximately 8-14 additional A10-hours.",
+    "shutdown_policy": "One existing A10 only, no concurrent training. Preserve OOM or instability as a failed arm instead of silently changing batch size, updates or architecture."
+  },
+  "protocol": {
+    "selection_dependency": {
+      "experiment_id": "CR-DYN-0008",
+      "all_mixture_arms_required": true,
+      "selection_artifact_required": true,
+      "rule": "Descending mean-frame PSNR, then descending mean SSIM, then descending horizon-16 PSNR, then mixture name."
+    },
+    "model": {
+      "tokenizer_checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints/19999",
+      "common": {
+        "d_bottleneck": 16,
+        "n_kv_heads": 1,
+        "packing_factor": 2,
+        "qk_norm_type": "qknorm",
+        "time_every": 2,
+        "time_layer_offset": 1,
+        "k_max": 8,
+        "context_length": 64
+      },
+      "scales": {
+        "tiny": {
+          "depth": 2,
+          "d_model": 64,
+          "n_heads": 1,
+          "n_register": 8
+        },
+        "small": {
+          "depth": 2,
+          "d_model": 128,
+          "n_heads": 2,
+          "n_register": 16
+        },
+        "medium": {
+          "depth": 4,
+          "d_model": 256,
+          "n_heads": 4,
+          "n_register": 32
+        },
+        "large": {
+          "depth": 6,
+          "d_model": 384,
+          "n_heads": 6,
+          "n_register": 32
+        }
+      }
+    },
+    "training": {
+      "max_steps": 20000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "ot_pairing": "barycentric",
+      "loss_weighting": "v_space",
+      "periodic_training_rollout_every_steps": 2500,
+      "checkpoint_every_steps": 5000,
+      "medium_reuse": "Reuse the byte-identical selected-mixture medium arm from CR-DYN-0008."
+    },
+    "evaluation": {
+      "rollout_type": "ema_shortcut",
+      "num_videos": 32,
+      "context_frames": 16,
+      "horizon": 16,
+      "seed": 4242,
+      "primary_target": "tokenizer_decoded_ground_truth",
+      "metrics": [
+        "mean_frame_psnr_db",
+        "mean_video_psnr_db",
+        "mean_ssim",
+        "psnr_by_horizon_db@1,@3,@8,@16"
+      ]
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "CR-DYN-0008 must have all three completed medium arms, a valid corpus audit and a frozen selection artifact before CR-DYN-0009 starts."
+    },
+    {
+      "id": "SC-2",
+      "rule": "All four scale points use the exact selected mixture, 16.6M EMA tokenizer, batch size, optimizer recipe, 20,000 updates and fixed held-out futures."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Every non-reused arm starts from scratch and reaches checkpoint step 19,999; OOM or instability remains visible as a failed arm."
+    },
+    {
+      "id": "SC-4",
+      "rule": "Support monotonic scaling only if tiny < small < medium <= large for both mean-frame PSNR and mean SSIM."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/runs",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/selected-mixture-dynamics-scale-comparison.json"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0008",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before checkpoint source-pool collection, mixture materialization or dynamics training.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Which PPO-checkpoint mixture best predicts final-policy held-out futures.",
+      "Whether recency-weighted data improves long-horizon action-conditioned prediction.",
+      "Whether any trained checkpoint is interactively controllable."
+    ],
+    "decision": [
+      "Wait until the existing A10 has no unrelated training PID, then collect and audit all source pools and run all three fixed-medium arms."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T18:25:22+08:00",
+      "reason": "Preregistered the corrected fixed-record PPO-checkpoint mixture experiment before any new data or metric."
+    }
+  ]
+}

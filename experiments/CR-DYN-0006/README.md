@@ -1,5 +1,10 @@
 # CR-DYN-0006 — PPO-stage trajectory ablation
 
+> Superseded before execution. No data collection or GPU training ran under
+> this ID. The user clarified that the intended variable was the mixture ratio
+> of multiple PPO checkpoints inside one corpus, so the corrected experiment is
+> `CR-DYN-0008`.
+
 ## Question
 
 When tokenizer, dynamics architecture, optimizer budget and held-out futures are fixed, does collecting CoinRun training trajectories from later CR-PPO-0002 checkpoints improve world-model rollout quality?
@@ -12,11 +17,13 @@ Every arm is scored on one fixed 512-record corpus collected from the final PPO 
 
 ## Observed
 
-No new collection or training result had been observed at preregistration time.
+No collection or training result was observed. The experiment was aborted
+during preregistration review.
 
 ## Interpretation
 
-None yet.
+The isolated-stage design answered a different question from the requested
+mixed-checkpoint recipe and therefore must not be executed or interpreted.
 
 ## Not established
 
@@ -26,4 +33,4 @@ None yet.
 
 ## Decision
 
-Run collection and audits first. Dynamics training may begin only after the full stage-corpus audit is valid.
+Retain this record as the rejected design. Execute `CR-DYN-0008` instead.

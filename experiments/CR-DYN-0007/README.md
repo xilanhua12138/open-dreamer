@@ -1,5 +1,9 @@
 # CR-DYN-0007 — Final-policy dynamics scale sweep
 
+> Superseded before execution. No GPU arm ran under this ID. The corrected
+> `CR-DYN-0009` scale sweep uses the mixture chosen by the fully executed
+> `CR-DYN-0008` checkpoint-mixture ablation.
+
 ## Question
 
 With the 16.6M EMA tokenizer, corrected 15-action/no-op-4 contract, final CR-PPO-0002 trajectories, equal 20,000-update budgets and identical held-out futures, how does dynamics quality change across 0.16M, 0.55M, 3.93M and 12.90M parameters?
@@ -12,11 +16,13 @@ Evaluation uses the same fixed final-policy held-out corpus, 32 futures, 16 cont
 
 ## Observed
 
-No new scale result had been observed at preregistration time.
+No scale result was observed. The experiment was aborted during protocol
+review.
 
 ## Interpretation
 
-None yet.
+The capacity variable remained valid, but hard-coding final-policy-only data
+would bypass the newly requested mixture comparison.
 
 ## Not established
 
@@ -26,4 +32,5 @@ None yet.
 
 ## Decision
 
-Start only after CR-DYN-0006 has produced a valid corpus audit and completed the final-policy medium arm.
+Retain this record as the rejected design. Execute `CR-DYN-0008` and then
+`CR-DYN-0009`.
