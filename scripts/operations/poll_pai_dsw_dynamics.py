@@ -66,7 +66,6 @@ class Config:
     status_poll_seconds: int = 10
     command_timeout_seconds: int = 45
     aliyun_config_path: Path | None = None
-    proxyclient_config_path: Path | None = None
 
 
 CommandRunner = Callable[[Sequence[str], str | None, int], CommandResult]
@@ -122,6 +121,7 @@ class Poller:
         input_text: str | None = None,
         allow_failure: bool = False,
         timeout_seconds: int | None = None,
+        redact_failure_detail: bool = False,
     ) -> CommandResult:
         result = self.command_runner(
             args,
@@ -129,7 +129,11 @@ class Poller:
             timeout_seconds or self.config.command_timeout_seconds,
         )
         if result.returncode != 0 and not allow_failure:
-            detail = (result.stderr or result.stdout).strip()
+            detail = (
+                "sensitive command output redacted"
+                if redact_failure_detail
+                else (result.stderr or result.stdout).strip()
+            )
             raise PollerError(
                 f"command failed rc={result.returncode}: {args[0]} "
                 f"{args[1] if len(args) > 1 else ''}: {detail[:500]}"
@@ -239,10 +243,6 @@ class Poller:
             self.config.aliyun_config_path
             or Path.home() / ".aliyun" / "config.json"
         )
-        proxyclient_config_path = (
-            self.config.proxyclient_config_path
-            or Path.home() / ".proxyclientconfig"
-        )
         try:
             aliyun_config = json.loads(
                 aliyun_config_path.read_text(encoding="utf-8")
@@ -284,21 +284,18 @@ class Poller:
 
         credential_input = "\n".join(
             [
+                "",
+                profile_region,
                 str(profile["access_key_id"]),
                 str(profile["access_key_secret"]),
                 str(profile["sts_token"]),
-                profile_region,
                 "",
             ]
         )
         self.run_command(
-            [
-                "proxyclient",
-                "config",
-                "--config-file",
-                str(proxyclient_config_path),
-            ],
+            ["proxyclient", "config"],
             input_text=credential_input,
+            redact_failure_detail=True,
         )
         self.emit(
             "proxy_credentials_refreshed",

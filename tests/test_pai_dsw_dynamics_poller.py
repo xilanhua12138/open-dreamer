@@ -79,7 +79,6 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
             start_wait_seconds=0,
             status_poll_seconds=0,
             aliyun_config_path=aliyun_config_path,
-            proxyclient_config_path=temp_path / "proxyclient-config",
         )
         return poller_module.Poller(
             config,
@@ -225,14 +224,16 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
         proxy_call = next(
             call for call in fake.calls if "proxyclient" in call[0]
         )
+        self.assertEqual(proxy_call[0], ["proxyclient", "config"])
         self.assertEqual(
             proxy_call[1],
             "\n".join(
                 [
+                    "",
+                    poller_module.REGION,
                     "test-access-key-id",
                     "test-access-key-secret",
                     "test-sts-token",
-                    poller_module.REGION,
                     "",
                 ]
             ),
@@ -317,6 +318,35 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
             monitor.run_cycle()
 
         self.assertEqual(len(fake.calls), 1)
+
+    def test_proxyclient_failure_does_not_expose_credentials(self):
+        fake = FakeRunner(
+            [
+                (
+                    "get-instance",
+                    poller_module.CommandResult(
+                        0, instance_payload("Running"), ""
+                    ),
+                ),
+                (
+                    "proxyclient config",
+                    poller_module.CommandResult(
+                        1,
+                        "",
+                        "bad config test-access-key-secret test-sts-token",
+                    ),
+                ),
+            ]
+        )
+        monitor = self.make_poller(fake)
+
+        with self.assertRaises(poller_module.PollerError) as raised:
+            monitor.run_cycle()
+
+        error = str(raised.exception)
+        self.assertIn("sensitive command output redacted", error)
+        self.assertNotIn("test-access-key-secret", error)
+        self.assertNotIn("test-sts-token", error)
 
     def test_remote_script_contains_all_frozen_inputs_and_atomic_pid(self):
         script = poller_module.remote_launch_script()
