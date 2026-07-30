@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0008",
-  "record_revision": 7,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 8,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-31T01:48:23+08:00",
-  "ended_at": null,
-  "summary": "The frozen serial pipeline is healthy as PID 929. Both final_only-medium and uniform-medium completed exactly 20,000 updates and their aligned 32-video held-out evaluations. Final-only currently leads uniform by 0.5052 dB mean-frame PSNR and 0.01575 mean SSIM, while recency_weighted-medium has reached 16,654/20,000 updates. No mixture is selected before the third arm completes.",
+  "ended_at": "2026-07-31T04:14:03+08:00",
+  "summary": "All three preregistered 20k mixture arms and aligned 32-video evaluations completed. The frozen rule ranked final_only first at 17.0731 dB mean-frame PSNR and 0.71345 mean SSIM, recency_weighted second at 17.0137/0.70131 and uniform third at 16.5679/0.69770. The recency-weighted hypothesis is rejected and final_only is frozen as the CR-DYN-0009 corpus.",
   "observations": [
     {
       "type": "remote_preflight",
@@ -125,6 +125,36 @@
       "gpu_utilization_percent": 99,
       "gpu_memory_used_mib": 2370,
       "gpu_memory_total_mib": 23028
+    },
+    {
+      "type": "arm_completed",
+      "at": "2026-07-31T04:13:34+08:00",
+      "arm": "recency_weighted-medium",
+      "completed_updates": 20000,
+      "last_step": 19999,
+      "num_held_out_videos": 32,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "mean_video_psnr_db": 15.878059002457658,
+      "mean_frame_psnr_db": 17.013735421200252,
+      "mean_ssim": 0.7013113222786589,
+      "horizon_16_psnr_db": 17.013735421200252,
+      "metrics_sha256": "760f0db12301e577e9c927d48dc8202a38fcbed5507499378d5dc7e956f5e922",
+      "run_state_sha256": "fd38bbc2fafdb494960a4e5beda5039f1f6d1ae27291de2c85205b3495e965dc",
+      "config_sha256": "0dd54b10779d25a6e2d9e393659dd0125ec27bac1aeec4ab3b2463dc79af2cb5",
+      "overrides_sha256": "37c2c51039c99c16c11d58e4c218a565952276bf93ed7eb4fe2e99efa87199ca"
+    },
+    {
+      "type": "selection_completed",
+      "at": "2026-07-31T04:14:03+08:00",
+      "selected_mixture": "final_only",
+      "ranked_mixtures": [
+        "final_only",
+        "recency_weighted",
+        "uniform"
+      ],
+      "selection_sha256": "71af24bb3dd8034d479d4b3bd372749c210f26ce0c6ebe635a0b73abcc0043a0",
+      "comparison_sha256": "1d82cc8759353a039e93c44a13069ff743f3cbbbca8b8fd300811634e8aa1c87"
     }
   ],
   "comparisons": [
@@ -137,6 +167,32 @@
       "delta_mean_frame_psnr_db": 0.505153677638816,
       "delta_mean_ssim": 0.0157511697861428,
       "delta_horizon_16_psnr_db": 0.505153677638816
+    },
+    {
+      "name": "frozen complete mixture selection",
+      "status": "complete",
+      "selection_rule": "descending mean_frame_psnr_db, then descending mean_ssim, then descending horizon-16 PSNR, then mixture name",
+      "ranking": [
+        {
+          "mixture": "final_only",
+          "mean_frame_psnr_db": 17.073096061747968,
+          "mean_ssim": 0.7134503743891403,
+          "horizon_16_psnr_db": 17.073096061747968
+        },
+        {
+          "mixture": "recency_weighted",
+          "mean_frame_psnr_db": 17.013735421200252,
+          "mean_ssim": 0.7013113222786589,
+          "horizon_16_psnr_db": 17.013735421200252
+        },
+        {
+          "mixture": "uniform",
+          "mean_frame_psnr_db": 16.567942384109152,
+          "mean_ssim": 0.6976992046029975,
+          "horizon_16_psnr_db": 16.567942384109152
+        }
+      ],
+      "selected_mixture": "final_only"
     }
   ],
   "deviations": [],
@@ -148,19 +204,22 @@
       "The final_only-medium arm completed exactly 20,000 updates and its 32-video held-out evaluation scored 17.073096 dB mean-frame PSNR, 0.713450 mean SSIM and 17.073096 dB horizon-16 PSNR.",
       "The uniform-medium arm completed exactly 20,000 updates and scored 16.567942 dB mean-frame PSNR, 0.697699 mean SSIM and 16.567942 dB horizon-16 PSNR on the aligned 32-video evaluation.",
       "Final-only provisionally exceeds uniform by 0.505154 dB mean-frame PSNR and 0.015751 mean SSIM, but the frozen selection cannot run before recency-weighted completes.",
-      "The serial runner entered recency_weighted-medium and its structured run state reached 16,654/20,000 updates with 99% GPU utilization."
+      "The recency_weighted-medium arm completed exactly 20,000 updates and scored 17.013735 dB mean-frame PSNR, 0.701311 mean SSIM and 17.013735 dB horizon-16 PSNR.",
+      "After all three evaluations existed, the frozen rule ranked final_only first, recency_weighted second and uniform third, then selected final_only for CR-DYN-0009."
     ],
-    "interpretation": [],
+    "interpretation": [
+      "The preregistered recency-weighted hypothesis is rejected because recency_weighted did not rank first under the frozen rule.",
+      "Recency-weighted improved PSNR at horizons 1, 3 and 8 over final-only, but lost the primary mean-frame, mean-SSIM and horizon-16 selection keys."
+    ],
     "not_established": [
-      "Which PPO-checkpoint mixture best predicts final-policy held-out futures.",
-      "Whether recency-weighted data improves long-horizon action-conditioned prediction.",
       "Whether any trained checkpoint is interactively controllable."
     ],
     "decision": [
       "Refresh only the expired local ProxyClient temporary credential from the existing open-dreamer OAuth profile; do not restart the Running instance, change specification, or create another instance.",
       "Keep launch ownership with ai.open-dreamer.dsw-dynamics-poller. After credential recovery, it must repeat the full GPU/PID/source/checkpoint preflight before the single dynamics launch."
       ,
-      "Continue the unchanged serial runner through all three mixture arms and the dependent scale sweep; do not skip an arm based on interim metrics."
+      "Continue the unchanged serial runner through all three mixture arms and the dependent scale sweep; do not skip an arm based on interim metrics.",
+      "Freeze final_only as the selected corpus for CR-DYN-0009 exactly as written by checkpoint-mixture-selection.json."
     ]
   },
   "artifacts": [
@@ -259,6 +318,70 @@
       "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/ema_shortcut/pred_000000.mp4",
       "retention": "local task root and DSW persistent storage",
       "sha256": "639b1f82b73ed11b8e51e7bb50a680345dfb027ed1e2b0d8cff8da6d44803ec0"
+    },
+    {
+      "name": "recency_weighted-medium held-out summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/recency_weighted-medium-eval-summary.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/recency_weighted-medium/metrics.json",
+      "retention": "git summary and DSW persistent storage",
+      "source_sha256": "760f0db12301e577e9c927d48dc8202a38fcbed5507499378d5dc7e956f5e922"
+    },
+    {
+      "name": "recency_weighted-medium run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/recency_weighted-medium-run-state.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/runs/recency_weighted-medium/run-state.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "fd38bbc2fafdb494960a4e5beda5039f1f6d1ae27291de2c85205b3495e965dc"
+    },
+    {
+      "name": "recency_weighted-medium Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0008/raw/recency_weighted-medium-overrides.yaml",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/runs/recency_weighted-medium/.hydra/overrides.yaml",
+      "retention": "git and DSW persistent storage",
+      "sha256": "37c2c51039c99c16c11d58e4c218a565952276bf93ed7eb4fe2e99efa87199ca"
+    },
+    {
+      "name": "frozen checkpoint-mixture selection",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/checkpoint-mixture-selection.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-selection.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "71af24bb3dd8034d479d4b3bd372749c210f26ce0c6ebe635a0b73abcc0043a0"
+    },
+    {
+      "name": "complete checkpoint-mixture comparison",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0008/raw/checkpoint-mixture-comparison.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/checkpoint-mixture-comparison.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "1d82cc8759353a039e93c44a13069ff743f3cbbbca8b8fd300811634e8aa1c87"
+    },
+    {
+      "name": "recency_weighted-medium original visual 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/recency_weighted-medium/original_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/recency_weighted-medium/ema_shortcut/original_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "877f624ab5a0afb15409001a0e964a3e4ee5e953d69e4a1c91ea710ccd46e9e1"
+    },
+    {
+      "name": "recency_weighted-medium tokenizer reconstruction 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/recency_weighted-medium/gt_decoded_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/recency_weighted-medium/ema_shortcut/gt_decoded_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "9c952fcfe77b0cc2914aba5ec273b33fff27f4e57dffa80e9f7c6351d5205dd2"
+    },
+    {
+      "name": "recency_weighted-medium predicted rollout 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0008/recency_weighted-medium/pred_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/recency_weighted-medium/ema_shortcut/pred_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "dd05178d10ebc31b0471476372770eadaa265cab14965c1442cc9dd3a7b8ce9e"
     }
   ],
   "revision_history": [
@@ -296,6 +419,11 @@
       "revision": 7,
       "at": "2026-07-31T04:05:48+08:00",
       "reason": "Recorded uniform-medium terminal metrics and visual evidence, the provisional two-arm delta, and recency_weighted-medium structured progress without selecting early."
+    },
+    {
+      "revision": 8,
+      "at": "2026-07-31T04:14:03+08:00",
+      "reason": "Closed the complete three-arm experiment, rejected the preregistered recency-weighted hypothesis and recorded the frozen final_only selection with raw metrics and visuals."
     }
   ]
 }

@@ -78,21 +78,29 @@ The runner then entered `recency_weighted-medium`; at 04:05:48 its structured
 state was 16,654/20,000 updates. PID `929` remained alive and the A10 reported
 99% utilization with 2,370/23,028 MiB allocated.
 
+`recency_weighted-medium` completed at 04:13:34 and scored 15.878059 dB
+mean-video PSNR, 17.013735 dB mean-frame PSNR and 0.701311 mean SSIM.
+Its horizon 1/3/8/16 PSNR was
+22.891438/21.020476/18.880781/17.013735 dB.
+
+At 04:14:03, with all three aligned evaluations present, the frozen rule wrote
+the final ordering `final_only > recency_weighted > uniform` and selected
+`final_only` for `CR-DYN-0009`. The selection and comparison files have SHA256
+`71af24bb...043a0` and `1d82cc87...a1c87`.
+
 ## Interpretation
 
-Two held-out arms are now valid and final-only is ahead of uniform on every
-frozen selection key. This is descriptive only: the experiment still cannot
-select a mixture or begin the scale sweep until recency-weighted completes.
+The preregistered recency-weighted hypothesis is rejected because it did not
+rank first. Recency-weighted did improve shorter-horizon PSNR at 1, 3 and 8
+relative to final-only, but final-only remained higher on mean-frame PSNR, mean
+SSIM and horizon-16 PSNR, which are the frozen selection keys.
 
 ## Not established
 
-- Which checkpoint mixture is best.
-- Whether the recency-weighted mixture improves action-conditioned prediction.
 - Whether any resulting checkpoint is interactively controllable.
 
 ## Decision
 
-Continue PID `929` through all three mixture arms. Only the frozen complete-arm
-selection may choose the CR-DYN-0009 corpus; no arm may be skipped based on an
-interim quality result. The five-minute poller must recognize the owned PID and
-must not start a second training process.
+Freeze `final_only` as the selected CR-DYN-0009 corpus. Continue the same
+serial PID `929` through the preregistered tiny/small/medium-reuse/large sweep;
+do not substitute another mixture based on qualitative preferences.

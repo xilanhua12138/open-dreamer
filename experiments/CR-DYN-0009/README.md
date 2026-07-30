@@ -20,20 +20,31 @@ changing any scientific constant. All scales use the 16.6M EMA tokenizer,
 
 ## Observed
 
-No mixture selection or scale result had been observed at preregistration time.
+`CR-DYN-0008` completed all three arms and its frozen rule selected
+`final_only` at 04:14:03. The 155,840-parameter `final_only-tiny` arm then
+trained from scratch to exactly 20,000 updates and completed at 04:47:34.
+Its aligned 32-video evaluation scored 12.052888 dB mean-video PSNR,
+12.669427 dB mean-frame PSNR and 0.553509 mean SSIM. Horizon 1/3/8/16 PSNR
+was 17.875752/15.739125/13.846570/12.669427 dB.
+
+The runner then entered the 545,920-parameter `final_only-small` arm. At
+05:05:49 its structured state was 9,882/20,000 updates, immediately before the
+periodic 10k evaluation. PID `929` remained alive.
 
 ## Interpretation
 
-None yet.
+The tiny result is a valid first scale point and lies 4.403669 dB mean-frame
+PSNR and 0.159942 mean SSIM below the reused medium anchor. This does not yet
+establish monotonicity because small and large are incomplete.
 
 ## Not established
 
-- Which checkpoint mixture will be selected.
 - Whether the corrected capacity curve is monotonic.
 - Whether large exceeds medium.
 - Whether any scale is good enough for interactive control.
 
 ## Decision
 
-Remain queued until `CR-DYN-0008` has all three completed arms, valid audits and
-a selection artifact.
+Continue the unchanged serial runner through small and large, reusing the
+byte-identical selected-medium result exactly as preregistered. Do not interpret
+the scale hypothesis until all four points exist.

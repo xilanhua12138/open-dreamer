@@ -19,8 +19,8 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
 | `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
-| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | running | not evaluated | none |
-| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | queued | not evaluated | none |
+| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | running | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | queued | not evaluated | none |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
@@ -81,13 +81,18 @@ User visual acceptance remains a separate final criterion.
 The clean remote `CR-DYN-0008/0009` execution source remains frozen at commit
 `8711cf8`. After the PPO, inventory and temporary ProxyClient blockers cleared,
 the exclusive poller launched exactly one serial pipeline as PID `929` at
-01:48:23 on 2026-07-31 and set a 12-hour shutdown timer. `final_only-medium`
-completed its exact 20k budget and scored 17.073096 dB mean-frame PSNR with
-0.713450 mean SSIM on 32 held-out videos. `uniform-medium` also completed 20k,
-scoring 16.567942 dB and 0.697699 on the same evaluation. Final-only therefore
-provisionally leads uniform by 0.505154 dB and 0.015751 SSIM.
-`recency_weighted-medium` then reached 16,654/20,000 updates. The frozen
-mixture ranking still awaits that third arm.
+01:48:23 on 2026-07-31 and set a 12-hour shutdown timer. All three CR-DYN-0008
+arms completed their exact 20k budgets. The frozen ordering was
+`final_only > recency_weighted > uniform`, at mean-frame PSNR
+`17.073096 / 17.013735 / 16.567942 dB` and mean SSIM
+`0.713450 / 0.701311 / 0.697699`. This rejects the preregistered
+recency-weighted hypothesis and freezes final-only for CR-DYN-0009.
+
+The selected-mixture scale sweep then started without another pipeline. The
+155,840-parameter tiny arm completed 20k and scored 12.669427 dB mean-frame
+PSNR with 0.553509 mean SSIM. The 545,920-parameter small arm subsequently
+reached 9,882/20,000 structured updates. Medium is reused from CR-DYN-0008;
+large and the final scale conclusion remain pending.
 
 Launch and monitoring ownership remains exclusively with the five-minute
 poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes

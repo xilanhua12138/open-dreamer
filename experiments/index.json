@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-31T04:05:48+08:00",
+  "updated_at": "2026-07-31T05:05:49+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -131,9 +131,9 @@
       "experiment_id": "CR-DYN-0008",
       "title": "CoinRun PPO-checkpoint mixture ablation for dynamics",
       "path": "experiments/CR-DYN-0008",
-      "execution_status": "running",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-TOK-0003",
         "CR-PPO-0002",
@@ -145,7 +145,7 @@
       "experiment_id": "CR-DYN-0009",
       "title": "CoinRun selected-mixture dynamics fixed-20k scale sweep",
       "path": "experiments/CR-DYN-0009",
-      "execution_status": "queued",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

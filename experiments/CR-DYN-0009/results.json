@@ -1,36 +1,149 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0009",
-  "record_revision": 1,
-  "execution_status": "queued",
+  "record_revision": 2,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-31T04:14:05+08:00",
   "ended_at": null,
-  "summary": "Preregistered before CR-DYN-0008 selection and before any selected-mixture scale arm.",
-  "observations": [],
-  "comparisons": [],
+  "summary": "CR-DYN-0008 completed and froze final_only as the selected mixture. The 155,840-parameter tiny arm then completed 20,000 updates and scored 12.6694 dB mean-frame PSNR with 0.55351 mean SSIM on the aligned 32-video evaluation. The 545,920-parameter small arm is active at 9,882/20,000 updates.",
+  "observations": [
+    {
+      "type": "dependency_satisfied",
+      "at": "2026-07-31T04:14:03+08:00",
+      "dependency": "CR-DYN-0008",
+      "selected_mixture": "final_only",
+      "ranked_mixtures": [
+        "final_only",
+        "recency_weighted",
+        "uniform"
+      ],
+      "selection_sha256": "71af24bb3dd8034d479d4b3bd372749c210f26ce0c6ebe635a0b73abcc0043a0"
+    },
+    {
+      "type": "arm_completed",
+      "at": "2026-07-31T04:47:34+08:00",
+      "arm": "final_only-tiny",
+      "parameters": 155840,
+      "completed_updates": 20000,
+      "last_step": 19999,
+      "num_held_out_videos": 32,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "mean_video_psnr_db": 12.052888296878745,
+      "mean_frame_psnr_db": 12.669426857753141,
+      "mean_ssim": 0.553508712937673,
+      "horizon_16_psnr_db": 12.669426857753141,
+      "metrics_sha256": "aa5bebad8e1f70248b398ee98290a43b967c51237948945fc267476d32052f36",
+      "run_state_sha256": "9576c53beea926521c50920d0bc7f263638450fca574567b69459aa714ce9516",
+      "config_sha256": "366eff56ffd1560d984fc8d779566506a93154e60dbd56f22cc1d0f125512a20",
+      "overrides_sha256": "516dca699f50651ae62cb1b0083a3465f1825650863665efdae8a887c04debb8"
+    },
+    {
+      "type": "training_progress",
+      "at": "2026-07-31T05:05:49+08:00",
+      "active_arm": "final_only-small",
+      "parameters": 545920,
+      "completed_updates": 9882,
+      "max_updates": 20000,
+      "pipeline_pid": 929,
+      "training_process_pid": 89774,
+      "gpu_memory_used_mib": 2342,
+      "gpu_memory_total_mib": 23028,
+      "phase": "periodic evaluation near 10,000 updates"
+    }
+  ],
+  "comparisons": [
+    {
+      "name": "provisional tiny versus reused medium anchor",
+      "status": "descriptive_only_until_all_scales_complete",
+      "baseline": "final_only-tiny",
+      "candidate": "final_only-medium",
+      "delta_mean_frame_psnr_db": 4.403669203994827,
+      "delta_mean_ssim": 0.1599416614514673,
+      "medium_source": "CR-DYN-0008"
+    }
+  ],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
+    "observed": [
+      "CR-DYN-0008 satisfied the frozen dependency and selected final_only only after all three mixture evaluations existed.",
+      "The 155,840-parameter tiny arm completed exactly 20,000 updates and scored 12.669427 dB mean-frame PSNR, 0.553509 mean SSIM and 12.669427 dB horizon-16 PSNR.",
+      "The serial runner entered the 545,920-parameter small arm and its structured state reached 9,882/20,000 updates."
+    ],
     "interpretation": [],
     "not_established": [
-      "Which checkpoint mixture CR-DYN-0008 will select.",
       "Whether corrected selected-mixture dynamics quality scales monotonically.",
       "Whether the 12.90M arm exceeds the 3.93M arm.",
       "Whether any resulting model is interactively controllable."
     ],
     "decision": [
-      "Do not start until CR-DYN-0008 has completed all mixture arms and written a valid selection artifact."
+      "Use the exact final_only corpus selected by CR-DYN-0008.",
+      "Continue the unchanged serial runner through small, reused medium and large before evaluating the monotonic scale hypothesis."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "final_only-tiny held-out summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-tiny-eval-summary.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-tiny/metrics.json",
+      "retention": "git summary and DSW persistent storage",
+      "source_sha256": "aa5bebad8e1f70248b398ee98290a43b967c51237948945fc267476d32052f36"
+    },
+    {
+      "name": "final_only-tiny run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-tiny-run-state.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/runs/final_only-tiny/run-state.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "9576c53beea926521c50920d0bc7f263638450fca574567b69459aa714ce9516"
+    },
+    {
+      "name": "final_only-tiny Hydra overrides",
+      "kind": "yaml",
+      "uri": "experiments/CR-DYN-0009/raw/final_only-tiny-overrides.yaml",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/runs/final_only-tiny/.hydra/overrides.yaml",
+      "retention": "git and DSW persistent storage",
+      "sha256": "516dca699f50651ae62cb1b0083a3465f1825650863665efdae8a887c04debb8"
+    },
+    {
+      "name": "final_only-tiny original visual 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-tiny/original_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-tiny/ema_shortcut/original_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "11f553ceb6fa6d1f267706c2317f13ef8eff580760df24a2cd74f6ac88e6a803"
+    },
+    {
+      "name": "final_only-tiny tokenizer reconstruction 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-tiny/gt_decoded_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-tiny/ema_shortcut/gt_decoded_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "1921f74eca60f6d250436f873f0c51ae409169727f9f4cf4a4beb60c9c629ce5"
+    },
+    {
+      "name": "final_only-tiny predicted rollout 000000",
+      "kind": "video",
+      "uri": "../synced/CR-DYN-0009/final_only-tiny/pred_000000.mp4",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/scale-ablation/eval/final_only-tiny/ema_shortcut/pred_000000.mp4",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "a89bb5aec5db5053ab42c68c1024665c8589cdc8cee668b1b87ab353b6b431d2"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
       "at": "2026-07-30T18:25:22+08:00",
       "reason": "Preregistered the adaptive-but-rule-frozen selected-mixture capacity sweep before CR-DYN-0008 results."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-31T05:05:49+08:00",
+      "reason": "Recorded the final_only dependency selection, exact tiny terminal metric and visual evidence, and the subsequent small-arm structured progress."
     }
   ]
 }
