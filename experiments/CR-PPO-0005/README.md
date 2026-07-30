@@ -55,5 +55,24 @@ red test reproduced the missing recorder contract, and the fix now makes the
 probe use `RunRecorder`, register its JSON artifact, and require a structured
 completed state before the runner may advance. Clean pushed recovery source
 `855981088b3f5674ff1c7f05ef5da829fc4c0509` passed all 124 tests. One recovery
-pipeline started at 18:14:55 Asia/Shanghai with PID `110225` and is re-recording
-the fixed 16-seed probe before training; the scientific protocol is unchanged.
+pipeline started at 18:14:55 Asia/Shanghai with PID `110225`.
+
+The fixed probe completed with a single observation SHA256
+`fd36a901...04feb`, 16 initialization seeds per arm, finite metrics and a
+structured completed run state:
+
+| Arm | Encoder RMS | JVP RMS gain | Global gradient L2 | Last branch / skip |
+|---|---:|---:|---:|---:|
+| Glorot reference | 0.4960 | 0.6493 | 4.6084 | 0.5380 |
+| Orthogonal √2 anchor | 13.0191 | 17.8623 | 3577.4231 | 1.0570 |
+| Orthogonal gain 1 | 0.7874 | 1.0729 | 11.0045 | 0.5300 |
+| Orthogonal √2, depth-scaled | 2.5210 | 3.4602 | 77.5217 | 0.4308 |
+| Orthogonal √2, zero-last | 1.4561 | 2.1225 | 40.1874 | 0.0000 |
+| Orthogonal √2, SkipInit | 1.4561 | 2.1225 | 33.6389 | 0.0000 |
+
+Versus Glorot, the unmitigated orthogonal-√2 arm amplified encoder RMS by
+`26.2468×`, encoder JVP gain by `27.5101×`, and the synthetic PPO global
+gradient by `776.2791×`. Unit-gain orthogonal initialization reduced those
+ratios to `1.5875×`, `1.6523×`, and `2.3879×`, respectively. This supports the
+initial amplification mechanism; it does not yet establish trained policy
+quality. The first unconditional training arm, `orthogonal_gain1`, is running.

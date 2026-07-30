@@ -1,0 +1,87 @@
+{
+  "accelerator": {
+    "available": true,
+    "cuda_toolkit": null,
+    "gpus": [
+      {
+        "driver_version": "550.163.01",
+        "index": 0,
+        "memory_total_mb": 23028,
+        "name": "NVIDIA A10",
+        "uuid": "GPU-2a2cff74-3c28-6d1a-9754-54e49fa297ed"
+      }
+    ],
+    "jax_devices": [
+      {
+        "device_kind": "NVIDIA A10",
+        "id": 0,
+        "platform": "gpu",
+        "process_index": 0
+      }
+    ]
+  },
+  "attempt_id": "5420f59c-8e8d-419e-9cd7-5ca7a3f5732b",
+  "collected_at": "2026-07-30T10:14:55.551739+00:00",
+  "command": [
+    "scripts/experiments/coinrun/probe_coinrun_ppo_initialization.py",
+    "--output",
+    "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/probe/initialization-probe.json",
+    "--num-envs",
+    "8",
+    "--observation-vector-steps",
+    "3",
+    "--observation-seed",
+    "4242",
+    "--num-initialization-seeds",
+    "16"
+  ],
+  "config_sha256": "86faa92563de221004cf1f9e28df5042b5302462301ea7f4fef428dacb599ca6",
+  "dependency_files": {
+    "pyproject.toml": "81e4db793c6d682cd1ff7f9c84fbcc78cd3f790660ae08edb37ad180e76cac59",
+    "uv.lock": "795e24f0e9b1ec29a41064721afd40910af73ff0233f4c4114eecd773281f066"
+  },
+  "environment": {
+    "proxy_configured": false,
+    "values": {
+      "WANDB_MODE": "offline",
+      "XLA_PYTHON_CLIENT_PREALLOCATE": "false"
+    }
+  },
+  "packages": {
+    "array-record": "0.8.1",
+    "flax": "0.10.2",
+    "grain": "0.2.11",
+    "gym3": "0.3.3",
+    "hydra-core": null,
+    "imageio": "2.36.1",
+    "jax": "0.4.35",
+    "jaxlib": "0.4.34",
+    "jaxlpips": null,
+    "numpy": "2.2.6",
+    "optax": "0.2.4",
+    "orbax-checkpoint": "0.11.5",
+    "procgen": "0.10.7",
+    "wandb": "0.19.7"
+  },
+  "run_id": "ab22f22c-3e0b-497d-bf25-19b5257cf7bf",
+  "runtime": {
+    "hostname": "dsw-825047-d54ff65d5-dm98v",
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "platform": "Linux-5.10.134-18.0.11.lifsea8.x86_64-x86_64-with-glibc2.35",
+    "python_executable": "/mnt/workspace/open-dreamer-ppo-collector/.venv-ppo/bin/python",
+    "python_version": "3.10.12"
+  },
+  "schema_version": "1.0",
+  "source": {
+    "available": true,
+    "branch": null,
+    "commit": "855981088b3f5674ff1c7f05ef5da829fc4c0509",
+    "dirty": false,
+    "patch": null,
+    "repository_root": "/mnt/workspace/open-dreamer-ppo-initializer-mitigation-fix1",
+    "reproducible_from_recorded_source": true,
+    "source_fingerprint_sha256": "ab2ded79f29114eeec9fe3fcad9ee2323f36a1889d3347dadeb5f742e66e78b1",
+    "untracked_files": []
+  }
+}

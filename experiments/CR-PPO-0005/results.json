@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-PPO-0005",
-  "record_revision": 6,
+  "record_revision": 7,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-30T18:00:15+08:00",
   "ended_at": null,
-  "summary": "Recovery is running from the clean pushed recorder-fix commit. The pipeline is re-recording the 16-seed probe before any of the four unconditional training arms.",
+  "summary": "The recorded 16-seed probe completed and strongly supports initial signal and gradient amplification under orthogonal-sqrt2. The first unconditional training arm, orthogonal_gain1, is now running.",
   "observations": [
     {
       "type": "pipeline_start",
@@ -30,6 +30,57 @@
       "instance_id": "dsw-ljvgtooejpvpxmhhc6",
       "initial_stage": "PROBING_INITIAL_SIGNAL_AND_GRADIENT_PROPAGATION",
       "protocol_changed": false
+    },
+    {
+      "type": "zero_update_probe",
+      "attempt_id": "5420f59c-8e8d-419e-9cd7-5ca7a3f5732b",
+      "observation_sha256": "fd36a901b7a7c2094c94c723b964b6e7ec870c0ba5aad2e62b78cc32ad804feb",
+      "observation_shape": [
+        32,
+        64,
+        64,
+        3
+      ],
+      "initialization_seeds": 16,
+      "all_metrics_finite": true,
+      "arms": {
+        "glorot_reference": {
+          "encoder_rms": 0.496026698499918,
+          "encoder_jvp_rms_gain": 0.649300439683933,
+          "gradient_global_l2": 4.6084237580174054,
+          "late_branch_to_skip_rms": 0.5380322582175971
+        },
+        "orthogonal_sqrt2_anchor": {
+          "encoder_rms": 13.01909801363945,
+          "encoder_jvp_rms_gain": 17.862344897063515,
+          "gradient_global_l2": 3577.423145381645,
+          "late_branch_to_skip_rms": 1.0570179345954624
+        },
+        "orthogonal_gain1": {
+          "encoder_rms": 0.7874382175505161,
+          "encoder_jvp_rms_gain": 1.0728561259663358,
+          "gradient_global_l2": 11.004459536703306,
+          "late_branch_to_skip_rms": 0.5300045699013234
+        },
+        "orthogonal_sqrt2_depth_scaled": {
+          "encoder_rms": 2.521013028919697,
+          "encoder_jvp_rms_gain": 3.460241350594858,
+          "gradient_global_l2": 77.52167873231815,
+          "late_branch_to_skip_rms": 0.43081571540645813
+        },
+        "orthogonal_sqrt2_zero_last": {
+          "encoder_rms": 1.4561012089252472,
+          "encoder_jvp_rms_gain": 2.1225146511834465,
+          "gradient_global_l2": 40.18736065501696,
+          "late_branch_to_skip_rms": 0.0
+        },
+        "orthogonal_sqrt2_skipinit": {
+          "encoder_rms": 1.4561012089252472,
+          "encoder_jvp_rms_gain": 2.1225146511834465,
+          "gradient_global_l2": 33.63887312920029,
+          "late_branch_to_skip_rms": 0.0
+        }
+      }
     }
   ],
   "comparisons": [],
@@ -59,8 +110,15 @@
     }
   ],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "Across 16 parameter seeds on the same 32 observations, orthogonal-sqrt2 produced 26.2468x Glorot encoder RMS, 27.5101x encoder JVP RMS gain and 776.2791x synthetic PPO global gradient L2.",
+      "Changing only the orthogonal gain from sqrt(2) to 1 reduced those ratios to 1.5875x, 1.6523x and 2.3879x while returning the last residual branch-to-skip ratio from 1.0570 to 0.5300, nearly the Glorot value 0.5380.",
+      "Zero-last and SkipInit made every probed residual branch initially zero, but sqrt(2) initialization outside the residual branches still left encoder/JVP/gradient scale above Glorot."
+    ],
+    "interpretation": [
+      "The zero-update evidence supports the preregistered amplification mechanism and identifies sqrt(2) gain, rather than orthogonality alone, as the main tested source of the initial scale gap.",
+      "The probe does not establish which mitigation improves trained policy quality; all four training arms remain unconditional."
+    ],
     "not_established": [
       "Whether orthogonal matrices or sqrt(2) gain drive the observed gap.",
       "Whether residual identity-start mitigations improve CoinRun sample efficiency.",
@@ -72,7 +130,31 @@
       "Do not collect trajectories or start dynamics."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "valid initialization probe",
+      "kind": "initialization_probe",
+      "uri": "experiments/CR-PPO-0005/raw/probe/initialization-probe.json",
+      "local_uri": "experiments/CR-PPO-0005/raw/probe/initialization-probe.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-ppo-initializer-mitigation/logs/coinrun-ppo-initializer-mitigation-v1/probe/initialization-probe.json",
+      "sha256": "e769e683b88af00a4b75fbf5aa385c0ade4e05a927fbef33e365c074dfe400d8",
+      "bytes": 349217
+    },
+    {
+      "name": "probe runtime identity",
+      "kind": "probe_runtime_identity",
+      "uri": "experiments/CR-PPO-0005/raw/probe/runtime-identity.json",
+      "local_uri": "experiments/CR-PPO-0005/raw/probe/runtime-identity.json",
+      "sha256": "8bdba18c64531475c888a753d834a64d7a2a9dacaa6adf605495049b11675a08"
+    },
+    {
+      "name": "probe terminal run state",
+      "kind": "probe_run_state",
+      "uri": "experiments/CR-PPO-0005/raw/probe/run-state.json",
+      "local_uri": "experiments/CR-PPO-0005/raw/probe/run-state.json",
+      "sha256": "5289a13b6d6e7d73a91c4dfb861c8ee6a5417c2dd01f1e7aa111b4a9cca3db7f"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -103,6 +185,11 @@
       "revision": 6,
       "at": "2026-07-30T18:14:55+08:00",
       "reason": "Started one recovery pipeline from the frozen recorder-fix source after confirming no probe or training process was alive."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-30T18:15:47+08:00",
+      "reason": "Recorded the valid 16-seed zero-update probe and transition into the first unconditional training arm."
     }
   ]
 }

@@ -1,0 +1,1 @@
+{"at": "2026-07-30T10:15:46.769300+00:00", "attempt_id": "5420f59c-8e8d-419e-9cd7-5ca7a3f5732b", "bytes": 349217, "completed_updates": 1, "key": "probe/initialization", "run_id": "ab22f22c-3e0b-497d-bf25-19b5257cf7bf", "schema_version": "1.0", "sha256": "e769e683b88af00a4b75fbf5aa385c0ade4e05a927fbef33e365c074dfe400d8", "step": 0, "uri": "initialization-probe.json"}
