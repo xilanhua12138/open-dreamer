@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 6,
-  "execution_status": "blocked",
+  "record_revision": 7,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T12:56:44+08:00",
   "ended_at": null,
-  "summary": "The zero-update runner failure was repaired and frozen. Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm then emitted finite metrics through 62,601 updates and fixed visuals through 60,001 before an external DSW stop killed the process. The same A10 is Running again, but training remains blocked pending an explicitly authorized fault resume from the retained step-50k checkpoint.",
+  "summary": "Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm emitted finite metrics through 62,601 updates before an external DSW stop. After explicit user authorization, the same frozen runner restored the retained step-50k checkpoint as a new attempt and resumed healthy training. Updates 50,001 through 62,601 are intentionally replayed because no newer durable checkpoint exists.",
   "observations": [
     {
       "type": "train_offline_tokenization_complete",
@@ -67,6 +67,29 @@
       "pipeline_pid_alive": false,
       "gpu_memory_used_mib_after_reallocation": 1,
       "training_restarted": false
+    },
+    {
+      "type": "dynamics_fault_resume_started",
+      "observed_at": "2026-07-31T17:19:31+08:00",
+      "user_authorized": true,
+      "pipeline_pid": 944,
+      "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+      "attempt_id": "9e81f38c-090d-4b59-b11c-669103fa190e",
+      "restored_checkpoint_step": 50000,
+      "first_recovery_metric_completed_updates": 50401,
+      "replayed_update_interval": [
+        50001,
+        62601
+      ],
+      "protocol_changed": false,
+      "steps_per_second": 6.325191156590595,
+      "eta_seconds": 23652.407697452203,
+      "flow_mse": 0.0390625,
+      "grad_norm": 2.902925491333008,
+      "gpu_memory_used_mib": 4396,
+      "gpu_memory_total_mib": 23028,
+      "gpu_utilization_percent_observed": 87,
+      "shutdown_due_at": "2026-08-01T07:16:20+08:00"
     }
   ],
   "comparisons": [],
@@ -79,6 +102,18 @@
       "dynamics_optimizer_updates_before_fix": 0,
       "existing_train_latents_reused": true,
       "verification": "A precise runner regression was red before removing the generic recorder and green afterward."
+    },
+    {
+      "at": "2026-07-31T17:16:43+08:00",
+      "type": "fault_resume_from_latest_durable_checkpoint",
+      "reason": "The external timer interruption occurred after update 62,601, but the newest durable Orbax checkpoint was step 50,000. Explicit user authorization requested continuing the same experiment.",
+      "protocol_changed": false,
+      "restored_checkpoint_step": 50000,
+      "replayed_update_interval": [
+        50001,
+        62601
+      ],
+      "accounting": "The new attempt_id separates replayed metrics from the original attempt; terminal claims use the final completed attempt and preserve both histories."
     }
   ],
   "failures": [
@@ -104,7 +139,9 @@
       "stage": "offline_latent_dynamics_training",
       "type": "infrastructure_interruption",
       "message": "The existing DSW shutdown timer became due and stopped the A10. The run had emitted metrics through completed update 62,601, a 60k fixed validation and a step-50k checkpoint.",
-      "resolved": false,
+      "resolved": true,
+      "resolved_at": "2026-07-31T17:16:43+08:00",
+      "resolution": "Explicitly authorized fault resume from this experiment's own step-50k checkpoint as attempt 9e81f38c-090d-4b59-b11c-669103fa190e.",
       "recoverable_checkpoint_step": 50000,
       "last_metric_completed_updates": 62601,
       "protocol_changed": false
@@ -115,18 +152,19 @@
       "All 4,096 train and 512 held-out latent records preserve exact categorical actions, rewards, terminals, record indices and source raw-tree identities.",
       "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea.",
       "Before the infrastructure interruption, the run emitted finite metrics through 62,601 completed updates, fixed validation videos through 60,001 updates and a durable step-50k checkpoint.",
-      "After the same A10 returned to Running, pipeline PID 1794 was dead and the GPU was idle; no automatic training restart occurred."
+      "After the same A10 returned to Running, pipeline PID 1794 was dead and the GPU was idle; no automatic training restart occurred.",
+      "After explicit user authorization, pipeline PID 944 restored step 50,000 under a new attempt ID. The first retained recovery metric at completed update 50,401 remained finite, and telemetry reported 6.3252 updates/s."
     ],
     "interpretation": [
-      "The offline representation passed its protocol parity gate and the interrupted optimization remained finite through the retained 60k evidence; terminal throughput and quality remain pending."
+      "The offline representation passed its protocol parity gate. The authorized resume is healthy, but terminal throughput and quality remain pending and the replayed 50,001–62,601 interval must not be counted as unique optimizer progress."
     ],
     "not_established": [
       "Whether offline encoding improves dynamics training throughput.",
       "Whether the unchanged 200k dynamics protocol reaches the quality thresholds.",
-      "Whether a resume from the retained checkpoint will preserve the preregistered terminal comparison."
+      "Whether the resumed attempt completes all terminal evaluations."
     ],
     "decision": [
-      "Preserve the interrupted run and resume only the same frozen protocol from its retained checkpoint when explicitly authorized."
+      "Continue only the authorized frozen step-50k fault resume through 200k and terminal evaluation; preserve both attempt histories and do not start another arm."
     ]
   },
   "artifacts": [
@@ -178,6 +216,20 @@
       "uri": "local-task://cr-dyn-0011-sync/interrupted-at-62640/viz/step_060000/rollouts_grid.mp4",
       "retention": "local_task",
       "sha256": "1eeb0f43ca673869addf3f022f009a70418cc049c15cfd5ab6f9896f822223e2"
+    },
+    {
+      "name": "fault-resume run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/recovery-run-state.json",
+      "retention": "git",
+      "sha256": "1e1db6d0b2be97545a6559210b5688fdc0e5c7a36b7e47fb09229266a8d7d762"
+    },
+    {
+      "name": "first retained metric after fault resume",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/recovery-first-metric.json",
+      "retention": "git",
+      "sha256": "8be957c33452e74223991c12c05ada94df982cf014b73f6a84d3c278a116a67e"
     }
   ],
   "revision_history": [
@@ -210,6 +262,11 @@
       "revision": 6,
       "at": "2026-07-31T17:02:29+08:00",
       "reason": "Recorded the external timer interruption, retained 50k checkpoint, 60k validation, finite 62,601-update metric and blocked recovery state without restarting the pipeline."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-31T17:19:31+08:00",
+      "reason": "Recorded the explicitly authorized fault resume, new attempt identity, step-50k restore, replayed-update interval, healthy first recovery metric and refreshed shutdown protection."
     }
   ]
 }

@@ -54,13 +54,23 @@ dynamics recipe instead consumes pre-tokenized latent ArrayRecords.
 - The same A10 returned to `Running` at 2026-07-31 16:48:40 Asia/Shanghai, but
   the old PID was dead and the GPU was idle. The run is therefore blocked
   pending an explicitly authorized fault resume; it was not silently restarted.
+- The user explicitly authorized continuing at 17:16. The same frozen runner
+  restored its latest durable step-50k checkpoint as attempt
+  `9e81f38c-090d-4b59-b11c-669103fa190e`; no model, data or schedule changed.
+- The first retained recovery metric at update 50,401 remained finite
+  (`flow_mse=0.0390625`, `grad_norm=2.9029`). Telemetry reported 6.3252
+  updates/s, about 4.4/23.0 GiB GPU memory and active GPU compute.
+- Because the interruption happened after update 62,601, this recovery must
+  replay updates 50,001–62,601. The new attempt ID keeps the overlapping
+  metric segments distinguishable; the replay is not counted as additional
+  unique optimizer progress.
 
 ### Interpretation
 
 The input-representation parity gate has passed and the interrupted run showed
-healthy finite optimization through 60k. A complete 200k run and terminal
-evaluation are still required before judging the throughput acceptance rule or
-model quality.
+healthy finite optimization through 60k. The authorized recovery is also
+healthy, but a complete 200k run and terminal evaluation are still required
+before judging the throughput acceptance rule or model quality.
 
 ### Not established
 
@@ -69,6 +79,6 @@ model quality.
 
 ### Decision
 
-Preserve the step-50k checkpoint and all 10k–60k evidence. Resume only the same
-frozen latent-only run when explicitly authorized; do not start another arm
-before its 200k terminal evaluations and visual review evidence are available.
+Continue the explicitly authorized step-50k fault resume under its separate
+attempt ID. Preserve both histories and do not start another arm before the
+200k terminal evaluations and visual-review evidence are available.
