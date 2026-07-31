@@ -21,7 +21,8 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
-| `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | running | not evaluated | none |
+| `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
+| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | planned | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | completed | supports hypothesis | smoke test |
@@ -145,12 +146,26 @@ and 16.6M EMA tokenizer fixed. Passing metrics still requires direct visual
 review and does not isolate a single causal factor. Fresh collection has now
 completed with 4,096 train and 512 held-out records. Split, pair and action
 audits passed, all 15 Procgen actions were observed, and the new records expose
-97 legal 64-frame starts and 33 legal 128-frame starts. The live pipeline is
-now training the single 3.93M-parameter repair arm from scratch for 200k
-updates. Before training, the rejected checkpoint scored 18.402460 dB
+97 legal 64-frame starts and 33 legal 128-frame starts. Before training, the
+rejected checkpoint scored 18.402460 dB
 mean-frame PSNR and 0.720044 SSIM on the fixed repair futures. Its aligned
 actions beat shuffled/all-noop controls on this metric subset, but that does
-not override the prior direct visual rejection.
+not override the prior direct visual rejection. The raw-video training arm then
+reached its first fixed validation at step 10,000. Online/EMA shortcut PSNR was
+`26.07/24.94 dB @1`, `22.41/21.69 dB @3` and `19.69/18.73 dB @8`.
+Because the frozen 16.6M tokenizer was being re-encoded on every update, the
+run projected roughly 13 more hours. It was intentionally stopped after
+11,320 completed updates with the 10k video and logs retained; it is aborted,
+not failed evidence for the full quality hypothesis.
+
+`CR-DYN-0011` is preregistered before its latent data exists. It reuses the
+byte-identical CR-DYN-0010 raw train/eval trees and changes only the dynamics
+training input representation: every 160-frame record is deterministically
+encoded once, then dynamics reads latent ArrayRecords. The new path preserves
+actions, rewards, terminals, record order and reward-biased crop semantics,
+and requires a full 4,096/512-record raw-to-latent audit before any optimizer
+update. Model, batch, 64/128 schedule, latent normalization, optimizer, 200k
+budget, `k_max=256` and terminal raw-RGB evaluation remain fixed.
 
 ## Creating or closing an experiment
 

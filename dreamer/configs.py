@@ -50,6 +50,7 @@ class DatasetConfig:
     mouse_repr: str = "categorical"  # "categorical" (mu-law bins, default) or "continuous" ([dx, dy])
     array_record_path: str = "datasets/coinrun_episodes/train"
     validation_array_record_path: str | None = None
+    validation_index_max: int | None = None
     validation_seed: int = 4242
     validation_batch_size: int = 4
     validation_sequence_length: int = 32

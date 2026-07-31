@@ -20,6 +20,11 @@ def load_json(path: Path) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--experiment-id", default="CR-DYN-0010")
+    parser.add_argument(
+        "--repair-arm",
+        default="final-policy-medium-reference-repair",
+    )
     parser.add_argument("--baseline-shortcut", type=Path, required=True)
     parser.add_argument("--baseline-actions", type=Path, required=True)
     parser.add_argument("--repair-shortcut", type=Path, required=True)
@@ -44,7 +49,7 @@ def main() -> None:
 
     payload = {
         "schema_version": "1.0",
-        "experiment_id": "CR-DYN-0010",
+        "experiment_id": args.experiment_id,
         "generated_at": datetime.now().astimezone().isoformat(),
         "baseline": {
             "experiment_id": "CR-DYN-0009",
@@ -53,7 +58,7 @@ def main() -> None:
             "action_conditioning": baseline_actions,
         },
         "repair": {
-            "arm": "final-policy-medium-reference-repair",
+            "arm": args.repair_arm,
             "shortcut": repair_shortcut,
             "diffusion_256_step": repair_diffusion,
             "action_conditioning": repair_actions,

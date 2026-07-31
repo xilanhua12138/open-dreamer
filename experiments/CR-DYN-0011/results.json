@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before offline tokenization or latent dynamics training.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether offline latent records preserve all raw CoinRun transition fields.",
+      "Whether offline encoding improves dynamics training throughput.",
+      "Whether the unchanged 200k dynamics protocol reaches the quality thresholds."
+    ],
+    "decision": [
+      "Freeze and audit a deterministic offline latent copy of the retained CR-DYN-0010 corpus, then train the same medium protocol from scratch."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-31T12:39:40+08:00",
+      "reason": "Preregistered offline latent encoding and same-protocol dynamics training before execution."
+    }
+  ]
+}

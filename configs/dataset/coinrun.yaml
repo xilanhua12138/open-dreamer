@@ -18,6 +18,7 @@ array_record_path: datasets/coinrun_episodes/train
 # Optional fixed held-out batch used for periodic dynamics visualization.
 # When null, training retains the historical current-training-batch behavior.
 validation_array_record_path: null
+validation_index_max: null
 validation_seed: 4242
 validation_batch_size: 4
 validation_sequence_length: 32

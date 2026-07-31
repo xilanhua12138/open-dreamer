@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "retrospective": false,
+  "created_at": "2026-07-31T12:39:40+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun dynamics offline-latent reference repair",
+  "kind": "confirmatory",
+  "question": "Can deterministic offline 16.6M tokenizer encoding preserve the CR-DYN-0010 CoinRun data/action protocol while removing repeated encoder work from every dynamics update?",
+  "reason": "CR-DYN-0010 processed raw RGB records and re-ran the frozen tokenizer encoder inside every training update. The first 10,000-update validation required about 43 minutes of steady-state training and exposed a 13-hour projected 200k schedule. The public OpenDreamer dynamics recipe trains on pre-tokenized latent ArrayRecords instead.",
+  "hypothesis": "Pre-tokenizing each 160-frame record once will preserve action, reward and terminal alignment, retain the same reward-biased crop semantics, and materially improve dynamics update throughput without changing the model, optimizer, token budget or final raw-RGB evaluation protocol.",
+  "falsification": "Reject the infrastructure hypothesis if any latent record differs from its raw source in action/reward/terminal alignment, if reward-biased cropping is not preserved, if the latent run cannot load the fixed train/eval shards, or if steady-state updates through 10k are not faster than CR-DYN-0010. Model-quality criteria remain the same but are not attributed to preprocessing.",
+  "baseline_id": "CR-DYN-0010",
+  "depends_on": [
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DYN-0010"
+  ],
+  "controlled_variable": {
+    "name": "dynamics_training_input_representation",
+    "values": [
+      "CR-DYN-0010 raw uint8 RGB with frozen tokenizer encoder executed in every train step",
+      "CR-DYN-0011 deterministic float32 latent ArrayRecords encoded once before training"
+    ]
+  },
+  "constants": {
+    "raw_train_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+    "raw_eval_tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+    "train_records": 4096,
+    "eval_records": 512,
+    "record_frames": 160,
+    "tokenizer": "n16.6m EMA checkpoint at 20,000 updates",
+    "latent_normalization": "reuse CR-DYN-0010 latent-stats-n16p6m.json exactly",
+    "dynamics_parameters": 3931136,
+    "dynamics_architecture": "depth=4,d_model=256,n_heads=4,n_kv_heads=1,n_register=32",
+    "batch_size": 16,
+    "short_T": 64,
+    "long_T": 128,
+    "long_ratio": 0.1,
+    "reward_biased_sampling_probability": 0.5,
+    "optimizer": "Muon",
+    "learning_rate": 0.0003,
+    "max_steps": 200000,
+    "k_max": 256,
+    "bootstrap_start": 100000,
+    "eval_seed": 4242,
+    "terminal_evaluation_target": "original_rgb"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "4d4da3eaa5c2edb1a96011be2288cb115945ddfd",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": true,
+    "patch_sha256": "4a8614e8a4a328c0a7a04d167fc00773cf650a57f0e4f20ef18a19fb3c1c44cc",
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_offline_latents.sh",
+    "runner_sha256": "0308db91ad7cc930c0c5816e3cff22a43d05dd526cd55dcf54a3891c29c4b62a"
+  },
+  "data": {
+    "raw_train_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+    "raw_eval_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/eval-final-policy-160",
+    "latent_train_uri": "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/train-final-policy-160-n16p6m",
+    "latent_eval_uri": "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/eval-final-policy-160-n16p6m",
+    "latent_record_shape": [
+      160,
+      16,
+      16
+    ],
+    "latent_storage_dtype": "float32",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "transition_alignment": "latents[t]=tokenizer(raw_video[t]), actions[t]=action_t, rewards[t]=reward observed after action_t",
+    "full_pair_audit_required": true
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "One offline encoding pass followed by the unchanged 200,000-update dynamics budget; expected to be substantially shorter than the projected 13-hour raw-video run.",
+    "shutdown_policy": "Reuse only the existing A10. Run serially after CR-DYN-0010 is stopped with its evidence retained. Keep the existing instance timer and extend only if fewer than four hours remain."
+  },
+  "protocol": {
+    "tokenization": {
+      "deterministic": true,
+      "batch_records": 4,
+      "records_per_shard": 256,
+      "output_dtype": "float32",
+      "train_shards": 16,
+      "eval_shards": 2,
+      "staged_atomic_publish": true,
+      "preserve_actions_rewards_terminals": true
+    },
+    "training": {
+      "data_type": "latent",
+      "from_scratch": true,
+      "max_steps": 200000,
+      "batch_size": 16,
+      "short_T": 64,
+      "long_T": 128,
+      "long_ratio": 0.1,
+      "context_length": 128,
+      "k_max": 256,
+      "bootstrap_start": 100000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "checkpoint_every_steps": 25000,
+      "periodic_fixed_heldout_every_steps": 10000
+    },
+    "evaluation": {
+      "periodic_target": "tokenizer_decoded_ground_truth",
+      "terminal_target": "original_rgb",
+      "shortcut_videos": 128,
+      "full_256_step_diffusion_videos": 8,
+      "action_conditioning_videos": 64,
+      "context_frames": 16,
+      "horizon_frames": 16,
+      "same_raw_eval_tree_as_CR_DYN_0010": true
+    },
+    "success_criteria": {
+      "full_train_pair_audit_valid": true,
+      "full_eval_pair_audit_valid": true,
+      "min_steady_state_throughput_speedup_at_10k": 1.25,
+      "min_mean_frame_psnr_db": 22.0,
+      "min_horizon_16_psnr_db": 20.0,
+      "min_aligned_vs_batch_shuffled_horizon_16_db": 0.25,
+      "min_aligned_vs_all_noop_horizon_16_db": 0.5,
+      "visual_review_required": true
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All 4,096 train and 512 eval latent records must preserve exact categorical actions, rewards, terminals, record order and raw-tree identity."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The latent dataloader must preserve CR-DYN-0010 reward-biased window selection and the 64/128, 10% long schedule."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Median steady-state throughput through 10,000 updates must be at least 1.25x the retained CR-DYN-0010 raw-video run."
+    },
+    {
+      "id": "SC-4",
+      "rule": "The run must complete the unchanged 200,000-update model/optimizer protocol and terminal raw-RGB evaluations."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Quality and action thresholds match CR-DYN-0010, but any improvement is a model-training observation rather than a causal claim about offline preprocessing; direct visual review remains mandatory."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1",
+    "/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/data",
+    "/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents",
+    "/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/repair",
+    "/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/repair-assessment.json"
+  ]
+}

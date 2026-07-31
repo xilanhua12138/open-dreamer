@@ -59,6 +59,15 @@ subset, aligned actions beat shuffled and all-noop controls by 2.776499 and
 direct visual rejection of its temporal/action behavior. Fresh latent
 statistics were then computed from 256 videos × 128 frames, and the one
 3.93M-parameter repair arm began its preregistered 200,000 updates from scratch
-at 2026-07-31 11:48:55 Asia/Shanghai. The Codex heartbeat
-`opendreamer-dynamics-repair-monitor` owns subsequent structured monitoring and
-evidence updates. No replacement instance or specification change is allowed.
+at 2026-07-31 11:48:55 Asia/Shanghai. It completed the first fixed validation
+at 10,000 updates and was intentionally stopped at 11,320 updates after
+inspection confirmed that each raw-RGB optimizer batch reran the frozen
+tokenizer encoder. The incomplete run and its rollout video remain retained as
+intermediate evidence; no terminal quality claim is made.
+
+CR-DYN-0011 was preregistered before its execution as the controlled
+replacement. It encodes each complete 160-frame record exactly once, audits
+the latent record identity plus exact action/reward/terminal alignment, and
+preserves the same reward-biased window-selection semantics before training
+the same dynamics model and schedule from scratch. No CR-DYN-0010 checkpoint
+will be reused.

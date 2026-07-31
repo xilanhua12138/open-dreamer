@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0010",
+  "execution_status": "aborted",
+  "operator_stop_at": "2026-07-31T12:39:19+08:00",
+  "reason": "The user requested removal of repeated online tokenizer encoding. The run was retained through its first fixed 10k validation and then stopped before starting the preregistered replacement CR-DYN-0011.",
+  "process": {
+    "signal": "SIGTERM",
+    "train_pid": 19899,
+    "pipeline_pid": 3170,
+    "pipeline_exit_code": 241,
+    "last_completed_updates_after_stop": 11320,
+    "planned_updates": 200000
+  },
+  "fixed_validation_step": 10000,
+  "periodic_shortcut_metrics": {
+    "online": {
+      "psnr_1_db": 26.07,
+      "psnr_3_db": 22.41,
+      "psnr_8_db": 19.69,
+      "mse": 0.313818,
+      "eval_seconds": 70.56
+    },
+    "ema": {
+      "psnr_1_db": 24.94,
+      "psnr_3_db": 21.69,
+      "psnr_8_db": 18.73,
+      "mse": 0.364406,
+      "eval_seconds": 4.37
+    },
+    "target": "original_rgb",
+    "context_frames": 16,
+    "horizon_frames": 16
+  },
+  "artifacts": {
+    "remote_video_uri": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/training/final-policy-medium-reference-repair/viz/step_010000/rollouts_grid.mp4",
+    "local_video_uri": "/Users/xilanhua/WorkSpace/mizzen/mizzen-insight/tmp_agent_output/20260728-open-dreamer-overnight/cr-dyn-0010-aborted-10k/rollouts_grid.mp4",
+    "video_sha256": "f8d4bd122e6c8d16ced57ac0565d45b4b44eebce4d2d62562b72ce7b142e87e8",
+    "remote_run_state_uri": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/training/final-policy-medium-reference-repair/run-state.json",
+    "remote_pipeline_log_uri": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/pipeline.log"
+  },
+  "claim_boundary": "The 10k periodic metrics are an intermediate raw-video observation. They do not evaluate the preregistered 200k success criteria and cannot establish usable world-model quality."
+}

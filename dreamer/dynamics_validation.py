@@ -40,6 +40,13 @@ def build_fixed_validation_batch(
 
     validation_cfg = copy.deepcopy(dataset_cfg)
     validation_cfg.array_record_path = validation_array_record_path
+    validation_index_max = getattr(
+        dataset_cfg,
+        "validation_index_max",
+        None,
+    )
+    if validation_index_max is not None:
+        validation_cfg.index_max = validation_index_max
     validation_cfg.p_include_reward = 0.0
     validation_cfg.dataloader_cfg.B = validation_batch_size
     validation_cfg.dataloader_cfg.num_workers = 0

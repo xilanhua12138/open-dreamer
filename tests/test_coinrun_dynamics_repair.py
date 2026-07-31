@@ -113,6 +113,8 @@ class CoinRunDynamicsRepairTests(unittest.TestCase):
     ) -> None:
         train_cfg = types.SimpleNamespace(
             array_record_path="/train",
+            index_max=16,
+            validation_index_max=2,
             p_include_reward=0.5,
             dataloader_cfg=types.SimpleNamespace(
                 B=16,
@@ -149,6 +151,7 @@ class CoinRunDynamicsRepairTests(unittest.TestCase):
         self.assertEqual(train_cfg.dataloader_cfg.B, 16)
         validation_cfg, kwargs = calls[0]
         self.assertEqual(validation_cfg.array_record_path, "/eval")
+        self.assertEqual(validation_cfg.index_max, 2)
         self.assertEqual(validation_cfg.p_include_reward, 0.0)
         self.assertEqual(validation_cfg.dataloader_cfg.B, 4)
         self.assertEqual(validation_cfg.dataloader_cfg.num_workers, 0)
