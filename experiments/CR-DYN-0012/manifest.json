@@ -63,7 +63,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "6b05e623abff5b5568a317053524f43fbb353468",
     "branch": "feat/coinrun-dynamics-stage-scale",
     "dirty": false,
     "patch_sha256": null,
