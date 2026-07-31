@@ -163,6 +163,25 @@ class CoinRunLatentDatasetTests(unittest.TestCase):
             runner,
         )
 
+    def test_offline_tokenization_is_not_wrapped_as_a_training_run(
+        self,
+    ) -> None:
+        runner = (
+            self.repository_root
+            / "scripts/experiments/coinrun"
+            / "run_coinrun_dynamics_offline_latents.sh"
+        ).read_text(encoding="utf-8")
+        tokenize_body = runner.split("tokenize_split() {", 1)[1].split(
+            "\n}\n\naudit_split()",
+            1,
+        )[0]
+
+        self.assertNotIn(
+            "scripts/experiments/run_recorded.py",
+            tokenize_body,
+            "offline preprocessing owns metadata.json, not training run-state",
+        )
+
     def test_offline_latent_experiment_is_preregistered_as_a_new_id(
         self,
     ) -> None:

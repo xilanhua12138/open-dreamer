@@ -63,22 +63,16 @@ tokenize_split() {
     return
   fi
   stage "TOKENIZING_${split^^}_COINRUN_RECORDS_OFFLINE"
-  "${DYNAMICS_PYTHON}" scripts/experiments/run_recorded.py \
-    --experiment-id CR-DYN-0011 \
-    --run-name "coinrun-offline-latents-${split}" \
-    --run-dir "${RUN_ROOT}/tokenization/${split}" \
-    --experiment-dir "${ROOT}/experiments/CR-DYN-0011" \
-    -- \
-    "${DYNAMICS_PYTHON}" \
-      scripts/experiments/coinrun/tokenize_coinrun_dataset.py \
-      --checkpoint "${TOKENIZER}" \
-      --input-dir "${raw_dataset}" \
-      --output-dir "${latent_dataset}" \
-      --split "${split}" \
-      --expected-records "${records}" \
-      --expected-frames 160 \
-      --batch-records 4 \
-      --records-per-shard 256
+  "${DYNAMICS_PYTHON}" \
+    scripts/experiments/coinrun/tokenize_coinrun_dataset.py \
+    --checkpoint "${TOKENIZER}" \
+    --input-dir "${raw_dataset}" \
+    --output-dir "${latent_dataset}" \
+    --split "${split}" \
+    --expected-records "${records}" \
+    --expected-frames 160 \
+    --batch-records 4 \
+    --records-per-shard 256
 }
 
 audit_split() {
