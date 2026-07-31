@@ -50,6 +50,7 @@ validation.every_steps=<preregistered-interval>
 | `CR-DYN-0004` | `probe_coinrun_dynamics_scaling.py`, `run_coinrun_large_fixed20k.sh` |
 | `CR-DYN-0005` | `select_best_coinrun_checkpoint.py`, `eval_coinrun_context_ablation.py`, `run_coinrun_context_ablation.sh` |
 | `CR-DEMO-0001` | `live_coinrun_demo.py`, `run_coinrun_live_demo.sh`, `smoke_live_coinrun_demo.sh` |
+| `CR-DEMO-0003` | `live_coinrun_continuous_demo.py` |
 | `CR-PPO-0001` | `prepare_coinrun_ppo_runtime.sh`, `train_coinrun_ppo.py`, `collect_coinrun_ppo_records.py`, `audit_coinrun_records.py`, `verify_coinrun_dataset_pair.py`, `run_coinrun_ppo_collector.sh` |
 
 `run_coinrun_extension_pipeline.sh` orders the large run, checkpoint selection, context ablation, and demo startup. It must remain idempotent through its PID/status/ready files.
