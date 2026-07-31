@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "generated_at": "2026-08-01T00:38:03.968530+08:00",
+  "checkpoint": {
+    "step": 199999,
+    "completed_updates": 200000,
+    "parameters": 3931136,
+    "tree_sha256": "7fa36878716d9d943a947882402a9e27437707f1fbd64022e264a67e3d72485c",
+    "files": 62,
+    "bytes": 99518770,
+    "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents/checkpoints/199999"
+  },
+  "shortcut_original_rgb": {
+    "num_videos": 128,
+    "context_frames": 16,
+    "predicted_frames": 16,
+    "mean_video_psnr_db": 21.896702869279224,
+    "mean_frame_psnr_db": 24.065977073795885,
+    "mean_ssim": 0.8339793744239616,
+    "psnr_by_horizon_db": {
+      "1": 31.227683105603973,
+      "3": 29.106967280098086,
+      "8": 26.388975401553534,
+      "16": 24.065977073795885
+    },
+    "ssim_by_horizon": {
+      "1": 0.9248416348546039,
+      "3": 0.9044299276244221,
+      "8": 0.8718785104908018,
+      "16": 0.8339793744239616
+    }
+  },
+  "full_diffusion_256_step_original_rgb": {
+    "num_videos": 8,
+    "context_frames": 16,
+    "predicted_frames": 16,
+    "mean_video_psnr_db": 22.448113411274846,
+    "mean_frame_psnr_db": 24.053034640016527,
+    "mean_ssim": 0.8468036487076912,
+    "psnr_by_horizon_db": {
+      "1": 28.43422728363293,
+      "3": 27.66918598717379,
+      "8": 25.992510637019905,
+      "16": 24.053034640016527
+    },
+    "ssim_by_horizon": {
+      "1": 0.9174655085275116,
+      "3": 0.9005922324047636,
+      "8": 0.8742831331874209,
+      "16": 0.8468036487076912
+    }
+  },
+  "action_conditioning_original_rgb": {
+    "num_videos": 64,
+    "context_frames": 16,
+    "predicted_frames": 16,
+    "seed": 4242,
+    "denoise_steps": 4,
+    "fixed_noise": true,
+    "aligned": {
+      "mean_video_psnr_db": 23.792630098005482,
+      "mean_frame_psnr_db": 26.210389047511494,
+      "mean_ssim": 0.8759594526910619,
+      "horizon_16_psnr_db": 26.210389047511494
+    },
+    "batch_shuffled": {
+      "mean_video_psnr_db": 15.24526736234283,
+      "mean_frame_psnr_db": 18.404332755988186,
+      "mean_ssim": 0.6872583843843973,
+      "horizon_16_psnr_db": 18.404332755988186
+    },
+    "one_step_shifted": {
+      "mean_video_psnr_db": 20.11089539150777,
+      "mean_frame_psnr_db": 23.326100693186156,
+      "mean_ssim": 0.8089722823409625,
+      "horizon_16_psnr_db": 23.326100693186156
+    },
+    "all_noop": {
+      "mean_video_psnr_db": 16.61587657186855,
+      "mean_frame_psnr_db": 19.729838385963525,
+      "mean_ssim": 0.7094427447337849,
+      "horizon_16_psnr_db": 19.729838385963525
+    },
+    "aligned_horizon_16_advantage_db": {
+      "batch_shuffled": 7.8060562915233085,
+      "one_step_shifted": 2.8842883543253386,
+      "all_noop": 6.480550661547969
+    }
+  },
+  "baseline_delta": {
+    "baseline_experiment_id": "CR-DYN-0009",
+    "baseline_arm": "final_only-medium",
+    "baseline_shortcut_mean_frame_psnr_db": 18.402459719482287,
+    "shortcut_mean_frame_psnr_db": 5.663517354313598
+  },
+  "preregistered_assessment": {
+    "quality_pass": true,
+    "action_use_pass": true,
+    "overall_metric_pass": true,
+    "visual_review_required": true,
+    "quality_claim": "awaiting_visual_review"
+  },
+  "full_source_evidence": [
+    {
+      "name": "shortcut metrics",
+      "sha256": "af9e41fcfe3a5bc18225ed6448590116c054bf0f507f42b7aa5bf0d86c34c22c"
+    },
+    {
+      "name": "full-diffusion metrics",
+      "sha256": "4dcbef1094727058b58c112301884cb18ad6a1132c73233b7cab9fbc1305d6f8"
+    },
+    {
+      "name": "action-conditioning metrics",
+      "sha256": "b2f2ef9fa78f15c5c439a2bcb34a0655b92608c3c7a114c82acd1e7bd476f25c"
+    },
+    {
+      "name": "repair assessment",
+      "sha256": "af2ff93b0b855225e318388bf9b7806a654cec5feff70494424e0eeaae7f8c11"
+    },
+    {
+      "name": "terminal run state",
+      "sha256": "6f08c8303ef2f664c3deed24e3f072deb0f1e7ed1e240db5701b277cde536535"
+    },
+    {
+      "name": "runtime identity",
+      "sha256": "2dd60bbbbbd0489b5f2528ef15e93b1ea032e4a4a95c9d9a87f8d3f32dbfc4a6"
+    }
+  ]
+}

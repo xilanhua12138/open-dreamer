@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 9,
-  "execution_status": "running",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
+  "record_revision": 10,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "internal_result",
   "started_at": "2026-07-31T12:56:44+08:00",
-  "ended_at": null,
-  "summary": "Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm emitted finite metrics through 62,601 updates before an external DSW stop. After explicit user authorization, the same frozen runner restored the retained step-50k checkpoint as a new attempt, replayed the unavoidable overlap and has now reached 110,597/200,000 finite updates with fixed validation through 110k and a step-100k checkpoint.",
+  "ended_at": "2026-08-01T00:38:04+08:00",
+  "summary": "All 4,608 raw-to-latent pair audits passed, offline latents improved median 1k-10k update throughput by 1.6432x over the raw-RGB baseline, and the recovered 3.93M run completed its unchanged 200,000-update timeline plus shortcut, 256-step diffusion and action-corruption evaluations. Shortcut mean-frame PSNR reached 24.0660 dB and aligned actions beat shuffled/all-noop controls by 7.8061/6.4806 dB at horizon 16. All preregistered numeric gates passed; direct visual acceptance remains pending.",
   "observations": [
     {
       "type": "train_offline_tokenization_complete",
@@ -126,6 +126,28 @@
       "training_pipeline_alive": true,
       "training_completed_updates_after_demo_start": 119027,
       "claim": "qualitative_preview_only"
+    },
+    {
+      "type": "terminal_training_and_evaluation_complete",
+      "observed_at": "2026-08-01T00:38:04+08:00",
+      "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+      "attempt_id": "9e81f38c-090d-4b59-b11c-669103fa190e",
+      "completed_updates": 200000,
+      "checkpoint_step": 199999,
+      "checkpoint_tree_sha256": "7fa36878716d9d943a947882402a9e27437707f1fbd64022e264a67e3d72485c",
+      "shortcut_mean_frame_psnr_db": 24.065977073795885,
+      "shortcut_mean_ssim": 0.8339793744239616,
+      "full_diffusion_mean_frame_psnr_db": 24.053034640016527,
+      "full_diffusion_mean_ssim": 0.8468036487076912,
+      "aligned_vs_batch_shuffled_horizon_16_db": 7.8060562915233085,
+      "aligned_vs_all_noop_horizon_16_db": 6.480550661547969,
+      "median_1k_10k_steps_per_second": 6.598613532977394,
+      "raw_rgb_baseline_median_1k_10k_steps_per_second": 4.015728299218011,
+      "median_throughput_speedup": 1.643192228483773,
+      "numeric_quality_pass": true,
+      "action_use_pass": true,
+      "visual_review_required": true,
+      "quality_claim": "awaiting_visual_review"
     }
   ],
   "comparisons": [],
@@ -187,21 +209,22 @@
     "observed": [
       "All 4,096 train and 512 held-out latent records preserve exact categorical actions, rewards, terminals, record indices and source raw-tree identities.",
       "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea.",
-      "Before the infrastructure interruption, the run emitted finite metrics through 62,601 completed updates, fixed validation videos through 60,001 updates and a durable step-50k checkpoint.",
-      "After the same A10 returned to Running, pipeline PID 1794 was dead and the GPU was idle; no automatic training restart occurred.",
-      "After explicit user authorization, pipeline PID 944 restored step 50,000 under a new attempt ID. The first retained recovery metric at completed update 50,401 remained finite, and telemetry reported 6.3252 updates/s.",
-      "The recovery surpassed the prior 62,601-update high-water mark and reached 110,597/200,000 updates. Fixed validation exists through 110k, checkpoints through step 100k and the latest retained flow MSE remains finite at 0.041015625."
+      "Before the infrastructure interruption, the run emitted finite metrics through 62,601 completed updates, fixed validation videos through 60,001 updates and a durable step-50k checkpoint; the explicitly authorized recovery preserved this history and replayed updates 50,001 through 62,601 under a new attempt ID.",
+      "The recovered run reached exactly 200,000 completed updates and checkpoint step 199,999; the final checkpoint contains 62 files, 99,518,770 bytes and has project-canonical tree SHA256 7fa36878716d9d943a947882402a9e27437707f1fbd64022e264a67e3d72485c.",
+      "Median recorder throughput over non-null progress samples from updates 1,001 through 10,000 was 6.5986 updates/s from offline latents versus 4.0157 updates/s from CR-DYN-0010 raw RGB, a 1.6432x speedup above the preregistered 1.25x gate.",
+      "On 128 original-RGB shortcut videos, mean-frame PSNR was 24.065977 dB and mean SSIM was 0.833979; on eight 256-step full-diffusion videos they were 24.053035 dB and 0.846804.",
+      "In the fixed 64-video action control, aligned actions reached 26.210389 dB at horizon 16 and exceeded batch-shuffled and all-noop actions by 7.806056 and 6.480551 dB. All preregistered numeric quality and action-use thresholds passed."
     ],
     "interpretation": [
-      "The offline representation passed its protocol parity gate and the authorized resume is healthy beyond the interrupted high-water mark. Terminal quality remains pending, the replayed 50,001–62,601 interval must not be counted as unique optimizer progress, and fluctuating periodic shortcut scores must not be interpreted post hoc."
+      "Offline latent encoding preserved the audited transition protocol, removed repeated tokenizer work and materially accelerated the same dynamics training recipe. The terminal metric and action-control gates support the preregistered infrastructure hypothesis, while the replayed 50,001–62,601 interval remains a recorded fault-recovery deviation rather than unique extra budget."
     ],
     "not_established": [
-      "Whether offline encoding improves dynamics training throughput.",
-      "Whether the unchanged 200k dynamics protocol reaches the quality thresholds.",
-      "Whether the resumed attempt completes all terminal evaluations."
+      "Whether the terminal rollouts are visually acceptable for interactive use; direct review is still required.",
+      "Which individual change in the broader CR-DYN-0010 repair bundle caused its quality gain.",
+      "Whether capacity above 3.93M improves this completed recipe; CR-DYN-0012 remains gated behind NanoDreamer validation."
     ],
     "decision": [
-      "Continue only the authorized frozen step-50k fault resume through 200k and terminal evaluation; preserve both attempt histories and do not start another arm."
+      "Use these frozen terminal values as the formal Medium reference for NanoDreamer parity. Keep XLarge paused until the Nano Tokenizer, PPO, data/latent audits, Dynamics and real continuous demo all pass their own reference tolerances."
     ]
   },
   "artifacts": [
@@ -295,6 +318,71 @@
       "uri": "experiments/CR-DYN-0011/raw/100k-live-demo-preview.json",
       "retention": "git",
       "sha256": "60d7ce7039f6eee071309be75861cd81e2d938e7090117b38e3ee16e6d1ae822"
+    },
+    {
+      "name": "terminal run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/terminal-run-state.json",
+      "retention": "git",
+      "sha256": "6f08c8303ef2f664c3deed24e3f072deb0f1e7ed1e240db5701b277cde536535"
+    },
+    {
+      "name": "terminal throughput comparison",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/terminal-throughput-summary.json",
+      "retention": "git",
+      "sha256": "6bbfc37e4590b9ea2e75e905e46c7343f2388c717b75fc886c106c0df4633b30"
+    },
+    {
+      "name": "terminal evaluation summary",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/terminal-evaluation-summary.json",
+      "retention": "git",
+      "sha256": "3b5a43fb66e2222b49d217b655c4796696b8f9c575ca437eab9c5af360765fa7"
+    },
+    {
+      "name": "terminal checkpoint step 199999",
+      "kind": "checkpoint_directory",
+      "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents/checkpoints/199999",
+      "retention": "remote_workspace",
+      "tree_sha256": "7fa36878716d9d943a947882402a9e27437707f1fbd64022e264a67e3d72485c",
+      "files": 62,
+      "bytes": 99518770
+    },
+    {
+      "name": "terminal full metric evidence",
+      "kind": "json_collection",
+      "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/repair",
+      "retention": "remote_workspace",
+      "sha256s": {
+        "shortcut-metrics.json": "af9e41fcfe3a5bc18225ed6448590116c054bf0f507f42b7aa5bf0d86c34c22c",
+        "diffusion-256-step-metrics.json": "4dcbef1094727058b58c112301884cb18ad6a1132c73233b7cab9fbc1305d6f8",
+        "action-conditioning.json": "b2f2ef9fa78f15c5c439a2bcb34a0655b92608c3c7a114c82acd1e7bd476f25c",
+        "repair-assessment.json": "af2ff93b0b855225e318388bf9b7806a654cec5feff70494424e0eeaae7f8c11"
+      }
+    },
+    {
+      "name": "terminal runtime identity",
+      "kind": "json",
+      "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents/runtime-identity.json",
+      "retention": "remote_workspace",
+      "sha256": "2dd60bbbbbd0489b5f2528ef15e93b1ea032e4a4a95c9d9a87f8d3f32dbfc4a6"
+    },
+    {
+      "name": "terminal rollout review videos",
+      "kind": "mp4_collection",
+      "uri": "local-task://cr-dyn-0011-terminal",
+      "retention": "local_task",
+      "count": 7,
+      "sha256s": [
+        "3c94a46e4535510cbc0b35929cdcfb9475eaff6f2b1434e41ae478c43783a3cf",
+        "4eb818a229ceaa4ea5d759b4637a2232ee44c74f5bf8c4de055fcd70af9273d1",
+        "25ac44fb50fd8792b1ffe85c80813a57b6bc8b9c541138c28c2fda7446cb0d07",
+        "c58597833be9b7a32ea0409d92f84deaa6d89b9ea783af3c46958eb0ee6a8cb8",
+        "921014caca21ea76a2b8f3328aea7fd34db4885b05caa6fef5b3e0d11f4e1514",
+        "c58597833be9b7a32ea0409d92f84deaa6d89b9ea783af3c46958eb0ee6a8cb8",
+        "3c94a46e4535510cbc0b35929cdcfb9475eaff6f2b1434e41ae478c43783a3cf"
+      ]
     }
   ],
   "revision_history": [
@@ -342,6 +430,11 @@
       "revision": 9,
       "at": "2026-07-31T20:31:20+08:00",
       "reason": "Recorded the user-requested step-100k continuous live preview, remote/local runtime and held-right/release verification, and evidence that the main 200k training pipeline remained alive."
+    },
+    {
+      "revision": 10,
+      "at": "2026-08-01T00:38:04+08:00",
+      "reason": "Closed the recovered 200k run with project-canonical checkpoint identity, recorder-derived throughput comparison, terminal shortcut/full-diffusion/action-control metrics and the explicit awaiting-visual-review claim boundary."
     }
   ]
 }

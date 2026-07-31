@@ -29,7 +29,7 @@ infrastructure and verifier defects, and records the current claim boundaries.
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
-| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | running | not evaluated | none |
+| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | completed | supports hypothesis | internal result |
 | `CR-DYN-0012` | Does a 52.80M dynamics model improve the completed 200k offline-latent recipe? | planned | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
@@ -185,15 +185,17 @@ and requires a full 4,096/512-record raw-to-latent audit before any optimizer
 update. Model, batch, 64/128 schedule, latent normalization, optimizer, 200k
 budget, `k_max=256` and terminal raw-RGB evaluation remain fixed.
 
-The offline train/eval corpora and all 4,608 pair audits passed, and the
-from-scratch dynamics arm emitted fixed visuals through 60k plus finite
-metrics through completed update 62,601. An existing DSW shutdown timer then
-stopped the A10. The same instance returned to `Running`, but the stale PID was
-dead and the GPU idle. After explicit user authorization, the same frozen
-runner restored the newest durable step-50k checkpoint as a new attempt. This
-necessarily replays updates 50,001–62,601; the separate attempt ID preserves
-both metric histories, and the replay is not unique additional optimizer
-progress. Recovery metrics are finite and training is active.
+The offline train/eval corpora and all 4,608 pair audits passed. An existing
+DSW shutdown timer interrupted the first attempt after metric update 62,601;
+the explicitly authorized recovery restored step 50k under a new attempt ID,
+preserved both histories and replayed updates 50,001–62,601 without counting
+them as unique extra budget. The recovered run completed the exact 200k
+timeline and terminal evaluations. Median 1k–10k throughput improved from
+4.0157 to 6.5986 updates/s (1.6432x). Shortcut/full-diffusion mean-frame PSNR
+was 24.0660/24.0530 dB, and aligned actions beat shuffled/all-noop controls by
+7.8061/6.4806 dB at horizon 16. All numeric gates passed; visual acceptance
+remains pending. This terminal checkpoint is the formal Medium reference for
+NanoDreamer parity, while XLarge remains gated behind the full Nano chain.
 
 `CR-DYN-0012` is preregistered before CR-DYN-0011 terminal metrics and before
 any xlarge GPU execution. It changes only dynamics capacity from 3,931,136 to

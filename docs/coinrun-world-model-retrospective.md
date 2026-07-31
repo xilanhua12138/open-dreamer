@@ -29,8 +29,9 @@
 7. 参考式修复第一次直接读取 RGB，每个 optimizer update 都重复运行冻结的 16.6M Tokenizer，算力浪费在重复编码上；因此改成一次性离线 latent。
 8. Live Demo 先后暴露了 dtype 漂移、阻塞式逐帧 RPC、重复 context prefill、错误 worktree import、checkpoint 路径语义和输入 revision 时钟单位等运行时问题。这些问题会让一个模型看起来“完全没反应”，但不能归因给模型权重。
 
-当前 Demo 的输入链和连续运行时已经工作；这只证明交互外壳正确。当前展示的是
-`CR-DYN-0011` 的早期 `25k` checkpoint，完整 `200k` Dynamics 训练和终态视觉验收尚未完成。
+连续运行时已经工作；这只证明交互外壳正确。`CR-DYN-0011` 现已完成
+`200k` Dynamics 训练、shortcut、256-step full diffusion 和 action controls。
+所有预注册数值门通过，但终态视觉验收仍未完成，因此不能把数值通过写成可用 Demo。
 
 ## 1. 先把问题拆成四个独立对象
 
@@ -462,13 +463,16 @@ optimizer update 都把选中的 RGB 帧重新送进冻结的 16.6M Tokenizer en
 `run-state.json`。这是生命周期归属错误，不是数据或模型错误。精确红测试确认后，
 将离线预处理与训练 recorder 分离。
 
-截至 2026-07-31 14:41 Asia/Shanghai：
+首次 attempt 在 metric update 62,601 后被外部关机 timer 中断；显式授权的恢复
+从 step 50k 继续，并把 replay 的 50,001–62,601 保留为 deviation。恢复最终完成
+`200,000` updates 和 step 199,999 checkpoint。
 
-- 训练从头运行到 `33,601 / 200,000` completed updates；
-- `25k` checkpoint 已保存；
-- 训练进程约使用 4.4 GiB GPU memory；
-- Demo 进程约使用 0.5 GiB；
-- 当前没有终态 quality claim。
+- 1k–10k recorder median throughput：raw RGB `4.0157` updates/s，offline latent
+  `6.5986` updates/s，即 `1.6432x`；
+- shortcut：`24.065977 dB / 0.833979 SSIM`；
+- 256-step full diffusion：`24.053035 dB / 0.846804 SSIM`；
+- horizon-16 aligned 相对 shuffled / all-noop：`+7.806056 / +6.480551 dB`；
+- 数值门全部通过，终态 claim 仍为 `awaiting_visual_review`。
 
 ## 7. Live Demo：模型 bug、运行时 bug和验证器 bug要分开
 
@@ -621,27 +625,29 @@ Dynamics 对任何动作都没反应。
 - PPO final-only 轨迹在当前 2,048-record mixture 比 uniform/recency 更好；
 - 64-frame corpus 让 reward-biased crop 失效；
 - 离线 latent 完整保留 actions/rewards/terminals/order；
-- continuous Demo runtime、cache、press/release 和 25k checkpoint 输入链已工作。
+- 离线 latent 把同协议 1k–10k median throughput 提高到 1.6432x；
+- `CR-DYN-0011` 完成 200k，并通过 shortcut、full diffusion 和 action controls 的数值门；
+- continuous Demo runtime、cache、press/release 和 step-100k preview 输入链已工作。
 
 ### 尚未建立
 
-- `CR-DYN-0011` 完整 200k 后是否达到可用视觉质量；
-- 它是否在固定 future 上通过完整 shortcut、full diffusion 和 action controls；
-- 25k 之后画面是否长期不漂移；
+- `CR-DYN-0011` 200k 终态画面是否达到可用视觉质量；
+- 200k 画面是否长期不漂移；
 - 玩家是否认为动作改变未来的方向、跳跃和碰撞足够可信；
 - 结果是否跨 seed、跨 level 或跨游戏成立；
 - 任何“可以发 paper”的通用初始化结论。
 
 ## 10. 当前下一步和停止条件
 
-只继续当前 `CR-DYN-0011`：
+当前顺序已经冻结：
 
-1. 在 50k / 100k / 200k 保存固定 validation visuals；
-2. 终态同时跑 shortcut、full diffusion、aligned/shuffled/shifted/all-noop；
-3. 比较相同 fixed futures，不跨 evaluator 直接比较绝对 PSNR；
-4. 将通过指标与用户视觉验收分开；
-5. 只有完整模型过关，才把新 checkpoint 切到 continuous Demo；
-6. 不再同时改变 Tokenizer、数据 mixture、Dynamics scale、context 和 sampler。
+1. 先用 NanoDreamer 分文件复现正式 Tokenizer、PPO、数据/latent audits 和
+   `CR-DYN-0011` Medium；
+2. 每段使用同一 held-out evaluator 和预注册 tolerance，不用 training metric 代替；
+3. Nano continuous Demo 必须通过真实 held-input/state progression，并由真实
+   Nano checkpoint 生成 README GIF；
+4. 只有完整 Nano 链通过，才恢复 `CR-DYN-0012` XLarge；
+5. 继续把指标通过与用户视觉验收分开，不同时改变数据、context、sampler 和 scale。
 
 最终 Demo 验收必须同时满足：
 

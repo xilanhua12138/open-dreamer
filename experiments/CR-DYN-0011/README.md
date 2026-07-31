@@ -45,49 +45,55 @@ dynamics recipe instead consumes pre-tokenized latent ArrayRecords.
   terminals, record order and raw-tree identities are preserved.
 - After a zero-update preprocessing-wrapper repair, the unchanged 3.93M
   dynamics arm started from scratch at 2026-07-31 13:11:38 Asia/Shanghai.
-- Before an external instance stop, the run emitted structured metrics through
-  62,601 completed updates and fixed validation videos through 60,001
-  completed updates. The latest durable checkpoint is step 50,000.
-- The last pre-stop telemetry reported 5.7366 updates/s, finite loss and an ETA
-  of 23,974 seconds. The 60k train metric remained finite at flow MSE
-  0.0380859375.
-- The same A10 returned to `Running` at 2026-07-31 16:48:40 Asia/Shanghai, but
-  the old PID was dead and the GPU was idle. The run is therefore blocked
-  pending an explicitly authorized fault resume; it was not silently restarted.
-- The user explicitly authorized continuing at 17:16. The same frozen runner
-  restored its latest durable step-50k checkpoint as attempt
-  `9e81f38c-090d-4b59-b11c-669103fa190e`; no model, data or schedule changed.
-- The first retained recovery metric at update 50,401 remained finite
-  (`flow_mse=0.0390625`, `grad_norm=2.9029`). Telemetry reported 6.3252
-  updates/s, about 4.4/23.0 GiB GPU memory and active GPU compute.
-- Because the interruption happened after update 62,601, this recovery must
-  replay updates 50,001–62,601. The new attempt ID keeps the overlapping
-  metric segments distinguishable; the replay is not counted as additional
-  unique optimizer progress.
-- The recovery has now passed the interrupted high-water mark and reached
-  110,597/200,000 completed updates. The latest retained training metric is
-  finite (`flow_mse=0.041015625`, `grad_norm=1.3421`), and progress telemetry
-  reported 5.5925 updates/s with about 16,048 seconds remaining.
-- Fixed-validation videos for 70k, 80k, 90k, 100k and 110k were synchronized
-  to the local task archive. Checkpoints now exist through step 100,000. The
-  periodic shortcut scores fluctuate substantially, so they are preserved as
-  intermediate observations rather than treated as a quality conclusion.
+- An external timer interrupted the first attempt after metric update 62,601.
+  The explicitly authorized recovery restored this experiment's step-50k
+  checkpoint under attempt `9e81f38c-090d-4b59-b11c-669103fa190e`; updates
+  50,001–62,601 were replayed and remain recorded as a deviation.
+- The recovery completed the unchanged 200,000-update timeline. Final
+  checkpoint step 199,999 contains 62 files / 99,518,770 bytes and has
+  project-canonical tree SHA256
+  `7fa36878716d9d943a947882402a9e27437707f1fbd64022e264a67e3d72485c`.
+- Over recorder progress samples from updates 1,001–10,000, median throughput
+  was 6.5986 updates/s from offline latents versus 4.0157 updates/s from raw
+  RGB: a 1.6432x speedup, above the preregistered 1.25x gate.
+
+Terminal original-RGB metrics:
+
+| Evaluation | Videos | Mean-frame PSNR | Mean-video PSNR | Mean SSIM |
+|---|---:|---:|---:|---:|
+| Shortcut | 128 | 24.065977 dB | 21.896703 dB | 0.833979 |
+| Full diffusion, 256 steps | 8 | 24.053035 dB | 22.448113 dB | 0.846804 |
+
+Fixed-noise action control over 64 held-out futures:
+
+| Future actions | Horizon-16 PSNR | Mean SSIM | Delta vs aligned |
+|---|---:|---:|---:|
+| Aligned | 26.210389 dB | 0.875959 | — |
+| Batch shuffled | 18.404333 dB | 0.687258 | -7.806056 dB |
+| One-step shifted | 23.326101 dB | 0.808972 | -2.884288 dB |
+| All no-op | 19.729838 dB | 0.709443 | -6.480551 dB |
+
+All preregistered numeric quality and action-use gates passed. Direct visual
+review remains mandatory and is not inferred from these metrics.
 
 ### Interpretation
 
-The input-representation parity gate has passed, the authorized recovery has
-surpassed the interrupted high-water mark, and optimization remains finite
-through 110k. A complete 200k run and terminal evaluation are still required
-before judging model quality; the periodic validation variance reinforces why
-no single intermediate PSNR should be selected post hoc.
+Offline latent encoding preserved the audited transition protocol and removed
+repeated tokenizer work while materially accelerating the same dynamics
+recipe. Terminal shortcut, full-diffusion and action-control metrics support
+the preregistered infrastructure hypothesis. The replayed interval is a
+fault-recovery deviation, not extra scientific budget.
 
 ### Not established
 
-- The preregistered throughput speedup relative to CR-DYN-0010.
-- Dynamics quality or usability.
+- Visual acceptability or interactive usability of the terminal checkpoint.
+- Which individual part of the broader reference-recipe repair caused the
+  quality gain.
+- Whether a model larger than 3.93M improves this completed recipe.
 
 ### Decision
 
-Continue the explicitly authorized step-50k fault resume under its separate
-attempt ID. Preserve both histories and do not start another arm before the
-200k terminal evaluations and visual-review evidence are available.
+Use this checkpoint and its terminal metrics as the formal Medium reference for
+NanoDreamer parity. Keep CR-DYN-0012 XLarge paused until NanoDreamer reproduces
+the Tokenizer, PPO, full data/latent audits, Dynamics controls and continuous
+demo within its frozen tolerances. Quality remains `awaiting_visual_review`.
