@@ -46,7 +46,12 @@ are frozen. This source includes a pre-execution, protocol-neutral lazy import
 fix after the lightweight CI reproduced a missing optional Grain dependency.
 After the first same-instance start attempt was blocked by temporary inventory,
 the same A10 returned to Running. Frozen remote preflight passed and exactly one
-pipeline started at 2026-07-31 11:39:55 Asia/Shanghai. It is collecting the
-fresh 160-frame train corpus. The Codex heartbeat
+pipeline started at 2026-07-31 11:39:55 Asia/Shanghai. Fresh collection then
+completed with 4,096 train and 512 held-out records, each 160 frames. The train,
+held-out and pair audits are valid, both corpora expose all 15 Procgen actions,
+and action 4 is recorded as no-op. The repaired sampler now has 97 legal
+64-frame starts and 33 legal 128-frame starts instead of one inert crop. The
+same live pipeline advanced to fixed-future evaluation of the rejected medium
+baseline before beginning the 200k repair training. The Codex heartbeat
 `opendreamer-dynamics-repair-monitor` owns subsequent structured monitoring and
 evidence updates. No replacement instance or specification change is allowed.

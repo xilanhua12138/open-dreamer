@@ -1,0 +1,28 @@
+{
+  "errors": [],
+  "eval": {
+    "audit": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/data/eval-audit.json",
+    "audit_sha256": "f1bee1584bf58ba7888ec58abfecb7619509526676ad1caf152796119e6f9633",
+    "level_range": [
+      10000,
+      10500
+    ],
+    "metadata": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/eval-final-policy-160/metadata.json",
+    "metadata_sha256": "9dd06d875d58a7edb1c2513fe74d0361fa8ab98592f4da4a1853dbd5a0d255a1",
+    "tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5"
+  },
+  "schema_version": "1.0",
+  "shared_policy_checkpoint_sha256": "8ebfa7a91e5b52ce2d51294fa0a9aa3a520f4bb1f2a6a2d17e5b4e154023e811",
+  "train": {
+    "audit": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/data/train-audit.json",
+    "audit_sha256": "1ef0548dbce193fa60abe985c90c39a94dc5586062e42d625a969a1ce6afc093",
+    "level_range": [
+      0,
+      500
+    ],
+    "metadata": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160/metadata.json",
+    "metadata_sha256": "43729cd7e276d875ef9d7c45a74d357b37bfc1040cb82862651336a3b1270d6b",
+    "tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4"
+  },
+  "valid": true
+}

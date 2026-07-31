@@ -1,0 +1,12 @@
+{
+  "dataset": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+  "long_start_positions": 33,
+  "long_window": 128,
+  "metadata_sha256": "43729cd7e276d875ef9d7c45a74d357b37bfc1040cb82862651336a3b1270d6b",
+  "p_include_reward": 0.5,
+  "record_frames": 160,
+  "reward_bias_operational": true,
+  "schema_version": "1.0",
+  "short_start_positions": 97,
+  "short_window": 64
+}

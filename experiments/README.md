@@ -142,7 +142,12 @@ exploratory bundle: fresh episode-safe 160-frame final-PPO records, mixed
 64/128-frame training, `k_max=256`, 200,000 updates, fixed held-out periodic
 visuals and future-action corruption controls. It keeps the medium architecture
 and 16.6M EMA tokenizer fixed. Passing metrics still requires direct visual
-review and does not isolate a single causal factor.
+review and does not isolate a single causal factor. Fresh collection has now
+completed with 4,096 train and 512 held-out records. Split, pair and action
+audits passed, all 15 Procgen actions were observed, and the new records expose
+97 legal 64-frame starts and 33 legal 128-frame starts. The live pipeline is
+reevaluating the rejected medium checkpoint on these fixed futures before the
+200k repair run.
 
 ## Creating or closing an experiment
 

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 5,
+  "record_revision": 6,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T11:39:55+08:00",
   "ended_at": null,
-  "summary": "The same A10 returned to Running, every frozen preflight passed, the rejected demo was stopped with evidence preserved, and exactly one CR-DYN-0010 pipeline started. It is collecting fresh 160-frame train records before training.",
+  "summary": "The fresh 4,096-train/512-eval 160-frame corpora and split/pair/action audits completed successfully. Reward-biased 64/128-frame sampling is operational, and the same live pipeline is reevaluating the rejected medium baseline on fixed repair futures before training.",
   "observations": [
     {
       "type": "capacity_blocked",
@@ -25,6 +25,22 @@
       "runner_sha256": "6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458",
       "status": "COLLECTING_TRAIN_FINAL_POLICY_160_FRAME_RECORDS",
       "shutdown_due_at": "2026-08-01T01:40:14+08:00"
+    },
+    {
+      "type": "fresh_data_audited",
+      "at": "2026-07-31T11:45:09+08:00",
+      "train_records": 4096,
+      "eval_records": 512,
+      "frames_per_record": 160,
+      "train_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+      "eval_tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+      "pair_audit_valid": true,
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4,
+      "short_start_positions": 97,
+      "long_start_positions": 33,
+      "reward_bias_operational": true,
+      "next_status": "EVALUATING_REJECTED_BASELINE_ON_FIXED_REPAIR_FUTURES"
     }
   ],
   "comparisons": [],
@@ -78,6 +94,34 @@
       "uri": "experiments/CR-DYN-0010/raw/launch-evidence.json",
       "retention": "git",
       "sha256": "80bc3faa521a943eb476a084059756f84ff124b3b03cb0784316657587859415"
+    },
+    {
+      "name": "fresh train collection audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/train-collection-audit.json",
+      "retention": "git",
+      "sha256": "1ef0548dbce193fa60abe985c90c39a94dc5586062e42d625a969a1ce6afc093"
+    },
+    {
+      "name": "fresh held-out collection audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/eval-collection-audit.json",
+      "retention": "git",
+      "sha256": "f1bee1584bf58ba7888ec58abfecb7619509526676ad1caf152796119e6f9633"
+    },
+    {
+      "name": "fresh train/eval pair audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/collection-pair-audit.json",
+      "retention": "git",
+      "sha256": "61049551c70b0fe3e8e5737cb14c3c9000fc3a376e3799ab9eac6de53fea7807"
+    },
+    {
+      "name": "reward-windowing audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/reward-windowing-audit.json",
+      "retention": "git",
+      "sha256": "f108cdf85e23fd0eac33b2fa99c43bd5f9af00c014c244c027fffa5ceb19a1d9"
     }
   ],
   "revision_history": [
@@ -105,6 +149,11 @@
       "revision": 5,
       "at": "2026-07-31T11:40:23+08:00",
       "reason": "Recorded the successful frozen preflight, preserved demo handoff, single pipeline launch and 14-hour shutdown timer."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-31T11:45:09+08:00",
+      "reason": "Recorded completed fresh train/eval collection, valid pair/action audits, operational reward windowing and transition to fixed-future baseline evaluation."
     }
   ]
 }

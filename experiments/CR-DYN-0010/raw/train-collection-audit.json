@@ -1,0 +1,254 @@
+{
+  "dataset": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+  "valid": true,
+  "errors": [],
+  "metadata": {
+    "action_counts": {
+      "0": 105401,
+      "1": 53412,
+      "10": 89663,
+      "11": 100999,
+      "12": 137372,
+      "13": 117871,
+      "14": 134194,
+      "2": 44257,
+      "3": 157538,
+      "4": 100744,
+      "5": 98808,
+      "6": 388070,
+      "7": 467263,
+      "8": 137065,
+      "9": 105135
+    },
+    "action_policy": "ppo",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "completed_episodes": 26134,
+    "consumer": "action_conditioned_dynamics_only",
+    "distribution_mode": "easy",
+    "env": "coinrun",
+    "environment_transitions": 2237792,
+    "episode_boundary_policy": "records never cross auto-reset boundaries; partial chunks are discarded when terminals[t] is true",
+    "excluded_downstream_stages": [
+      "behavior_cloning",
+      "policy_training_inside_world_model"
+    ],
+    "experiment_id": "CR-DYN-0010",
+    "frames_per_record": 160,
+    "level_range": [
+      0,
+      500
+    ],
+    "mean_episode_return": 8.532562944822836,
+    "num_levels": 500,
+    "policy": {
+      "architecture": "impala_cnn",
+      "checkpoint": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+      "checkpoint_completed_env_steps": 25165824,
+      "checkpoint_sha256": "8ebfa7a91e5b52ce2d51294fa0a9aa3a520f4bb1f2a6a2d17e5b4e154023e811",
+      "deterministic": false,
+      "exploration_epsilon": 0.05,
+      "temperature": 1.0
+    },
+    "records": 4096,
+    "schema_version": "2.0",
+    "seed": 50240,
+    "shard_entries": [
+      {
+        "bytes": 32309248,
+        "name": "shard-00000.array_record",
+        "sha256": "c19fa6475240a25ae4d76cbdf9ffe769fdde23919e65901841f3e10212a3e269"
+      },
+      {
+        "bytes": 33619968,
+        "name": "shard-00001.array_record",
+        "sha256": "7a3f77641f539289b54c2cefc0e5499ab8a6e9468fd45a092089de2f3b658bb9"
+      },
+      {
+        "bytes": 31653888,
+        "name": "shard-00002.array_record",
+        "sha256": "f3605f561dd3e27582e6c533b90b77bdc5436dbdc9402f4908e64b5f9a0b8fab"
+      },
+      {
+        "bytes": 33292288,
+        "name": "shard-00003.array_record",
+        "sha256": "ce6dec4ebfc335316cb1ba56fdcb5feefc9d1b27476a2b7c8aff93aea5f04c5d"
+      },
+      {
+        "bytes": 33292288,
+        "name": "shard-00004.array_record",
+        "sha256": "bc2e8bd40bfa3d52946195e7992dcfba35598d97790d675d32762e8ea4de48ad"
+      },
+      {
+        "bytes": 33488896,
+        "name": "shard-00005.array_record",
+        "sha256": "e15e16ffa8af6a2039b5b1e8b0fc6314bf5273cc0826546bc6e4c71dcd50ff99"
+      },
+      {
+        "bytes": 33095680,
+        "name": "shard-00006.array_record",
+        "sha256": "92363af33768ca284c0722ebd6288aa550598006121b0779d861db290b57b29e"
+      },
+      {
+        "bytes": 34406400,
+        "name": "shard-00007.array_record",
+        "sha256": "beb73f49a2c747d3a132ee339f1cb30c8a333e0e67e281a6f2c22d3a74459b64"
+      },
+      {
+        "bytes": 33816576,
+        "name": "shard-00008.array_record",
+        "sha256": "875635128d24c62a65d890ebd26238a5a701a151aff48747500f86ca30b08187"
+      },
+      {
+        "bytes": 33816576,
+        "name": "shard-00009.array_record",
+        "sha256": "3032ff13202eb2d715983217c88b91b91a1154438682f279c95a36566efca724"
+      },
+      {
+        "bytes": 33161216,
+        "name": "shard-00010.array_record",
+        "sha256": "c2dee5c21f35d281d941e0872177a498e75850eaf3f033592a662f8e46a90506"
+      },
+      {
+        "bytes": 32571392,
+        "name": "shard-00011.array_record",
+        "sha256": "ffce9cc670ecd8ca4e5b915c9dbf23991f7b01cb76ad372556d6fe89cf56d6eb"
+      },
+      {
+        "bytes": 32374784,
+        "name": "shard-00012.array_record",
+        "sha256": "b87d4ac6a01ab1ff0cb05f7485fface6a87b7ba36b6b0f3f5cf0fdebf8101dd7"
+      },
+      {
+        "bytes": 33619968,
+        "name": "shard-00013.array_record",
+        "sha256": "68cc910a20caf46e37191bab2b15102de34088f2a97ab43764d43f323c610c94"
+      },
+      {
+        "bytes": 33947648,
+        "name": "shard-00014.array_record",
+        "sha256": "88f0ee55f19101b95a352b9a932081ce72286b8204e41d1c0805f59082097093"
+      },
+      {
+        "bytes": 34537472,
+        "name": "shard-00015.array_record",
+        "sha256": "823150bd264c829304d138444638aa6b5fc3bcca5293f883574d6c8589a3aad6"
+      }
+    ],
+    "shards": 16,
+    "start_level": 0,
+    "success_rate": 0.8532562944822836,
+    "successful_episodes": 22299,
+    "terminals_in_records": true,
+    "transition_alignment": "raw_video[t]=observation_t, actions[t]=action_t, rewards[t]=reward observed after action_t",
+    "tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+    "vector_steps": 69931
+  },
+  "array_record_records": 4096,
+  "audited_records": 4096,
+  "observed_actions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "macro_persistence_ratio": 0.1367279628537736,
+  "records_with_nonzero_reward": 55,
+  "metadata_sha256": "43729cd7e276d875ef9d7c45a74d357b37bfc1040cb82862651336a3b1270d6b",
+  "tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+  "shards": [
+    {
+      "name": "shard-00000.array_record",
+      "bytes": 32309248,
+      "sha256": "c19fa6475240a25ae4d76cbdf9ffe769fdde23919e65901841f3e10212a3e269"
+    },
+    {
+      "name": "shard-00001.array_record",
+      "bytes": 33619968,
+      "sha256": "7a3f77641f539289b54c2cefc0e5499ab8a6e9468fd45a092089de2f3b658bb9"
+    },
+    {
+      "name": "shard-00002.array_record",
+      "bytes": 31653888,
+      "sha256": "f3605f561dd3e27582e6c533b90b77bdc5436dbdc9402f4908e64b5f9a0b8fab"
+    },
+    {
+      "name": "shard-00003.array_record",
+      "bytes": 33292288,
+      "sha256": "ce6dec4ebfc335316cb1ba56fdcb5feefc9d1b27476a2b7c8aff93aea5f04c5d"
+    },
+    {
+      "name": "shard-00004.array_record",
+      "bytes": 33292288,
+      "sha256": "bc2e8bd40bfa3d52946195e7992dcfba35598d97790d675d32762e8ea4de48ad"
+    },
+    {
+      "name": "shard-00005.array_record",
+      "bytes": 33488896,
+      "sha256": "e15e16ffa8af6a2039b5b1e8b0fc6314bf5273cc0826546bc6e4c71dcd50ff99"
+    },
+    {
+      "name": "shard-00006.array_record",
+      "bytes": 33095680,
+      "sha256": "92363af33768ca284c0722ebd6288aa550598006121b0779d861db290b57b29e"
+    },
+    {
+      "name": "shard-00007.array_record",
+      "bytes": 34406400,
+      "sha256": "beb73f49a2c747d3a132ee339f1cb30c8a333e0e67e281a6f2c22d3a74459b64"
+    },
+    {
+      "name": "shard-00008.array_record",
+      "bytes": 33816576,
+      "sha256": "875635128d24c62a65d890ebd26238a5a701a151aff48747500f86ca30b08187"
+    },
+    {
+      "name": "shard-00009.array_record",
+      "bytes": 33816576,
+      "sha256": "3032ff13202eb2d715983217c88b91b91a1154438682f279c95a36566efca724"
+    },
+    {
+      "name": "shard-00010.array_record",
+      "bytes": 33161216,
+      "sha256": "c2dee5c21f35d281d941e0872177a498e75850eaf3f033592a662f8e46a90506"
+    },
+    {
+      "name": "shard-00011.array_record",
+      "bytes": 32571392,
+      "sha256": "ffce9cc670ecd8ca4e5b915c9dbf23991f7b01cb76ad372556d6fe89cf56d6eb"
+    },
+    {
+      "name": "shard-00012.array_record",
+      "bytes": 32374784,
+      "sha256": "b87d4ac6a01ab1ff0cb05f7485fface6a87b7ba36b6b0f3f5cf0fdebf8101dd7"
+    },
+    {
+      "name": "shard-00013.array_record",
+      "bytes": 33619968,
+      "sha256": "68cc910a20caf46e37191bab2b15102de34088f2a97ab43764d43f323c610c94"
+    },
+    {
+      "name": "shard-00014.array_record",
+      "bytes": 33947648,
+      "sha256": "88f0ee55f19101b95a352b9a932081ce72286b8204e41d1c0805f59082097093"
+    },
+    {
+      "name": "shard-00015.array_record",
+      "bytes": 34537472,
+      "sha256": "823150bd264c829304d138444638aa6b5fc3bcca5293f883574d6c8589a3aad6"
+    }
+  ]
+}
