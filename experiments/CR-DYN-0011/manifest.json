@@ -48,10 +48,10 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": "4d4da3eaa5c2edb1a96011be2288cb115945ddfd",
+    "commit": "81406603d6ded2c116741f529ddbfc52286b61e6",
     "branch": "feat/coinrun-dynamics-stage-scale",
-    "dirty": true,
-    "patch_sha256": "4a8614e8a4a328c0a7a04d167fc00773cf650a57f0e4f20ef18a19fb3c1c44cc",
+    "dirty": false,
+    "patch_sha256": null,
     "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_offline_latents.sh",
     "runner_sha256": "0308db91ad7cc930c0c5816e3cff22a43d05dd526cd55dcf54a3891c29c4b62a"
   },
