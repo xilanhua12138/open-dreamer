@@ -15,11 +15,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
-import grain
 import numpy as np
 
 from dreamer.coinrun_latent_dataset import validate_coinrun_latent_pair
-from dreamer.data.serialization import deserialize_msgpack_record
 from dreamer.experiment_runtime import atomic_write_json, sha256_file
 
 
@@ -44,6 +42,10 @@ def _tree_sha256(paths: list[Path]) -> str:
 
 def main() -> None:
     args = parse_args()
+    import grain
+
+    from dreamer.data.serialization import deserialize_msgpack_record
+
     raw_metadata = json.loads(
         (args.raw_dataset / "metadata.json").read_text(encoding="utf-8")
     )
