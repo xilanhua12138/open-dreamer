@@ -4,6 +4,13 @@ This directory is the durable source of truth for local OpenDreamer experiments.
 
 The 2026-07-28 records are retrospective backfills from retained Hydra configs, metrics, logs, comparison artifacts, remote paths, and SHA256 hashes. They are explicitly marked `retrospective: true`; later experiments must be registered before GPU time begins.
 
+## Cross-chain retrospective
+
+Read [CoinRun world-model 实验全链复盘](../docs/coinrun-world-model-retrospective.md)
+for the causal chain from Tokenizer scale through PPO data, Dynamics repair and
+the continuous Live Demo. It separates model/data failures from runtime,
+infrastructure and verifier defects, and records the current claim boundaries.
+
 ## Current experiments
 
 | ID | Question | Execution | Scientific result | Claim |
@@ -22,7 +29,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
-| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | planned | not evaluated | none |
+| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | running | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | completed | supports hypothesis | smoke test |
@@ -135,6 +142,16 @@ no-op advancement, held-right persistence, release, pause and reset at about
 22–25 ms steady latency. The complete 720px stage and sidebar fit at 1440x900
 without page scrolling. This supports runtime correctness only and does not
 override the prior rejection of visual coherence or learned action response.
+
+The first shared-session verifier used nanosecond revisions while the browser
+uses microseconds. Because the server accepts only monotonically increasing
+process-global input revisions, the verifier permanently outranked later
+browser inputs: `/api/input` returned 200 but silently retained the previous
+action. The verifier now uses `time.time_ns() // 1000`, the polluted demo
+process was restarted, and no-op `302/303/304`, held-right `307/308` and
+release `311` were observed before the user confirmed that interaction worked.
+This was verifier state pollution, not evidence that the checkpoint ignored
+actions.
 
 `CR-DYN-0010` addresses the failed model before any further demo work. The
 prior 64-frame records and 64-frame window had only one possible crop, so the

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0003",
-  "record_revision": 2,
+  "record_revision": 3,
   "execution_status": "completed",
   "scientific_status": "supports_hypothesis",
   "claim_level": "smoke_test",
   "started_at": "2026-07-31T11:33:48+08:00",
   "ended_at": "2026-07-31T11:38:21+08:00",
-  "summary": "The separate continuous runtime loaded final_only-medium, reused persistent dynamics and decoder caches, advanced without per-frame client inference calls, honored held-right and release state, survived pause/reset, and fit the full desktop interface inside 1440x900. Stable cached generation took 21.4–32.1 ms remotely and 21.6–25.4 ms through the local tunnel. This repairs runtime and layout defects only; it does not overturn the prior rejection of the checkpoint's visual or action quality.",
+  "summary": "The separate continuous runtime loaded final_only-medium, reused persistent dynamics and decoder caches, advanced without per-frame client inference calls, honored held-right and release state, survived pause/reset, and fit the full desktop interface inside 1440x900. A later no-response incident on the CR-DYN-0011 25k checkpoint was traced to a nanosecond verifier revision permanently outranking browser microsecond revisions in process-global state; matching clocks and restarting restored interaction. These are runtime and verifier repairs only, not terminal Dynamics quality evidence.",
   "observations": [
     {
       "type": "remote_continuous_runtime_verified",
@@ -56,6 +56,26 @@
       "stage_bottom_px": 841,
       "sidebar_bottom_px": 886,
       "observed_fps": 46.28
+    },
+    {
+      "type": "input_revision_clock_recovered",
+      "at": "2026-07-31T14:45:42+08:00",
+      "model": "cr-dyn-0011-medium-25k",
+      "failure_class": "verification_tool_state_pollution",
+      "browser_revision_clock": "Date.now() * 1000 + counter",
+      "verifier_clock_before": "time.time_ns()",
+      "verifier_clock_after": "time.time_ns() // 1000",
+      "noop_steps": [
+        302,
+        303,
+        304
+      ],
+      "right_steps": [
+        307,
+        308
+      ],
+      "release_step": 311,
+      "user_confirmed_interaction_worked": true
     }
   ],
   "comparisons": [
@@ -65,8 +85,18 @@
       "result": "The world advanced autonomously while subscribed, held-right affected multiple generated frames, release restored no-op, and stable cached frame latency fell to about 22–25 ms."
     }
   ],
-  "deviations": [],
-  "failures": [],
+  "deviations": [
+    "The later CR-DYN-0011 25k smoke changed the loaded checkpoint but did not change the continuous runtime protocol. It is retained only as an input-path regression observation, not as a comparable model-quality evaluation."
+  ],
+  "failures": [
+    {
+      "at": "2026-07-31T14:45:42+08:00",
+      "stage": "shared_input_verification",
+      "category": "verification_tool_state_pollution",
+      "message": "An external verifier used nanosecond revisions while the browser used microseconds. The process-global monotonic revision silently rejected later browser inputs even though the endpoint returned HTTP 200.",
+      "resolved": true
+    }
+  ],
   "conclusion": {
     "observed": [
       "Both remote and local-tunnel health reported protocol continuous-sse-v1 with no runtime error.",
@@ -78,16 +108,19 @@
     "interpretation": [
       "The persistent-cache model loop and held-state transport implement the intended real-time interaction semantics.",
       "The initial JIT compilation remains a one-time startup cost; steady cached generation is fast enough for a continuously rendered browser stream.",
-      "The oversized-page defect is fixed at the preregistered desktop viewport."
+      "The oversized-page defect is fixed at the preregistered desktop viewport.",
+      "The later apparent no-response failure was caused by verifier revision state, not a measured loss of model action dependence."
     ],
     "not_established": [
       "Visual coherence of the selected dynamics checkpoint.",
       "Whether action conditioning was learned strongly enough to be useful.",
-      "Whether the selected checkpoint is visually coherent enough for a usable game-like experience."
+      "Whether the selected checkpoint is visually coherent enough for a usable game-like experience.",
+      "Terminal visual, temporal and action quality of CR-DYN-0011, whose repaired smoke used only the 25k checkpoint."
     ],
     "decision": [
       "Keep CR-DEMO-0002's user rejection in force for model quality.",
-      "Use this continuous runtime and responsive layout as the demo shell for a future checkpoint that passes visual and action-quality review."
+      "Use this continuous runtime and responsive layout as the demo shell for a future checkpoint that passes visual and action-quality review.",
+      "Replace or expose the process-global revision contract so stale browser inputs cannot be silently reported as successful."
     ]
   },
   "artifacts": [
@@ -125,6 +158,13 @@
       "uri": "remote:///mnt/workspace/open-dreamer-continuous-demo/logs/coinrun-continuous-demo-v1/demo.log",
       "bytes_at_completion": 1420,
       "retention": "DSW persistent storage"
+    },
+    {
+      "name": "input revision clock recovery",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0003/raw/input-revision-clock-recovery.json",
+      "retention": "git",
+      "sha256": "3b55ff1f4edb83dfc1f7255355aaf84d57d4e3e8c61da4439d635ff32dfbc794"
     }
   ],
   "revision_history": [
@@ -137,6 +177,11 @@
       "revision": 2,
       "at": "2026-07-31T11:38:21+08:00",
       "reason": "Recorded complete remote and local continuous-runtime, held-state, pause/reset and desktop-layout verification."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-31T14:45:42+08:00",
+      "reason": "Recorded the later verifier nanosecond versus browser microsecond revision collision, process restart, restored held-right/release observations and user confirmation."
     }
   ]
 }

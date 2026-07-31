@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0003",
+  "recorded_at": "2026-07-31T14:45:42+08:00",
+  "failure": {
+    "symptom": "The browser input endpoint returned HTTP 200, but held actions produced no observed action change.",
+    "server_contract": "Only revisions strictly greater than the process-global input_revision are accepted.",
+    "browser_revision_clock": "Date.now() * 1000 + counter",
+    "verifier_revision_clock_before_fix": "time.time_ns()",
+    "root_cause": "The nanosecond verifier revision was about 1000 times larger than browser microsecond revisions and permanently outranked subsequent browser inputs in the same process.",
+    "classification": "verification_tool_state_pollution"
+  },
+  "recovery": {
+    "verifier_revision_clock_after_fix": "time.time_ns() // 1000",
+    "process_restarted_to_clear_input_revision": true,
+    "checkpoint_changed": false,
+    "training_changed": false,
+    "runtime_model": "cr-dyn-0011-medium-25k"
+  },
+  "verification": {
+    "noop_steps": [
+      302,
+      303,
+      304
+    ],
+    "right_steps": [
+      307,
+      308
+    ],
+    "release_step": 311,
+    "user_confirmed_interaction_worked": true
+  },
+  "prevention": [
+    "Use one declared revision unit or a session-local sequence number.",
+    "Return whether an input update was accepted and the current server revision.",
+    "Do not let an external verifier permanently dominate a shared browser session.",
+    "Assert observed press and release action changes instead of accepting HTTP 200 as sufficient."
+  ]
+}

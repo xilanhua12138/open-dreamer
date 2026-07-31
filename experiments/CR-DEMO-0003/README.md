@@ -51,6 +51,18 @@ At 1440x900, the complete 720x720 stage and sidebar fit in the initial
 viewport. The document had no horizontal or vertical scroll; the live page
 reported 46.28 FPS.
 
+When the same runtime was later pointed at the new CR-DYN-0011 25k checkpoint,
+the browser initially appeared completely unresponsive even though
+`/api/input` returned HTTP 200. The external verifier had written a
+`time.time_ns()` revision into the process-global monotonic input state, while
+the browser uses `Date.now() * 1000 + counter`. The nanosecond value permanently
+outranked subsequent browser microsecond values, so they were silently ignored.
+
+The verifier was corrected to `time.time_ns() // 1000` and the demo process was
+restarted to clear the polluted revision. Independent observation then saw
+no-op steps `302/303/304`, held-right steps `307/308`, and no-op again at step
+`311` after release. The user confirmed that the interaction worked.
+
 ### Interpretation
 
 The runtime now has the intended semantics: the model world advances while a
@@ -60,15 +72,21 @@ per-request context refill. The responsive layout fixes the oversized frame
 that pushed controls below the fold.
 
 This is a runtime and UI result. It does not improve the learned checkpoint.
+The later no-response failure was also a runtime verification defect, not a
+new model-quality result.
 
 ### Not established
 
 - Visual or temporal coherence of `final_only-medium`.
 - Whether the model learned an action effect strong enough to look or feel
   controllable.
+- Final quality of the in-progress CR-DYN-0011 200k run; the repaired input
+  smoke used only its early 25k checkpoint.
 
 ### Decision
 
 Keep this runtime and layout as the shell for later checkpoints. Preserve
 CR-DEMO-0002's direct user rejection of the current checkpoint; do not describe
-this smoke test as a model-quality repair.
+this smoke test as a model-quality repair. Replace the process-global
+cross-client revision clock with an explicit unit or session-local sequence,
+and make `/api/input` report whether the update was accepted.
