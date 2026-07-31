@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import types
 import unittest
 from pathlib import Path
@@ -159,6 +161,33 @@ class CoinRunDynamicsRepairTests(unittest.TestCase):
                 "seq_len": 32,
                 "return_actions": True,
             },
+        )
+
+    def test_validation_helpers_import_without_optional_data_dependencies(
+        self,
+    ) -> None:
+        code = """
+import builtins
+original_import = builtins.__import__
+def guarded_import(name, *args, **kwargs):
+    if name == "dreamer.data" or name.startswith("dreamer.data."):
+        raise ModuleNotFoundError("blocked optional data dependency")
+    return original_import(name, *args, **kwargs)
+builtins.__import__ = guarded_import
+import dreamer.dynamics_validation
+"""
+        completed = subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=self.repository_root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(
+            completed.returncode,
+            0,
+            completed.stdout + completed.stderr,
         )
 
     def test_periodic_validation_can_avoid_full_256_step_diffusion(

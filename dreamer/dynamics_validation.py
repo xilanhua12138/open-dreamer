@@ -6,8 +6,6 @@ import copy
 from collections.abc import Callable
 from typing import Any
 
-from dreamer.data import build_iterator
-
 
 def periodic_rollout_names(*, include_diffusion: bool) -> tuple[str, ...]:
     if include_diffusion:
@@ -29,7 +27,7 @@ def build_fixed_validation_batch(
     validation_sequence_length: int,
     device: Any,
     dtype: Any,
-    iterator_builder: Callable[..., Any] = build_iterator,
+    iterator_builder: Callable[..., Any] | None = None,
 ) -> dict[str, Any]:
     """Materialize one immutable held-out batch for every periodic evaluation."""
 
@@ -46,6 +44,10 @@ def build_fixed_validation_batch(
     validation_cfg.dataloader_cfg.B = validation_batch_size
     validation_cfg.dataloader_cfg.num_workers = 0
 
+    if iterator_builder is None:
+        from dreamer.data import build_iterator
+
+        iterator_builder = build_iterator
     iterator = iterator_builder(
         validation_cfg,
         seed=validation_seed,
