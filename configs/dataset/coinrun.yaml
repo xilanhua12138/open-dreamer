@@ -15,6 +15,14 @@ data_type: video
 # does not require `index_max` contiguous shard generation.
 array_record_path: datasets/coinrun_episodes/train
 
+# Optional fixed held-out batch used for periodic dynamics visualization.
+# When null, training retains the historical current-training-batch behavior.
+validation_array_record_path: null
+validation_index_max: null
+validation_seed: 4242
+validation_batch_size: 4
+validation_sequence_length: 32
+
 # Optional cap on records exposed to the sampler. `-1` means all records.
 num_max_samples: -1
 
@@ -60,7 +68,8 @@ patch_size: 8
 
 # CoinRun uses categorical actions in this config.
 num_binary_actions: 0
-categorical_action_dim: 16
+categorical_action_dim: 15
+categorical_noop_action: 4
 continuous_action_dim: 0
 
 # Pixel normalization stats for values in [0, 1]. The std is sqrt(1/12), the

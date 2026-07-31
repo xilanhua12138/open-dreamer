@@ -22,6 +22,14 @@ from dreamer.logging import build_logger
 from dreamer.models import Tokenizer
 from dreamer.parallel import build_parallel, MeshRules
 from dreamer.scaling import ScalingContext
+from dreamer.experiment_runtime import atomic_write_json
+from dreamer.tokenizer_validation import (
+    build_validation_dataset_config,
+    evaluate_fixed_validation,
+    should_run_validation,
+    validation_set_sha256,
+    write_validation_artifacts,
+)
 
 from dreamer.checkpointing import (
     TokenizerCheckpointBundle,
@@ -244,6 +252,42 @@ def run(cfg: TokenizerConfig):
 
         # Data iterator
         train_dataloader = build_iterator(cfg.dataset, device=data_sharding, seq_len=dl_cfg.long_T)
+        validation_batches = []
+        validation_sha256 = None
+        if cfg.validation.enabled:
+            validation_dataset = build_validation_dataset_config(
+                cfg.dataset,
+                cfg.validation,
+            )
+            validation_iterator = iter(
+                build_iterator(
+                    validation_dataset,
+                    seed=cfg.validation.seed,
+                    device=data_sharding,
+                    dtype=cfg.dtype,
+                    seq_len=cfg.validation.frames,
+                )
+            )
+            validation_batches = [
+                next(validation_iterator) for _ in range(cfg.validation.batches)
+            ]
+            validation_sha256 = validation_set_sha256(validation_batches)
+            if jax.process_index() == 0:
+                atomic_write_json(
+                    run_dir / "validation-set.json",
+                    {
+                        "schema_version": "1.0",
+                        "dataset_path": cfg.validation.dataset_path,
+                        "seed": cfg.validation.seed,
+                        "batch_size": cfg.validation.batch_size,
+                        "batches": cfg.validation.batches,
+                        "frames": cfg.validation.frames,
+                        "num_clips": (
+                            cfg.validation.batch_size * cfg.validation.batches
+                        ),
+                        "sha256": validation_sha256,
+                    },
+                )
 
         with build_checkpoint_manager(cfg.ckpt, ckpt_dir, item_names=TokenizerCheckpointBundle.get_item_names()) as checkpoint_manager:
             # Resume from checkpoint
@@ -282,6 +326,57 @@ def run(cfg: TokenizerConfig):
                 )
 
                 ema_update_step(bundle.tokenizer, bundle.tokenizer_ema, ema_decay=cfg.ema_decay)
+                logger.observe_step(step)
+
+                if cfg.validation.enabled and should_run_validation(
+                    step=step,
+                    max_steps=cfg.max_steps,
+                    every_steps=cfg.validation.every_steps,
+                ):
+                    (
+                        validation_metrics,
+                        validation_target,
+                        validation_online,
+                        validation_ema,
+                    ) = evaluate_fixed_validation(
+                        bundle.tokenizer,
+                        bundle.tokenizer_ema,
+                        validation_batches,
+                    )
+                    if jax.process_index() == 0:
+                        assert validation_sha256 is not None
+                        validation_artifacts = write_validation_artifacts(
+                            output_dir=run_dir / "validation",
+                            completed_updates=step + 1,
+                            metrics=validation_metrics,
+                            target=validation_target,
+                            online=validation_online,
+                            ema=validation_ema,
+                            validation_set_sha256=validation_sha256,
+                            fps=cfg.validation.fps,
+                            max_samples=cfg.validation.max_visual_samples,
+                        )
+                        logger.log_metrics(
+                            step,
+                            validation_metrics,
+                            prefix="validation/",
+                        )
+                        logger.log_image(
+                            step,
+                            "validation/reconstruction",
+                            validation_artifacts["image"],
+                            caption=(
+                                f"Completed updates {step + 1}: "
+                                "target | online | EMA"
+                            ),
+                        )
+                        logger.log_video(
+                            step,
+                            "validation/reconstruction_video",
+                            validation_artifacts["video"],
+                            format="gif",
+                            fps=cfg.validation.fps,
+                        )
 
                 if logger.should_log(step):
                     metrics_cpu = jax.device_get(aux)

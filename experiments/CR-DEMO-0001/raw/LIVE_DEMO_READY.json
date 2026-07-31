@@ -1,0 +1,7 @@
+{
+  "ready": true,
+  "model": "medium",
+  "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+  "url_over_ssh_tunnel": "http://127.0.0.1:7860",
+  "created_at": "2026-07-29T00:42:19.548646+00:00"
+}

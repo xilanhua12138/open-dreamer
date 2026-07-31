@@ -1,0 +1,25 @@
+{
+  "at": "2026-07-31T08:06:16.290208+00:00",
+  "attempt_id": "4f9ab924-6ace-4f18-9e47-8b3ce45586a9",
+  "completed_updates": 62601,
+  "metrics": {
+    "T": 64,
+    "boot_mse": 0.0,
+    "boot_target_norm": 0.0,
+    "data_tokens_seen": 1153843200,
+    "flops_spent": 132232719944908800,
+    "flow_mse": 0.0380859375,
+    "flow_mse_high": 0.006865847390145063,
+    "flow_mse_image": 0.0,
+    "flow_mse_low": 0.06354262679815292,
+    "flow_mse_mid": 0.04031796008348465,
+    "flow_mse_sequence": 0.0380859375,
+    "grad_norm": 2.805586814880371,
+    "lr": 0.0003000000142492354,
+    "total_tokens_seen": 5384601600
+  },
+  "prefix": "train/",
+  "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+  "schema_version": "1.0",
+  "step": 62600
+}

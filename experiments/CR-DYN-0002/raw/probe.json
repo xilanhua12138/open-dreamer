@@ -1,0 +1,51 @@
+{
+  "tokenizer_checkpoint": "logs/coinrun-official-min-n0.17m-c1e16-20260728/checkpoints",
+  "tokenizer_params": 163392,
+  "batch_size": 32,
+  "frames": 64,
+  "budget": 1000000000000000.0,
+  "candidates": [
+    {
+      "name": "tiny",
+      "depth": 2,
+      "d_model": 64,
+      "n_heads": 1,
+      "n_kv_heads": 1,
+      "n_register": 8,
+      "params": 155840,
+      "dynamics_flops_per_step": 36436967424,
+      "encoder_flops_per_step": 29276241920,
+      "native_flops_per_step": 65713209344,
+      "budget": 1000000000000000.0,
+      "steps": 15217
+    },
+    {
+      "name": "small",
+      "depth": 2,
+      "d_model": 128,
+      "n_heads": 2,
+      "n_kv_heads": 1,
+      "n_register": 16,
+      "params": 545920,
+      "dynamics_flops_per_step": 180426375168,
+      "encoder_flops_per_step": 29276241920,
+      "native_flops_per_step": 209702617088,
+      "budget": 1000000000000000.0,
+      "steps": 4768
+    },
+    {
+      "name": "medium",
+      "depth": 4,
+      "d_model": 256,
+      "n_heads": 4,
+      "n_kv_heads": 1,
+      "n_register": 32,
+      "params": 3931392,
+      "dynamics_flops_per_step": 2078520901632,
+      "encoder_flops_per_step": 29276241920,
+      "native_flops_per_step": 2107797143552,
+      "budget": 1000000000000000.0,
+      "steps": 474
+    }
+  ]
+}

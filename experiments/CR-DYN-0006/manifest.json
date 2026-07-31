@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0006",
+  "retrospective": false,
+  "created_at": "2026-07-30T17:54:47+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO-stage trajectory ablation for dynamics",
+  "kind": "confirmatory",
+  "question": "At fixed tokenizer, dynamics architecture, optimizer budget and held-out futures, how does the PPO checkpoint used to collect training trajectories affect CoinRun dynamics rollout quality?",
+  "reason": "The earlier action-conditioned world model used a broken 16-action/no-op contract and non-learned trajectories, then failed user evaluation. CR-PPO-0002 produced a source-aligned checkpoint chain with materially stronger CoinRun behavior, so policy maturity can now be isolated as a data-quality variable.",
+  "hypothesis": "Later PPO checkpoints produce more coherent, goal-directed action-state coverage, so a fixed medium dynamics model trained on later-stage trajectories will improve held-out mean-frame PSNR, horizon-16 PSNR and SSIM relative to the 1,048,576-transition corpus.",
+  "falsification": "Reject a simple policy-maturity explanation if the final-policy corpus does not outperform the earliest corpus on both mean-frame PSNR and mean SSIM under the fixed final-policy evaluation set, or if the ordering is materially non-monotonic.",
+  "baseline_id": "CR-DYN-0004",
+  "depends_on": [
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DEMO-0001"
+  ],
+  "controlled_variable": {
+    "name": "ppo_collection_checkpoint_completed_env_steps",
+    "values": [
+      1048576,
+      6291456,
+      12582912,
+      25165824
+    ]
+  },
+  "constants": {
+    "tokenizer_name": "n16.6m",
+    "tokenizer_parameters": 14912320,
+    "tokenizer_completed_updates": 20000,
+    "tokenizer_weights": "EMA",
+    "tokenizer_n_latents": 16,
+    "tokenizer_d_bottleneck": 16,
+    "ppo_source_experiment": "CR-PPO-0002",
+    "collection_records_per_stage": 2048,
+    "collection_frames_per_record": 64,
+    "collection_seed": 20240,
+    "collection_level_range": [
+      0,
+      200
+    ],
+    "collection_temperature": 1.0,
+    "collection_exploration_epsilon": 0.05,
+    "dynamics_name": "medium",
+    "dynamics_parameters": 3931392,
+    "dynamics_depth": 4,
+    "dynamics_d_model": 256,
+    "dynamics_n_heads": 4,
+    "dynamics_n_register": 32,
+    "batch_size": 16,
+    "sequence_length": 64,
+    "optimizer_updates": 20000,
+    "evaluation_dataset": "fixed final-policy held-out corpus",
+    "evaluation_records": 512,
+    "evaluation_level_range": [
+      10000,
+      10500
+    ],
+    "evaluation_seed": 4242,
+    "evaluation_videos": 32,
+    "evaluation_context_frames": 16,
+    "evaluation_horizon": 16
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "d8d7a925d7ff57423f9591551581cb4c39e08bc7",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_stage_scale.sh",
+    "runner_sha256": "d038c6e305d348aacfcdf5b038077cc732cd3dc0cac327d77d1313987d1b1df0",
+    "component_sha256": {
+      "collector": "309565750a1cb7ca9eb041ef688f5fd41eafc92cd21ded88c63f3218e5269241",
+      "corpus_verifier": "9cc0a9aa82021ec616b2fd16f709eba4e626ffcdb0c460c3ecf99899bdac94eb",
+      "summarizer": "1d91cb219cf64d15a7c4c8d2f7348d28950e9f32925db3389e1c3099204d4f6f"
+    },
+    "source_freeze": "Execution code is frozen at d8d7a925d7ff57423f9591551581cb4c39e08bc7. No new corpus or dynamics result was observed before the freeze."
+  },
+  "data": {
+    "environment": "Procgen CoinRun easy",
+    "ppo_checkpoint_root": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints",
+    "train_root": "/mnt/workspace/datasets/coinrun-ppo-stage-v1/train",
+    "eval_root": "/mnt/workspace/datasets/coinrun-ppo-stage-v1/eval-final-policy",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "transition_alignment": "raw_video[t]=observation_t, actions[t]=action_t, rewards[t]=reward observed after action_t",
+    "episode_boundary_policy": "discard partial chunk on terminal; no record crosses reset",
+    "audit": "All four training corpora and the fixed evaluation corpus must pass individual ArrayRecord audits plus the stage-corpus identity audit before dynamics starts."
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "Four medium 20k dynamics arms plus collection and evaluation; approximately 10-16 A10-hours, with CR-DYN-0007 adding further time.",
+    "shutdown_policy": "One existing A10 only, serial arms, no concurrent PPO/tokenizer job; bounded shutdown timer refreshed only when less than four hours remain."
+  },
+  "protocol": {
+    "collection": {
+      "stages": {
+        "ppo01p05m": 1048576,
+        "ppo06p29m": 6291456,
+        "ppo12p58m": 12582912,
+        "ppo25p17m": 25165824
+      },
+      "train_records_per_stage": 2048,
+      "eval_records": 512,
+      "frames": 64,
+      "stochastic_policy": true
+    },
+    "model": {
+      "tokenizer_checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints/19999",
+      "dynamics": {
+        "depth": 4,
+        "d_model": 256,
+        "n_heads": 4,
+        "n_kv_heads": 1,
+        "packing_factor": 2,
+        "n_register": 32,
+        "qk_norm_type": "qknorm",
+        "time_every": 2,
+        "time_layer_offset": 1,
+        "k_max": 8,
+        "context_length": 64
+      }
+    },
+    "training": {
+      "max_steps": 20000,
+      "bootstrap_start": 10000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "ot_pairing": "barycentric",
+      "loss_weighting": "v_space",
+      "periodic_training_rollout_every_steps": 2500,
+      "checkpoint_every_steps": 5000
+    },
+    "evaluation": {
+      "rollout_type": "ema_shortcut",
+      "fixed_policy_checkpoint_completed_env_steps": 25165824,
+      "num_videos": 32,
+      "context_frames": 16,
+      "horizon": 16,
+      "seed": 4242,
+      "primary_target": "tokenizer_decoded_ground_truth",
+      "metrics": [
+        "mean_frame_psnr_db",
+        "mean_video_psnr_db",
+        "mean_ssim",
+        "psnr_by_horizon_db@1,@3,@8,@16"
+      ]
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All four training corpora contain exactly 2,048 episode-safe 64-frame records, use the exact registered PPO checkpoints, preserve the 15-action/no-op-4 contract, and pass the stage-corpus audit."
+    },
+    {
+      "id": "SC-2",
+      "rule": "All four medium dynamics arms complete exactly 20,000 optimizer updates from scratch with the same 16.6M EMA tokenizer and no silent OOM-driven protocol change."
+    },
+    {
+      "id": "SC-3",
+      "rule": "All arms are evaluated against the same 32 held-out final-policy futures with context 16, horizon 16 and seed 4242."
+    },
+    {
+      "id": "SC-4",
+      "rule": "Support the hypothesis only if the final-stage corpus exceeds the earliest-stage corpus on both mean-frame PSNR and mean SSIM; report any non-monotonic intermediate ordering without smoothing it away."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-stage-scale/logs/coinrun-dynamics-stage-scale-v1/stage-corpus-audit.json",
+    "/mnt/workspace/open-dreamer-dynamics-stage-scale/logs/coinrun-dynamics-stage-scale-v1/latent-stats-n16p6m.json",
+    "/mnt/workspace/open-dreamer-dynamics-stage-scale/logs/coinrun-dynamics-stage-scale-v1/stage-ablation/runs",
+    "/mnt/workspace/open-dreamer-dynamics-stage-scale/logs/coinrun-dynamics-stage-scale-v1/stage-ablation/eval",
+    "/mnt/workspace/open-dreamer-dynamics-stage-scale/logs/coinrun-dynamics-stage-scale-v1/ppo-stage-comparison.json"
+  ]
+}

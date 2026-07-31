@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-TOK-0004",
+  "run_name": "n28p7m-seed0",
+  "evaluation_identity": {
+    "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "seed": 4242,
+    "batch_size": 32,
+    "frames": 16,
+    "batches": 16,
+    "num_clips": 512
+  },
+  "milestones": [
+    {
+      "completed_updates": 2500,
+      "uri": "n28p7m-updates-02500-heldout-eval.json",
+      "sha256": "63d417764ea4739faaf6f6a58fdec888e61836ffbb9c473d7eec87053ecd9d8a"
+    },
+    {
+      "completed_updates": 5000,
+      "uri": "n28p7m-updates-05000-heldout-eval.json",
+      "sha256": "933e4649b0f10dedaf90f38a0e688d6c18f5e03a71cf69dbad41d300348dc3dd"
+    },
+    {
+      "completed_updates": 10000,
+      "uri": "n28p7m-updates-10000-heldout-eval.json",
+      "sha256": "fd6976878685e28bf7430820d3510a43c2e60a6c0b2fada4d6ad496934a405e8"
+    },
+    {
+      "completed_updates": 20000,
+      "uri": "n28p7m-updates-20000-heldout-eval.json",
+      "sha256": "a75ca7d4486e45a98386c0f78c5ae50c2ffa0de81eff43472f11cf1d7738fd52"
+    }
+  ]
+}

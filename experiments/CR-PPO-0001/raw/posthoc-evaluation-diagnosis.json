@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0001",
+  "posthoc": true,
+  "reason": "The final preregistered deterministic 64-episode metric was unexpectedly low, so policy sampling and level-distribution effects were measured before changing training code.",
+  "fixed_heldout_500_levels_256_episodes": {
+    "peak_22020096": {
+      "deterministic_success_rate": 0.44140625,
+      "stochastic_success_rate": 0.59375
+    },
+    "final_25165824": {
+      "deterministic_success_rate": 0.33984375,
+      "stochastic_success_rate": 0.5390625
+    }
+  },
+  "full_distribution_stochastic_512_episodes": {
+    "peak_22020096": {
+      "mean_return": 5.390625,
+      "success_rate": 0.5390625
+    },
+    "final_25165824": {
+      "mean_return": 4.9609375,
+      "success_rate": 0.49609375
+    }
+  },
+  "interpretation_limit": "The larger stochastic evaluations prove that deterministic 64-episode evaluation understated performance, but the roughly 5/10 full-distribution return remains below the public easy-200 reference curve. This does not identify one causal training bug."
+}

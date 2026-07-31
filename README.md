@@ -35,6 +35,16 @@
 
 ---
 
+## Local experiment ledger
+
+This fork maintains auditable small-scale CoinRun experiments under [`experiments/`](experiments/README.md). Read [`CLAUDE.md`](CLAUDE.md) before planning, launching, monitoring, evaluating, or interpreting a run.
+
+The ledger separates preregistered intent, execution status, raw observations, interpretation, unsupported claims, and the next decision. Validate it with:
+
+```bash
+uv run --no-project python scripts/validate_experiments.py
+```
+
 Open Dreamer is a simple, performant, and easy-to-use JAX/Flax NNX
 implementation of the Dreamer 4 world model — trained on Minecraft/VPT-style
 gameplay and playable in real time. This repository holds the **training

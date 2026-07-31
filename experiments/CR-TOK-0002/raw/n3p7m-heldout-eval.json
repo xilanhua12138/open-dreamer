@@ -1,0 +1,41 @@
+{
+  "checkpoint": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/runs/n3p7m/checkpoints",
+  "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+  "seed": 4242,
+  "batch_size": 32,
+  "frames": 16,
+  "batches": 16,
+  "num_clips": 512,
+  "metrics": {
+    "online_clean_mse": 0.001679133769357577,
+    "online_clean_psnr": 29.30452823638916,
+    "online_masked_mse": 0.003884862977429293,
+    "online_masked_psnr": 26.42827534675598,
+    "ema_clean_mse": 0.0029713354451814666,
+    "ema_clean_psnr": 26.207462906837463,
+    "ema_masked_mse": 0.004641807099687867,
+    "ema_masked_psnr": 24.659922242164612,
+    "online_clean_edge_psnr": 22.15021569125033,
+    "online_clean_temporal_change_psnr": 22.770309761165926,
+    "ema_clean_edge_psnr": 20.241949942478072,
+    "ema_clean_temporal_change_psnr": 21.02331753337458
+  },
+  "regions": {
+    "online_clean_edge": {
+      "selected_rgb_values": 13594359,
+      "squared_error": 82858.51879882812
+    },
+    "online_clean_temporal_change": {
+      "selected_rgb_values": 15172386,
+      "squared_error": 80172.03491210938
+    },
+    "ema_clean_edge": {
+      "selected_rgb_values": 13594359,
+      "squared_error": 128577.1337890625
+    },
+    "ema_clean_temporal_change": {
+      "selected_rgb_values": 15172386,
+      "squared_error": 119873.20849609375
+    }
+  }
+}

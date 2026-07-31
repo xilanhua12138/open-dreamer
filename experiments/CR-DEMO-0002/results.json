@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0002",
+  "record_revision": 4,
+  "execution_status": "completed",
+  "scientific_status": "rejects_hypothesis",
+  "claim_level": "internal_result",
+  "started_at": "2026-07-31T06:46:49+08:00",
+  "ended_at": "2026-07-31T10:54:05+08:00",
+  "summary": "CR-DYN-0009 selected final_only-medium and the repaired runtime passed remote and local health plus two consecutive real steps. The user then rejected the demo because temporal generation was unusable and actions did not produce credible responses. Transport and inference plumbing work, but the preregistered usable action-conditioned demo hypothesis is rejected.",
+  "observations": [
+    {
+      "type": "checkpoint_selected",
+      "at": "2026-07-31T06:46:49+08:00",
+      "model": "final_only-medium",
+      "parameters": 3931392,
+      "mean_frame_psnr_db": 17.073096061747968,
+      "mean_ssim": 0.7134503743891403,
+      "selection_sha256": "055eb3f28c25c967f55003045cbbdad57151a0e7e1be93d8ff8833545045a36d"
+    },
+    {
+      "type": "remote_runtime_verified",
+      "at": "2026-07-31T06:52:05+08:00",
+      "health_ok": true,
+      "step": 1,
+      "action_id": 4,
+      "context_frames": 16,
+      "denoise_steps": 4,
+      "latency_ms": 9846.2,
+      "warmup_ms": 27232.5,
+      "returned_png_data_url": true,
+      "ready_sha256": "ec441e53eee727397af2620df309440fee80dbfa236f5737a61c1ab7f9cd10fa"
+    },
+    {
+      "type": "instance_restarted_after_timer_stop",
+      "at": "2026-07-31T07:16:36+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "status": "Running",
+      "remote_preflight": "PREFLIGHT_BLOCKED stale_demo_pid:74923",
+      "local_listener_7860": false
+    },
+    {
+      "type": "stale_attempt_archived",
+      "at": "2026-07-31T10:39:45+08:00",
+      "stale_pid": 74923,
+      "archive_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/stale-demo-attempts/20260731T023945Z",
+      "preserved_files": [
+        "live-demo.pid",
+        "LIVE_DEMO_READY.json",
+        "live-demo-health.json",
+        "live-demo-step.json",
+        "live-demo.log"
+      ]
+    },
+    {
+      "type": "remote_runtime_reverified",
+      "at": "2026-07-31T10:41:24+08:00",
+      "demo_pid": 968,
+      "health_ok": true,
+      "step": 1,
+      "action_id": 4,
+      "latency_ms": 11489.4,
+      "warmup_ms": 32227.6
+    },
+    {
+      "type": "local_runtime_verified",
+      "at": "2026-07-31T10:43:34+08:00",
+      "url": "http://127.0.0.1:7860",
+      "tunnel_label": "ai.open-dreamer.dsw-demo-tunnel",
+      "tunnel_pid": 76828,
+      "health_ok": true,
+      "step": 2,
+      "action_id": 7,
+      "latency_ms": 764.5
+    },
+    {
+      "type": "user_quality_rejection",
+      "at": "2026-07-31T10:54:05+08:00",
+      "visual_quality": "rejected",
+      "action_response": "rejected",
+      "reason": "The generated world was not temporally credible and the displayed response did not track the selected action reliably."
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [
+    {
+      "at": "2026-07-31T06:52:36+08:00",
+      "stage": "local_ssh_tunnel",
+      "category": "infrastructure",
+      "message": "Three port-forward attempts timed out and a fourth cycle failed the local health-and-step check; localhost:7860 had no listener."
+    },
+    {
+      "at": "2026-07-31T07:09:00+08:00",
+      "stage": "instance_lifecycle",
+      "category": "infrastructure",
+      "message": "The DSW shutdown timer stopped the instance before local verification completed. After the exclusive poller restarted it, the persisted live-demo.pid pointed to dead PID 74923 and preflight blocked without restarting the demo."
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "The frozen scale comparison selected final_only-medium, not large.",
+      "The remote server returned ok=true for /health and a real action-4 /api/step returned a PNG data URL as step 1.",
+      "The remote generated step took 9846.2 ms after a 27232.5 ms warmup.",
+      "No local process listened on 127.0.0.1:7860, so neither local health nor the required subsequent local step passed.",
+      "The same A10 restarted after the timer stop, but the exclusive poller reported PREFLIGHT_BLOCKED stale_demo_pid:74923.",
+      "Stale-attempt recovery then restored a fresh remote demo and a persistent local tunnel; remote step 1 and local step 2 both passed.",
+      "The user directly reviewed the generated interaction and rejected both temporal quality and action response."
+    ],
+    "interpretation": [
+      "Checkpoint loading, two consecutive generated steps and the user-facing local access path are now proven.",
+      "The first generated step includes compilation/warmup cost; the second cached step is the relevant interactive latency observation.",
+      "Technical readiness does not establish visual quality or correct action semantics.",
+      "The completed user review falsifies the usable action-conditioned demo hypothesis even though the runtime plumbing is healthy."
+    ],
+    "not_established": [
+      "Whether failure is dominated by shortcut sampling, insufficient optimization, insufficient long records or learned action ignorance.",
+      "Whether the dynamics action interface has a subtle data-dependent alignment defect not covered by existing source tracing and tests."
+    ],
+    "decision": [
+      "Do not present final_only-medium or http://127.0.0.1:7860 as a usable world-model demo.",
+      "Retain the live process only as a rejected diagnostic artifact during the current user-controlled instance window.",
+      "Run action-corruption and sampler/checkpoint diagnostics before authorizing another training protocol.",
+      "Do not restart the removed training poller; the dedicated tunnel is the only remaining launchd job."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "remote demo ready marker",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0002/raw/LIVE_DEMO_READY.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/LIVE_DEMO_READY.json",
+      "retention": "git and DSW persistent storage",
+      "sha256": "ec441e53eee727397af2620df309440fee80dbfa236f5737a61c1ab7f9cd10fa"
+    },
+    {
+      "name": "remote runtime verification summary",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0002/raw/remote-runtime-verification.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo-health.json and live-demo-step.json",
+      "retention": "git summary, local task root and DSW persistent storage",
+      "health_source_sha256": "1c54597fd00a099ec6f5a7345f85af33b1e025ec1db043fd52639bf1126c5318",
+      "step_source_sha256": "3a27a914c0eea9d294926f0dac282cb21f4be7ba666cf67ba97de032ccef9799"
+    },
+    {
+      "name": "selected demo checkpoint",
+      "kind": "json",
+      "uri": "../synced/CR-DEMO-0002/live-demo-selection.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo-selection.json",
+      "retention": "local task root and DSW persistent storage",
+      "sha256": "055eb3f28c25c967f55003045cbbdad57151a0e7e1be93d8ff8833545045a36d"
+    },
+    {
+      "name": "local runtime verification",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0002/raw/local-runtime-verification.json",
+      "local_source_uri": "../manual-demo-control/local-step-2.json",
+      "retention": "git summary and local task root",
+      "local_step_source_sha256": "57cd93bc21dc9aacd0647fa2a731dd69b7277ddd1fa8ef51cf41ae5239230001"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 2,
+      "at": "2026-07-31T07:17:43+08:00",
+      "reason": "Recorded the held-out-selected medium checkpoint, successful remote health/step, failed local tunnel verification, timer stop and stale-demo-PID blocker."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-31T10:43:34+08:00",
+      "reason": "Recorded stale-attempt archival, fresh remote step 1, persistent local tunnel health and the consecutive local step 2; moved the demo from blocked to running pending user visual review."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-31T10:54:05+08:00",
+      "reason": "Closed the visual review as a rejection: runtime transport works, but temporal generation and action response are not usable."
+    }
+  ]
+}

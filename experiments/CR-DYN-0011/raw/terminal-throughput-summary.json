@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "metric": "median recorder progress steps_per_second",
+  "window": {
+    "min_completed_updates": 1001,
+    "max_completed_updates": 10000,
+    "exclude_null": true
+  },
+  "raw_rgb_baseline": {
+    "experiment_id": "CR-DYN-0010",
+    "telemetry_uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/training/final-policy-medium-reference-repair/telemetry.jsonl",
+    "samples": 74,
+    "min_steps_per_second": 3.9550917414123608,
+    "median_steps_per_second": 4.015728299218011,
+    "max_steps_per_second": 4.045671487933218
+  },
+  "offline_latent_candidate": {
+    "experiment_id": "CR-DYN-0011",
+    "telemetry_uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents/telemetry.jsonl",
+    "samples": 46,
+    "min_steps_per_second": 6.553370180898461,
+    "median_steps_per_second": 6.598613532977394,
+    "max_steps_per_second": 6.656417546486298
+  },
+  "median_speedup_ratio": 1.643192228483773,
+  "preregistered_min_speedup_ratio": 1.25,
+  "pass": true
+}

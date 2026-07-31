@@ -1,0 +1,114 @@
+{
+  "dataset": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/eval-final-policy-160",
+  "valid": true,
+  "errors": [],
+  "metadata": {
+    "action_counts": {
+      "0": 14318,
+      "1": 7321,
+      "10": 12430,
+      "11": 13497,
+      "12": 19166,
+      "13": 15773,
+      "14": 19257,
+      "2": 5954,
+      "3": 21590,
+      "4": 13027,
+      "5": 13790,
+      "6": 55993,
+      "7": 65417,
+      "8": 18990,
+      "9": 14421
+    },
+    "action_policy": "ppo",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "completed_episodes": 3924,
+    "consumer": "action_conditioned_dynamics_only",
+    "distribution_mode": "easy",
+    "env": "coinrun",
+    "environment_transitions": 310944,
+    "episode_boundary_policy": "records never cross auto-reset boundaries; partial chunks are discarded when terminals[t] is true",
+    "excluded_downstream_stages": [
+      "behavior_cloning",
+      "policy_training_inside_world_model"
+    ],
+    "experiment_id": "CR-DYN-0010",
+    "frames_per_record": 160,
+    "level_range": [
+      10000,
+      10500
+    ],
+    "mean_episode_return": 8.440366972477063,
+    "num_levels": 500,
+    "policy": {
+      "architecture": "impala_cnn",
+      "checkpoint": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+      "checkpoint_completed_env_steps": 25165824,
+      "checkpoint_sha256": "8ebfa7a91e5b52ce2d51294fa0a9aa3a520f4bb1f2a6a2d17e5b4e154023e811",
+      "deterministic": false,
+      "exploration_epsilon": 0.05,
+      "temperature": 1.0
+    },
+    "records": 512,
+    "schema_version": "2.0",
+    "seed": 60240,
+    "shard_entries": [
+      {
+        "bytes": 33947648,
+        "name": "shard-00000.array_record",
+        "sha256": "6a2d6e46bf799f933989655fad78aeae545fb9eda25a243649eb6ceddff54f00"
+      },
+      {
+        "bytes": 33882112,
+        "name": "shard-00001.array_record",
+        "sha256": "657050a9b45c18de8473335ddb685a80a180f5f369ce201eaa8c2e80217345c3"
+      }
+    ],
+    "shards": 2,
+    "start_level": 10000,
+    "success_rate": 0.8440366972477065,
+    "successful_episodes": 3312,
+    "terminals_in_records": true,
+    "transition_alignment": "raw_video[t]=observation_t, actions[t]=action_t, rewards[t]=reward observed after action_t",
+    "tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+    "vector_steps": 9717
+  },
+  "array_record_records": 512,
+  "audited_records": 512,
+  "observed_actions": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "macro_persistence_ratio": 0.13596943789308177,
+  "records_with_nonzero_reward": 3,
+  "metadata_sha256": "9dd06d875d58a7edb1c2513fe74d0361fa8ab98592f4da4a1853dbd5a0d255a1",
+  "tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+  "shards": [
+    {
+      "name": "shard-00000.array_record",
+      "bytes": 33947648,
+      "sha256": "6a2d6e46bf799f933989655fad78aeae545fb9eda25a243649eb6ceddff54f00"
+    },
+    {
+      "name": "shard-00001.array_record",
+      "bytes": 33882112,
+      "sha256": "657050a9b45c18de8473335ddb685a80a180f5f369ce201eaa8c2e80217345c3"
+    }
+  ]
+}

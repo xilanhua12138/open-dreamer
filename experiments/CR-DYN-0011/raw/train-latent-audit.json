@@ -1,0 +1,30 @@
+{
+  "all_actions_aligned": true,
+  "all_rewards_aligned": true,
+  "all_terminals_aligned": true,
+  "audited_records": 4096,
+  "errors": [],
+  "experiment_id": "CR-DYN-0011",
+  "latent_dataset": "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/train-final-policy-160-n16p6m",
+  "latent_metadata_sha256": "26f2fc7bb82026383a85ba86c853a92b787a7c503e371903e26e533bd0dd4798",
+  "latent_records": 4096,
+  "latent_shapes": [
+    [
+      160,
+      16,
+      16
+    ]
+  ],
+  "latent_tree_sha256": "07e886d9aed0dfec5a273d12afdbb21f81c8df51c9cd2f7f60f73ddf68c97e2d",
+  "raw_dataset": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+  "raw_records": 4096,
+  "raw_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+  "schema_version": "1.0",
+  "tokenizer": {
+    "checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints",
+    "deterministic": true,
+    "resolved_checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints/19999",
+    "resolved_checkpoint_tree_sha256": "1bb5fdabf434a1e828e43a8a208a4b0516871a108e450424a4f48838ad3fbf6f"
+  },
+  "valid": true
+}

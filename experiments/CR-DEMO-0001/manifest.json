@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0001",
+  "retrospective": true,
+  "created_at": "2026-07-28",
+  "owner": "xilanhua12138",
+  "title": "Action-conditioned CoinRun browser demo",
+  "kind": "exploratory",
+  "question": "Can a user press action buttons and receive low-latency model-predicted next frames from the selected CoinRun world model?",
+  "reason": "Held-out metrics and offline videos do not directly expose action responsiveness, drift, or interactive latency.",
+  "hypothesis": "The selected fixed-20k checkpoint can serve one-step action-conditioned predictions quickly enough for direct browser inspection.",
+  "falsification": "The server cannot load the checkpoint, health/step calls fail, latency is unusable, or action buttons do not produce inspectable trajectories.",
+  "baseline_id": "CR-DYN-0005",
+  "depends_on": [
+    "CR-DYN-0004",
+    "CR-DYN-0005"
+  ],
+  "controlled_variable": {
+    "name": "user_action",
+    "values": [
+      "left",
+      "left+jump",
+      "noop",
+      "jump",
+      "right",
+      "right+jump"
+    ]
+  },
+  "constants": {
+    "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+    "selected_model": "medium",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "bind": "127.0.0.1:7860",
+    "access": "SSH local port forward"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "base_upstream_commit": "797e41f052b5996740938fd2fe8161f1866de3a2",
+    "commit": "58758e581945715445f42856c53130e08d978ec6",
+    "branch": "feat/experiment-ledger",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_live_demo.sh",
+    "runner_sha256": "5e831d5836bc29849e080bde2dfc58cd3a6c44289fa91bd292eecee62cf729fa",
+    "server": "scripts/experiments/coinrun/live_coinrun_demo.py",
+    "server_sha256": "5e6d14b651fa6dd527c3e220862ca6de5f962657ffd5ce38a57b8b3487791106"
+  },
+  "data": {
+    "environment": "learned CoinRun latent dynamics",
+    "initial_context_source": "held-out local CoinRun trajectory",
+    "action_mapping": {
+      "left": 1,
+      "left_jump": 2,
+      "noop": 4,
+      "jump": 5,
+      "right": 7,
+      "right_jump": 8
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 24,
+    "estimated_budget": "interactive inference only",
+    "shutdown_policy": "3-hour user evaluation window after verified readiness"
+  },
+  "protocol": {
+    "model": {
+      "name": "medium",
+      "parameters": 3931392,
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+      "context_frames": 16,
+      "denoise_steps": 4
+    },
+    "training": {
+      "performed": false,
+      "agent_or_policy": false
+    },
+    "evaluation": {
+      "health_check": "GET /health returns ready model metadata",
+      "step_check": "POST /api/step performs real model inference",
+      "qualitative": "user presses actions and inspects generated frames",
+      "latency": "record server inference latency and end-to-end request latency"
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "The selected checkpoint loads once and GET /health reports ready."
+    },
+    {
+      "id": "SC-2",
+      "rule": "A real POST /api/step returns a generated frame and action metadata."
+    },
+    {
+      "id": "SC-3",
+      "rule": "The SSH-forwarded local URL works before the 3-hour shutdown timer is set."
+    }
+  ],
+  "planned_outputs": [
+    "LIVE_DEMO_READY.json",
+    "health response",
+    "one real step response",
+    "latency observations",
+    "selected checkpoint and context manifest"
+  ]
+}

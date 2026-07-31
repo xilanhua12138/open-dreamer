@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0002",
+  "retrospective": false,
+  "created_at": "2026-07-31T01:59:26+08:00",
+  "owner": "xilanhua12138",
+  "title": "Corrected CoinRun dynamics browser demo",
+  "kind": "exploratory",
+  "question": "After the corrected PPO-mixture and dynamics-scale experiments finish, can the held-out-selected checkpoint serve sustained action-conditioned CoinRun inference through the local browser?",
+  "reason": "CR-DEMO-0001 passed a runtime smoke but failed user quality review under a small tokenizer, random-action data and a broken Procgen action contract. CR-DYN-0008/0009 correct those inputs and require a new interactive evaluation rather than reusing the rejected checkpoint.",
+  "hypothesis": "The held-out-selected corrected checkpoint will load, survive at least two consecutive generated steps without dtype drift, and expose action-conditioned trajectories suitable for direct user review.",
+  "falsification": "Reject runtime usability if checkpoint selection is incomplete, the server fails to become healthy, either of two consecutive real steps fails, the SSH tunnel fails, or the user again judges representation clarity or action response unusable.",
+  "baseline_id": "CR-DEMO-0001",
+  "depends_on": [
+    "CR-DYN-0008",
+    "CR-DYN-0009"
+  ],
+  "controlled_variable": {
+    "name": "interactive_action",
+    "values": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      8
+    ]
+  },
+  "constants": {
+    "checkpoint_selection": "Descending held-out mean-frame PSNR then mean SSIM across the completed CR-DYN-0009 scale grid",
+    "tokenizer": "16.6M EMA fixed-20k",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "evaluation_dataset": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/eval-final-policy",
+    "bind": "127.0.0.1:7860",
+    "access": "SSH local port forward"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "369907703807021ee6c2450d052a0ea78eb79400",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/live_coinrun_demo.py",
+    "runner_sha256": "a668c87663c3ccbe38b6580f8224691ba2ac1c2580937858fa52b54099999852"
+  },
+  "data": {
+    "environment": "learned Procgen CoinRun easy dynamics",
+    "initial_context_source": "fixed held-out final-policy trajectory",
+    "level_range": [
+      10000,
+      10500
+    ],
+    "action_mapping": {
+      "left": 1,
+      "left_jump": 2,
+      "noop": 4,
+      "jump": 5,
+      "right": 7,
+      "right_jump": 8
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "interactive inference after CR-DYN-0008/0009 release the GPU",
+    "shutdown_policy": "Set a 12-hour shutdown timer when the demo process starts; do not run inference concurrently with training."
+  },
+  "protocol": {
+    "model": {
+      "checkpoint": "CR-DYN-0009 held-out-selected completed scale checkpoint",
+      "context_frames": 16,
+      "denoise_steps": 4,
+      "weights": "EMA shortcut dynamics with 16.6M EMA tokenizer"
+    },
+    "training": {
+      "performed": false,
+      "concurrent_with_dynamics_training": false
+    },
+    "evaluation": {
+      "remote_health": "GET /health returns ok=true and the selected model name",
+      "remote_step": "POST /api/step with action 4 returns a generated PNG",
+      "local_health": "The SSH-forwarded GET /health returns the same model",
+      "local_step": "A second POST /api/step through localhost returns the next generated PNG",
+      "qualitative": "The user directly reviews representation clarity and action response."
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "CR-DYN-0008 and CR-DYN-0009 are complete and the selected checkpoint is backed by held-out metrics."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The remote server passes health and one real generated step."
+    },
+    {
+      "id": "SC-3",
+      "rule": "The local SSH tunnel passes health and a second consecutive real generated step."
+    },
+    {
+      "id": "SC-4",
+      "rule": "User visual review accepts both representation clarity and action responsiveness."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo-selection.json",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/LIVE_DEMO_READY.json",
+    "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/live-demo.log",
+    "tmp_agent_output/20260728-open-dreamer-overnight/dsw-dynamics-poller/LIVE_DEMO_READY.json"
+  ]
+}

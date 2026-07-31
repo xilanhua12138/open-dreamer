@@ -15,6 +15,13 @@ data_type: latent
 # `shard-00001.array_record`, and so on.
 array_record_path: /alloc/data/tokenized_data_500M
 
+# Optional held-out latent dataset used by periodic dynamics visualization.
+validation_array_record_path: null
+validation_index_max: null
+validation_seed: 4242
+validation_batch_size: 4
+validation_sequence_length: 32
+
 # Number of contiguous latent shards to load. Set this to the actual shard count
 # written by tokenization; it is not a video count.
 index_max: 89
@@ -26,6 +33,7 @@ num_max_samples: -1
 # Action dimensions must match the raw dataset and the dynamics model.
 num_binary_actions: 27
 categorical_action_dim: 121
+categorical_noop_action: 60
 continuous_action_dim: 0
 
 # Must match the representation used during tokenization. Valid values are

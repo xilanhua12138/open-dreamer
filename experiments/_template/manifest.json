@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "EXAMPLE-0000",
+  "retrospective": false,
+  "created_at": "YYYY-MM-DDTHH:MM:SS+08:00",
+  "owner": "github-handle",
+  "title": "Concise experiment title",
+  "kind": "confirmatory",
+  "question": "One question only.",
+  "reason": "Why this experiment should be run now.",
+  "hypothesis": "Expected result and mechanism.",
+  "falsification": "Observable result that would reject the hypothesis.",
+  "baseline_id": null,
+  "depends_on": [],
+  "controlled_variable": {
+    "name": "variable_name",
+    "values": []
+  },
+  "constants": {},
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": null,
+    "branch": null,
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": null
+  },
+  "data": {},
+  "compute": {
+    "provider": null,
+    "region": null,
+    "accelerator": null,
+    "accelerator_count": null,
+    "accelerator_memory_gb": null,
+    "estimated_budget": null,
+    "shutdown_policy": null
+  },
+  "protocol": {
+    "model": {},
+    "training": {},
+    "evaluation": {}
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "A criterion written before results are observed."
+    }
+  ],
+  "planned_outputs": []
+}

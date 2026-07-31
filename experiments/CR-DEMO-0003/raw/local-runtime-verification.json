@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0003",
+  "verified_at": "2026-07-31T11:37:47+08:00",
+  "base_url": "http://127.0.0.1:7860",
+  "health": {
+    "error": null,
+    "model": "final_only-medium",
+    "ok": true,
+    "protocol": "continuous-sse-v1"
+  },
+  "initial_step": 3,
+  "noop_steps": [
+    4,
+    5,
+    6
+  ],
+  "right_steps": [
+    11,
+    12
+  ],
+  "release_step": 19,
+  "latency_ms": [
+    25.4,
+    23.4,
+    21.7,
+    22.1,
+    21.6,
+    21.8
+  ],
+  "paused_ack": true,
+  "reset_ack_status": "resetting",
+  "reset_step": 0,
+  "access": {
+    "kind": "launchd-managed SSH tunnel",
+    "label": "ai.open-dreamer.dsw-demo-tunnel",
+    "local_port": 7860,
+    "remote_target": "127.0.0.1:7860"
+  }
+}

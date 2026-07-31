@@ -1,0 +1,12 @@
+{
+  "devices": [
+    "cuda:0"
+  ],
+  "logits_shape": [
+    1,
+    15
+  ],
+  "values_shape": [
+    1
+  ]
+}

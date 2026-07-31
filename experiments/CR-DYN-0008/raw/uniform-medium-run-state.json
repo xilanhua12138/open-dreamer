@@ -1,0 +1,14 @@
+{
+  "attempt_id": "a447c104-b0be-4a0f-ac6c-3ed6da241035",
+  "attempt_started_at": "2026-07-30T18:39:36.084492+00:00",
+  "ended_at": "2026-07-30T19:26:16.844348+00:00",
+  "failure": null,
+  "last_completed_updates": 20000,
+  "last_step": 19999,
+  "max_steps": 20000,
+  "run_id": "2ef7e4bb-0bb9-4efb-8845-f5d830871836",
+  "schema_version": "1.0",
+  "started_at": "2026-07-30T18:39:36.084479+00:00",
+  "state": "COMPLETED",
+  "updated_at": "2026-07-30T19:26:16.844339+00:00"
+}

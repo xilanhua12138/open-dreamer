@@ -21,6 +21,10 @@ from dreamer.configs import (
     DynamicsModelConfig,
     TokenizerModelConfig,
 )
+from dreamer.checkpoint_steps import (
+    normalize_checkpoint_save_steps,
+    resolve_checkpoint_step,
+)
 from dreamer.models import (
     Dynamics,
     Tokenizer,
@@ -44,10 +48,14 @@ def build_checkpoint_manager(
     ) -> ocp.CheckpointManager:
 
     is_multihost = jax.process_count() > 1
+    save_on_steps = normalize_checkpoint_save_steps(
+        ckpt_cfg.max_steps,
+        ckpt_cfg.save_on_steps,
+    )
     checkpoint_options = ocp.CheckpointManagerOptions(
         max_to_keep=ckpt_cfg.max_to_keep,
         save_interval_steps=ckpt_cfg.save_interval_steps,
-        save_on_steps=[ckpt_cfg.max_steps - 1],  # always save at the end
+        save_on_steps=save_on_steps,
         single_host_load_and_broadcast=is_multihost,
         enable_async_checkpointing=True,
         multiprocessing_options=ocp.options.MultiprocessingOptions(primary_host=0),
@@ -100,6 +108,7 @@ class CheckpointBundle:
         mesh_rules: MeshRules,
         rngs: nnx.Rngs | None = None,
         model_names: set[str] | None = None,
+        step: int | None = None,
     ) -> Self:
         """Load bundle from checkpoint (without optimizers).
 
@@ -111,6 +120,7 @@ class CheckpointBundle:
             mesh_rules: Mesh sharding rules
             rngs: Random number generators (default: Rngs(0))
             model_names: Optional subset of registry keys to load. If None, loads all.
+            step: Optional exact zero-based checkpoint step. Defaults to latest.
 
         Returns:
             Bundle with loaded models, unloaded/optimizer fields set to None
@@ -130,13 +140,14 @@ class CheckpointBundle:
 
         item_names = tuple(dict.fromkeys((*registry.keys(), "meta")))
         with ocp.CheckpointManager(checkpoint_path, item_names=item_names) as checkpoint_manager:
-            step = checkpoint_manager.latest_step()
-            if step is None:
-                raise FileNotFoundError(f"No checkpoint found in {checkpoint_path}")
+            selected_step = resolve_checkpoint_step(
+                step,
+                checkpoint_manager.all_steps(),
+            )
 
             # Load config from metadata
             meta_restored = checkpoint_manager.restore(
-                step, args=ocp.args.Composite(meta=ocp.args.JsonRestore())
+                selected_step, args=ocp.args.Composite(meta=ocp.args.JsonRestore())
             )
             meta = meta_restored["meta"]
 
@@ -152,7 +163,7 @@ class CheckpointBundle:
                 for name, model in models.items()
             }
             restore_args = ocp.args.Composite(**restore_kwargs)
-            restored = checkpoint_manager.restore(step, args=restore_args)
+            restored = checkpoint_manager.restore(selected_step, args=restore_args)
 
             # Update model weights
             for name, model in models.items():

@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "candidates": [
+    {
+      "name": "n0.17m",
+      "depth": 1,
+      "d_model": 64,
+      "training_flops_budget": 1e+16,
+      "phase": "primary_fixed_flops",
+      "parameters": 163392,
+      "batch_size": 128,
+      "sequence_length": 16,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "flops_per_step": 159551324160,
+      "allocated_steps": 62675
+    },
+    {
+      "name": "n1.1m",
+      "depth": 2,
+      "d_model": 128,
+      "training_flops_budget": 1e+16,
+      "phase": "primary_fixed_flops",
+      "parameters": 1048192,
+      "batch_size": 128,
+      "sequence_length": 16,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "flops_per_step": 1068540887040,
+      "allocated_steps": 9358
+    },
+    {
+      "name": "n3.7m",
+      "depth": 3,
+      "d_model": 192,
+      "training_flops_budget": 1e+16,
+      "phase": "primary_fixed_flops",
+      "parameters": 3342528,
+      "batch_size": 128,
+      "sequence_length": 16,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "flops_per_step": 3403426037760,
+      "allocated_steps": 2938
+    },
+    {
+      "name": "n8.6m",
+      "depth": 4,
+      "d_model": 256,
+      "training_flops_budget": 2e+16,
+      "phase": "conditional_quality_extension",
+      "parameters": 7734528,
+      "batch_size": 128,
+      "sequence_length": 16,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "flops_per_step": 7840664125440,
+      "allocated_steps": 2550
+    },
+    {
+      "name": "n16.6m",
+      "depth": 5,
+      "d_model": 320,
+      "training_flops_budget": 4e+16,
+      "phase": "conditional_quality_extension",
+      "parameters": 14912320,
+      "batch_size": 128,
+      "sequence_length": 16,
+      "n_latents": 16,
+      "d_bottleneck": 16,
+      "flops_per_step": 15056712499200,
+      "allocated_steps": 2656
+    }
+  ],
+  "remote_uri": "/mnt/workspace/open-dreamer-v2/logs/coinrun-tokenizer-scale-v2-20260729/tokenizer-scale-probe.json",
+  "remote_sha256": "5afde5ba4b02bd447b8c9161fdcd8ee88339dab2998975b686b3a5a120897b9c"
+}

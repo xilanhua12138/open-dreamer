@@ -1,0 +1,270 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0010",
+  "record_revision": 8,
+  "execution_status": "aborted",
+  "scientific_status": "inconclusive",
+  "claim_level": "none",
+  "started_at": "2026-07-31T11:39:55+08:00",
+  "ended_at": "2026-07-31T12:39:19+08:00",
+  "summary": "Fresh 160-frame collection, audits and the first fixed 10,000-update validation completed. The raw-video repair arm was intentionally stopped at 11,320 updates after confirming that every optimizer update repeated the frozen tokenizer encoder. CR-DYN-0011 preserves the scientific recipe while moving that deterministic encoding into a separately audited offline preprocessing stage.",
+  "observations": [
+    {
+      "type": "capacity_blocked",
+      "at": "2026-07-31T11:26:47+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "status": "Failed",
+      "reason": "Sales of this resource are temporarily suspended in the specified zone.",
+      "experiment_started": false
+    },
+    {
+      "type": "pipeline_started",
+      "at": "2026-07-31T11:39:55+08:00",
+      "pipeline_pid": 3170,
+      "execution_commit": "692e2bd64dd984bdf28d33156efb6739059bc94e",
+      "runner_sha256": "6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458",
+      "status": "COLLECTING_TRAIN_FINAL_POLICY_160_FRAME_RECORDS",
+      "shutdown_due_at": "2026-08-01T01:40:14+08:00"
+    },
+    {
+      "type": "fresh_data_audited",
+      "at": "2026-07-31T11:45:09+08:00",
+      "train_records": 4096,
+      "eval_records": 512,
+      "frames_per_record": 160,
+      "train_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+      "eval_tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+      "pair_audit_valid": true,
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4,
+      "short_start_positions": 97,
+      "long_start_positions": 33,
+      "reward_bias_operational": true,
+      "next_status": "EVALUATING_REJECTED_BASELINE_ON_FIXED_REPAIR_FUTURES"
+    },
+    {
+      "type": "rejected_baseline_fixed_future_evaluation",
+      "at": "2026-07-31T11:48:55+08:00",
+      "num_videos": 128,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "denoise_steps": 4,
+      "mean_frame_psnr_db": 18.402459719482287,
+      "mean_video_psnr_db": 17.03155657194408,
+      "mean_ssim": 0.7200441043937175,
+      "horizon_16_psnr_db": 18.402459719482287,
+      "action_control_num_videos": 64,
+      "aligned_vs_batch_shuffled_horizon_16_psnr_db": 2.776499071053202,
+      "aligned_vs_one_step_shifted_horizon_16_psnr_db": 0.7871919875498747,
+      "aligned_vs_all_noop_horizon_16_psnr_db": 2.6401313881890367,
+      "interpretation_boundary": "The metric controls show action-conditioned divergence on these sampled futures but do not establish visually credible action response; direct review already rejected the baseline."
+    },
+    {
+      "type": "repair_training_started",
+      "at": "2026-07-31T11:48:55+08:00",
+      "run_id": "535e5bcb-6157-4e03-8d1a-5c2ec0eec697",
+      "attempt_id": "87feca6f-36a7-48fc-8b5a-5cbe258c0ad0",
+      "model_parameters": 3931136,
+      "max_updates": 200000,
+      "checkpoint_resume": false,
+      "status": "TRAINING_REFERENCE_REPAIR_MEDIUM_200K"
+    },
+    {
+      "type": "intermediate_fixed_validation_and_operator_abort",
+      "at": "2026-07-31T12:39:19+08:00",
+      "completed_updates_at_validation": 10000,
+      "completed_updates_at_stop": 11320,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "online_shortcut_psnr_horizon_1_db": 26.07,
+      "online_shortcut_psnr_horizon_3_db": 22.41,
+      "online_shortcut_psnr_horizon_8_db": 19.69,
+      "online_shortcut_mse": 0.313818,
+      "ema_shortcut_psnr_horizon_1_db": 24.94,
+      "ema_shortcut_psnr_horizon_3_db": 21.69,
+      "ema_shortcut_psnr_horizon_8_db": 18.73,
+      "ema_shortcut_mse": 0.364406,
+      "operator_signal": "SIGTERM",
+      "remote_wrapper_status": "FAILED exit_code=241",
+      "reason": "The frozen tokenizer encoder was deterministically recomputed for every sampled raw RGB training batch, obscuring dynamics-only throughput and wasting the majority of the intended 200,000-update budget.",
+      "follow_up_experiment": "CR-DYN-0011"
+    }
+  ],
+  "comparisons": [],
+  "deviations": [
+    {
+      "at": "2026-07-31T11:36:21+08:00",
+      "type": "pre_execution_source_fix",
+      "from_commit": "1c647df007ebb6d388f081ea95ea07475e683c4e",
+      "to_commit": "2fbfe81ce240f02638fb9815c367af88e999b1c7",
+      "reason": "The validation helper imported the optional Grain dataloader at module import time, while the lightweight ledger CI intentionally omits Grain.",
+      "protocol_changed": false,
+      "runner_sha256_changed": false,
+      "verification": "A new subprocess regression test failed before the fix; the exact CI dependency set then passed all 159 tests, Python compile checks, shell syntax checks and git diff checks."
+    },
+    {
+      "at": "2026-07-31T12:39:19+08:00",
+      "type": "operator_abort_for_new_controlled_experiment",
+      "reason": "Move deterministic tokenizer encoding out of the repeated optimizer path while preserving source records, latent values, action/reward/terminal alignment, reward-biased windowing, model, schedule and evaluation protocol.",
+      "protocol_changed": true,
+      "scientific_question_changed": false,
+      "replacement_experiment": "CR-DYN-0011",
+      "old_checkpoint_reused": false,
+      "evidence_preserved": true
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-07-31T11:31:58+08:00",
+      "stage": "pre_execution_ci",
+      "type": "ModuleNotFoundError",
+      "message": "No module named 'grain' while importing dreamer.dynamics_validation.",
+      "optimizer_updates": 0,
+      "data_records_collected": 0,
+      "resolved_by": "2fbfe81ce240f02638fb9815c367af88e999b1c7"
+    }
+  ],
+  "conclusion": {
+    "observed": [
+      "Fresh 160-frame train and held-out records passed split, pair and action audits.",
+      "The from-scratch repair arm reached its first fixed validation at 10,000 updates and was stopped at 11,320 updates.",
+      "The raw-video dataloader caused the frozen tokenizer encoder to run inside every optimizer update."
+    ],
+    "interpretation": [
+      "The 10,000-update metrics are an intermediate diagnostic only; they do not validate the original 200,000-update repair claim.",
+      "Offline pretokenization is a controlled systems repair only if latent values, record order, action/reward/terminal alignment and reward-biased crop semantics are independently audited."
+    ],
+    "not_established": [
+      "Whether the reference-like repair bundle improves absolute rollout quality.",
+      "Whether the repaired dynamics measurably uses future actions.",
+      "Which individual change in the exploratory bundle is causal.",
+      "Whether direct interactive visual review will accept the result.",
+      "Whether the full 200,000-update reference recipe would have passed the preregistered repair thresholds."
+    ],
+    "decision": [
+      "Preserve all CR-DYN-0010 evidence and do not interpret the intermediate run as a terminal result.",
+      "Run CR-DYN-0011 from scratch with offline audited latents and otherwise identical dynamics/evaluation settings."
+    ]
+  },
+  "artifacts": [
+    {
+      "name": "initial same-instance launch blocker",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/launch-blocker.json",
+      "retention": "git",
+      "sha256": "68e98761672c7a2eb58edcd40e898a362cbc79b901527d10cd40f075e22e05cc"
+    },
+    {
+      "name": "frozen remote launch evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/launch-evidence.json",
+      "retention": "git",
+      "sha256": "80bc3faa521a943eb476a084059756f84ff124b3b03cb0784316657587859415"
+    },
+    {
+      "name": "fresh train collection audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/train-collection-audit.json",
+      "retention": "git",
+      "sha256": "1ef0548dbce193fa60abe985c90c39a94dc5586062e42d625a969a1ce6afc093"
+    },
+    {
+      "name": "fresh held-out collection audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/eval-collection-audit.json",
+      "retention": "git",
+      "sha256": "f1bee1584bf58ba7888ec58abfecb7619509526676ad1caf152796119e6f9633"
+    },
+    {
+      "name": "fresh train/eval pair audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/collection-pair-audit.json",
+      "retention": "git",
+      "sha256": "61049551c70b0fe3e8e5737cb14c3c9000fc3a376e3799ab9eac6de53fea7807"
+    },
+    {
+      "name": "reward-windowing audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/reward-windowing-audit.json",
+      "retention": "git",
+      "sha256": "f108cdf85e23fd0eac33b2fa99c43bd5f9af00c014c244c027fffa5ceb19a1d9"
+    },
+    {
+      "name": "rejected baseline fixed-future shortcut metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/rejected-baseline-fixed-futures-shortcut-metrics.json",
+      "retention": "git",
+      "sha256": "0c155ee8222d0fe10dd0f8467d87fbf9de781c65b0808b6c1f12f6781ded852d"
+    },
+    {
+      "name": "rejected baseline fixed-future action controls",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/rejected-baseline-fixed-futures-action-conditioning.json",
+      "retention": "git",
+      "sha256": "a64f5a335214400a33aebc7189417e80290b0d1b75800eb874f7bc3af539421c"
+    },
+    {
+      "name": "fresh reference-repair latent statistics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/reference-repair-latent-stats.json",
+      "retention": "git",
+      "sha256": "ec0e3ef15ad908ef338a86a2f327834784bf87144194cf215a7debacd896d1e7"
+    },
+    {
+      "name": "raw-video 10k validation and operator-abort evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/raw-video-10k-abort.json",
+      "retention": "git",
+      "sha256": "69077e01f266ec5f914bfe17c5d2f4dc4f813f2d6e520f5d650d4ffad7d6e284"
+    },
+    {
+      "name": "raw-video 10k rollout grid",
+      "kind": "mp4",
+      "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/training/final-policy-medium-reference-repair/viz/step_010000/rollouts_grid.mp4",
+      "retention": "remote_workspace_and_local_task_copy",
+      "sha256": "f8d4bd122e6c8d16ced57ac0565d45b4b44eebce4d2d62562b72ce7b142e87e8"
+    }
+  ],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-31T11:21:06+08:00",
+      "reason": "Preregistered the reference-recipe repair before execution."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-31T11:26:20+08:00",
+      "reason": "Recorded the tested implementation commit and immutable runner digest before remote execution."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-31T11:29:47+08:00",
+      "reason": "Recorded the initial A10 inventory blocker and queued idempotent Codex heartbeat ownership."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-31T11:36:21+08:00",
+      "reason": "Recorded the pre-execution lightweight-CI import failure, red regression and protocol-neutral source fix."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-31T11:40:23+08:00",
+      "reason": "Recorded the successful frozen preflight, preserved demo handoff, single pipeline launch and 14-hour shutdown timer."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-31T11:45:09+08:00",
+      "reason": "Recorded completed fresh train/eval collection, valid pair/action audits, operational reward windowing and transition to fixed-future baseline evaluation."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-31T11:48:55+08:00",
+      "reason": "Recorded the fixed-future rejected-baseline metrics and action controls, fresh latent statistics and start-from-scratch transition into the single 200k repair training run."
+    },
+    {
+      "revision": 8,
+      "at": "2026-07-31T12:39:19+08:00",
+      "reason": "Recorded the first 10k fixed validation, the operator stop at 11,320 updates, preserved raw-video evidence and preregistered CR-DYN-0011 as the offline-latent controlled replacement."
+    }
+  ]
+}

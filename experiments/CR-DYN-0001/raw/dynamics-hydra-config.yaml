@@ -1,0 +1,155 @@
+run_name: coinrun-minimal-dynamics
+use_wandb: false
+dataset:
+  name: coinrun
+  data_type: video
+  array_record_path: /mnt/workspace/datasets/coinrun-minimal-complete-20260728/train
+  num_max_samples: -1
+  dataloader_cfg:
+    B: 32
+    num_workers: 4
+    prefetch_buffer_size: 4
+    device_prefetch_buffer_size: 1
+    short_T: 64
+    long_T: 64
+    long_ratio: 0.0
+    start_step: 0
+    dtype: bfloat16
+  H: 64
+  W: 64
+  C: 3
+  padding_H:
+  - 0
+  - 0
+  padding_W:
+  - 0
+  - 0
+  patch_size: 8
+  num_binary_actions: 0
+  categorical_action_dim: 16
+  continuous_action_dim: 0
+  dataset_mean:
+  - 0.5
+  - 0.5
+  - 0.5
+  dataset_std:
+  - 0.288675
+  - 0.288675
+  - 0.288675
+  p_include_reward: 0.5
+  latent_mean:
+  - -0.029909316450357437
+  - 0.004424660466611385
+  - -0.00032595646916888654
+  - -0.0340392030775547
+  - -0.0031314303632825613
+  - 0.0558345727622509
+  - 0.04920908808708191
+  - -0.032208289951086044
+  - -0.033443063497543335
+  - 0.005327688064426184
+  - -0.05281414836645126
+  - 0.003484863555058837
+  - -0.03131979703903198
+  - 0.021612020209431648
+  - -0.016686731949448586
+  - -0.042559776455163956
+  latent_std:
+  - 0.1732890009880066
+  - 0.15492655336856842
+  - 0.1265721172094345
+  - 0.1601809859275818
+  - 0.13536328077316284
+  - 0.14521433413028717
+  - 0.2509809136390686
+  - 0.1280231475830078
+  - 0.1427968442440033
+  - 0.15851855278015137
+  - 0.14356166124343872
+  - 0.17456398904323578
+  - 0.16807226836681366
+  - 0.15188464522361755
+  - 0.14114916324615479
+  - 0.2221360206604004
+scaling_tokens_per_param: 0.0
+scaling_flops_budget: 0.0
+ckpt:
+  max_to_keep: 1
+  save_interval_steps: 5000
+  max_steps: ${max_steps}
+logger:
+  run_name: ${run_name}
+  use_wandb: ${use_wandb}
+  wandb_entity: null
+  wandb_project: tiny_dreamer_4
+  log_every: 100
+  max_steps: ${max_steps}
+  log_gradients: false
+dtype: bfloat16
+param_dtype: float32
+ema_dtype: ${param_dtype}
+parallel_strategy: data
+seed: 0
+tokenizer_ckpt: /mnt/workspace/open-dreamer/logs/coinrun-minimal-complete-20260728/tokenizer/checkpoints
+dynamics:
+  d_bottleneck: 16
+  depth: 2
+  d_model: 128
+  n_heads: 2
+  n_kv_heads: 1
+  packing_factor: 2
+  n_register: 16
+  qk_norm_type: qknorm
+  rope_theta: 10000.0
+  time_every: 2
+  time_layer_offset: 1
+  mlp_ratio: 4
+  dropout_rate: 0.0
+  k_max: 8
+  context_length: 64
+  use_residual_lambdas: false
+  use_bias: false
+  use_rmsnorm_scale: true
+  dtype: ${dtype}
+  param_dtype: ${param_dtype}
+  latent_mean: ${dataset.latent_mean}
+  latent_std: ${dataset.latent_std}
+  num_binary_actions: ${dataset.num_binary_actions}
+  categorical_action_dim: ${dataset.categorical_action_dim}
+  continuous_action_dim: ${dataset.continuous_action_dim}
+ema_decay: 0.999
+max_steps: 15000
+bootstrap_start: 5000
+bootstrap_fraction: 0.25
+image_fraction: 0.0
+ot:
+  enabled: false
+  epsilon: null
+  max_iter: 50
+  threshold: 0.001
+  lse_mode: true
+  pairing: barycentric
+  scale_cost: mean
+loss_weighting: v_space
+lr_schedule:
+  schedule_type: wsd
+  lr: 0.0003
+  init_lr: 0.0
+  lr_end: 0.0
+  warmup_ratio: 0.05
+  decay_ratio: 0.1
+  max_steps: ${max_steps}
+optimizer:
+  optimizer_type: muon
+  weight_decay: 0.1
+  adam_b1: 0.9
+  adam_b2: 0.99
+  adam_eps: 1.0e-08
+  adam_lr_ratio: 1.0
+  mup_scaling: false
+  agc_clipping: 0.0
+  agc_eps: 0.001
+  muon_beta: 0.99
+  muon_nesterov: true
+  muon_ns_steps: 5
+write_video_every: 0

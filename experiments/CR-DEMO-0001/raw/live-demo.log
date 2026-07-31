@@ -1,0 +1,7 @@
+Loading medium from /mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints...
+[parallel] data: {'data': 1, 'model': 1}
+READY http://127.0.0.1:7860 model=medium warmup_ms=24014.2
+127.0.0.1 "GET /health HTTP/1.1" 200 -
+127.0.0.1 "GET /health HTTP/1.1" 200 -
+127.0.0.1 "GET /health HTTP/1.1" 200 -
+127.0.0.1 "POST /api/step HTTP/1.1" 200 -

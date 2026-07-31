@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "observed_at": "2026-07-31T20:06:03+08:00",
+  "instance_status": "Running",
+  "pipeline": {
+    "pid": 944,
+    "pid_alive": true,
+    "status": "TRAINING_MEDIUM_200K_FROM_OFFLINE_LATENTS",
+    "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+    "attempt_id": "9e81f38c-090d-4b59-b11c-669103fa190e",
+    "state": "RUNNING",
+    "last_completed_updates": 110597,
+    "max_steps": 200000,
+    "failure": null
+  },
+  "latest_train_metric": {
+    "at": "2026-07-31T12:05:11.569940+00:00",
+    "completed_updates": 110301,
+    "flow_mse": 0.041015625,
+    "grad_norm": 1.342061161994934,
+    "loss_finite": true
+  },
+  "latest_progress": {
+    "at": "2026-07-31T12:05:03.314513+00:00",
+    "completed_updates": 110253,
+    "steps_per_second": 5.592484894440563,
+    "eta_seconds": 16047.785857985356
+  },
+  "gpu": {
+    "name": "NVIDIA A10",
+    "memory_used_mib": 4426,
+    "memory_total_mib": 23028,
+    "utilization_percent": 83,
+    "power_w": 148.29
+  },
+  "checkpoint_steps": [
+    0,
+    25000,
+    50000,
+    75000,
+    100000
+  ],
+  "fixed_validation_milestones": [
+    {
+      "completed_updates": 70001,
+      "psnr_1_step_ema_shortcut_db": 33.71131134033203,
+      "psnr_3_step_ema_shortcut_db": 27.705364227294922,
+      "psnr_8_step_ema_shortcut_db": 24.105453491210938,
+      "video_sha256": "65ee55f30d3f94de58cbe074fcd49328029c6d04cbed026bb5ed27918db4f682"
+    },
+    {
+      "completed_updates": 80001,
+      "psnr_1_step_ema_shortcut_db": 30.148517608642578,
+      "psnr_3_step_ema_shortcut_db": 30.89337730407715,
+      "psnr_8_step_ema_shortcut_db": 30.841522216796875,
+      "video_sha256": "7a53dd6a5ef0093daf7d39e7da4305b404edf97b75dc3f8a0b623c408ec2caa3"
+    },
+    {
+      "completed_updates": 90001,
+      "psnr_1_step_ema_shortcut_db": 39.84189224243164,
+      "psnr_3_step_ema_shortcut_db": 33.92351150512695,
+      "psnr_8_step_ema_shortcut_db": 30.166973114013672,
+      "video_sha256": "37a62ae183661b4b22a6f318c235370735aa3f3616bfb8afcbd1f199e6ff343c"
+    },
+    {
+      "completed_updates": 100001,
+      "psnr_1_step_ema_shortcut_db": 31.49030303955078,
+      "psnr_3_step_ema_shortcut_db": 31.027488708496094,
+      "psnr_8_step_ema_shortcut_db": 29.199392318725586,
+      "video_sha256": "936bccf2b531237a98c41d90d84aa9ac2285ff38626af37b2e1cb658d3ccdcee"
+    },
+    {
+      "completed_updates": 110001,
+      "psnr_1_step_ema_shortcut_db": 27.95758056640625,
+      "psnr_3_step_ema_shortcut_db": 26.72915267944336,
+      "psnr_8_step_ema_shortcut_db": 23.913808822631836,
+      "video_sha256": "515243f9d4258153c64a33fe1e156564e710edebd19587aeb5e64977daa324ba"
+    }
+  ],
+  "local_visual_root": "local-task://cr-dyn-0011-sync/running-at-110301/viz",
+  "run_state_sha256": "ff1900f19a53881b2f80f1559a95c885a407f415ad95ed5fd79dcd642bb22783",
+  "shutdown_due_at": "2026-08-01T07:16:20+08:00",
+  "claim_boundary": "These are periodic fixed-validation and health observations from a running attempt. They do not replace the preregistered terminal shortcut, full-diffusion, action-control or visual-review assessment."
+}

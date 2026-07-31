@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "python": "3.10.12 (main, Feb  4 2025, 14:57:36) [GCC 11.4.0]",
+  "packages": {
+    "numpy": "2.2.6",
+    "scipy": "1.14.1",
+    "jax": "0.4.35",
+    "jaxlib": "0.4.34",
+    "flax": "0.10.2",
+    "optax": "0.2.4",
+    "procgen": "0.10.7",
+    "gym3": "0.3.3",
+    "array-record": "0.8.1",
+    "grain": "0.2.11",
+    "imageio": "2.36.1",
+    "wandb": "0.19.7"
+  },
+  "jax_devices_under_cpu_smoke": [
+    "TFRT_CPU_0"
+  ],
+  "coinrun_action_dim": 15,
+  "coinrun_rgb_shape": [
+    1,
+    64,
+    64,
+    3
+  ],
+  "actor_logits_shape": [
+    1,
+    15
+  ],
+  "actor_values_shape": [
+    1
+  ]
+}

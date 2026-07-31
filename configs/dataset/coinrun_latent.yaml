@@ -1,0 +1,53 @@
+# Offline-tokenized CoinRun records produced by
+# `scripts/experiments/coinrun/tokenize_coinrun_dataset.py`.
+
+defaults:
+  - _self_
+
+name: coinrun_latent
+data_type: latent
+
+array_record_path: /mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/train
+index_max: 16
+num_max_samples: -1
+
+validation_array_record_path: null
+validation_index_max: null
+validation_seed: 4242
+validation_batch_size: 4
+validation_sequence_length: 32
+
+dataloader_cfg:
+  B: 16
+  num_workers: 4
+  prefetch_buffer_size: 4
+  device_prefetch_buffer_size: 1
+  short_T: 64
+  long_T: 128
+  long_ratio: 0.1
+  start_step: 0
+  dtype: bfloat16
+
+# Original frame geometry is retained for tokenizer decoding and visualization.
+H: 64
+W: 64
+C: 16
+padding_H: [0, 0]
+padding_W: [0, 0]
+patch_size: 8
+
+num_binary_actions: 0
+categorical_action_dim: 15
+categorical_noop_action: 4
+continuous_action_dim: 0
+
+dataset_mean: [0.5, 0.5, 0.5]
+dataset_std: [0.288675, 0.288675, 0.288675]
+
+# The runner overrides these with the frozen CR-DYN-0010 statistics so the
+# input representation is the only active training change.
+latent_mean: null
+latent_std: null
+
+# ProcessLatentAndSlice preserves the raw CoinRun reward-biased crop semantics.
+p_include_reward: 0.5

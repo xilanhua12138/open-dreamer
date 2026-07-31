@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0004",
+  "record_revision": 1,
+  "execution_status": "queued",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before same-metric historical re-evaluation or fresh all-old combined training.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether the historical checkpoint is intrinsically poor under the aligned evaluator.",
+      "Whether all four old training settings interact to reproduce the collapse.",
+      "Whether any observed training difference is a software bug."
+    ],
+    "decision": [
+      "Wait for CR-PPO-0003, then re-evaluate the historical checkpoint and train one fresh all-old combined arm."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T17:34:00+08:00",
+      "reason": "Preregistered the combined-control diagnosis before either new result."
+    }
+  ]
+}

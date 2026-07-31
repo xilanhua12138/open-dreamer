@@ -27,8 +27,9 @@ from tqdm import tqdm
 from dreamer.configs import DynamicsConfig, OptimalTransportConfig
 from dreamer.data import build_dual_iterator
 from dreamer.logging import build_logger
+from dreamer.dynamics_validation import build_fixed_validation_batch
 from dreamer.models import Dynamics, Tokenizer
-from dreamer.actions import Actions, shift_actions, NUM_BINARY_ACTIONS, NUM_CAMERA_CLASSES
+from dreamer.actions import Actions, shift_actions
 from dreamer.parallel import build_parallel, MeshRules
 from dreamer.scaling import ScalingContext
 from dreamer.training import (
@@ -191,8 +192,13 @@ def run(cfg: DynamicsConfig):
 
         # Check if using latent data (pre-tokenized)
         use_latent_data = cfg.dataset.data_type == "latent"
-        assert cfg.dataset.num_binary_actions == NUM_BINARY_ACTIONS
-        assert cfg.dataset.categorical_action_dim == NUM_CAMERA_CLASSES
+        action_dims = (
+            cfg.dataset.num_binary_actions,
+            cfg.dataset.categorical_action_dim,
+            cfg.dataset.continuous_action_dim,
+        )
+        if any(dim < 0 for dim in action_dims):
+            raise ValueError(f"Action dimensions must be non-negative, got {action_dims}.")
 
         # Load pretrained tokenizer (required for video data, optional for latent data checkpoints)
         tokenizer_bundle = TokenizerCheckpointBundle.from_pretrained(cfg.tokenizer_ckpt, mesh_rules=mesh_rules)
@@ -250,6 +256,21 @@ def run(cfg: DynamicsConfig):
         )
 
         dataloader = build_dual_iterator(cfg.dataset, device=data_sharding, dtype=cfg.dtype)
+        fixed_validation_batch = None
+        if cfg.dataset.validation_array_record_path:
+            fixed_validation_batch = build_fixed_validation_batch(
+                cfg.dataset,
+                validation_array_record_path=(
+                    cfg.dataset.validation_array_record_path
+                ),
+                validation_seed=cfg.dataset.validation_seed,
+                validation_batch_size=cfg.dataset.validation_batch_size,
+                validation_sequence_length=(
+                    cfg.dataset.validation_sequence_length
+                ),
+                device=data_sharding,
+                dtype=cfg.dtype,
+            )
         with build_checkpoint_manager(cfg.ckpt, ckpt_dir, item_names=DynamicsCheckpointBundle.get_item_names()) as checkpoint_manager:
             # Resume from checkpoint
             start_step, bundle, rng = bundle.restore(checkpoint_manager, rng)
@@ -271,14 +292,33 @@ def run(cfg: DynamicsConfig):
                 latents = batch.get("latents")
                 input_tensor = latents if latents is not None else videos
 
-                actions = shift_actions(actions, cfg.dataset.categorical_action_dim)
+                actions = shift_actions(
+                    actions,
+                    cfg.dataset.categorical_action_dim,
+                    cfg.dataset.categorical_noop_action,
+                )
 
                 # Validation/visualization — all hosts must participate in JAX
                 # compute (model is sharded), but only process 0 does I/O.
                 do_eval = (cfg.write_video_every>0 and step>0 and (step % cfg.write_video_every == 0)) or step == cfg.max_steps - 1
                 if do_eval:
-                    val_data = input_tensor[:4]
-                    val_actions = actions[:4]
+                    if fixed_validation_batch is None:
+                        val_data = input_tensor[:4]
+                        val_actions = actions[:4]
+                    else:
+                        val_data = fixed_validation_batch.get(
+                            "latents",
+                            fixed_validation_batch.get("videos"),
+                        )
+                        if val_data is None:
+                            raise ValueError(
+                                "fixed validation batch has neither videos nor latents"
+                            )
+                        val_actions = shift_actions(
+                            fixed_validation_batch["actions"],
+                            cfg.dataset.categorical_action_dim,
+                            cfg.dataset.categorical_noop_action,
+                        )
                     run_evaluation(
                         cfg, step, bundle.tokenizer,
                         dynamics_online=bundle.dynamics,
@@ -310,6 +350,8 @@ def run(cfg: DynamicsConfig):
 
                 # EMA update
                 ema_update_step(bundle.dynamics, bundle.dynamics_ema, ema_decay=cfg.ema_decay)
+                if is_main_process:
+                    logger.observe_step(step)
 
                 # Logging — device_get on all hosts to stay in sync, only host 0 logs
                 if logger.should_log(step):

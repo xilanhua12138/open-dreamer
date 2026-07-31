@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0010",
+  "retrospective": false,
+  "created_at": "2026-07-31T11:21:06+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun dynamics reference-recipe repair",
+  "kind": "exploratory",
+  "question": "Does a reference-like long-record, long-sequence and 200k-update training bundle repair the unusable CR-DYN-0009 medium model and make its future predictions measurably depend on aligned actions?",
+  "reason": "CR-DYN-0009 selected a 3.93M medium model at only 17.073 dB and direct review rejected both temporal coherence and action response. Its 64-frame records were exactly the same length as its 64-frame training window, making the configured reward-biased slicing mathematically inert. It also used 20k updates and k_max=8, far below the repository's general dynamics reference schedule.",
+  "hypothesis": "Fresh 160-frame PPO records, a 64/128-frame sequence mixture, k_max=256 and 200,000 updates will improve fixed-future held-out quality and produce a positive aligned-action advantage over shuffled and no-op future actions.",
+  "falsification": "Reject the repair if EMA shortcut mean-frame PSNR is below 22 dB, horizon-16 PSNR is below 20 dB, aligned future actions beat batch-shuffled actions by less than 0.25 dB at horizon 16, aligned actions beat all-noop by less than 0.50 dB, or direct visual review remains unusable.",
+  "baseline_id": "CR-DYN-0009",
+  "depends_on": [
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DYN-0009",
+    "CR-DEMO-0002"
+  ],
+  "controlled_variable": {
+    "name": "reference_recipe_repair_bundle",
+    "values": [
+      "CR-DYN-0009 final_only-medium: 64-frame records, T=64 only, k_max=8, 20k updates",
+      "CR-DYN-0010 medium repair: 160-frame records, T=64/128, k_max=256, 200k updates"
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun easy",
+    "policy_checkpoint": "PPO official-parity final checkpoint at 25,165,824 transitions",
+    "train_level_range": [
+      0,
+      500
+    ],
+    "eval_level_range": [
+      10000,
+      10500
+    ],
+    "tokenizer": "n16.6m EMA checkpoint at 20,000 updates",
+    "dynamics_parameters": 3931392,
+    "dynamics_architecture": "depth=4,d_model=256,n_heads=4,n_kv_heads=1,n_register=32",
+    "batch_size": 16,
+    "optimizer": "Muon",
+    "learning_rate": 0.0003,
+    "ot_pairing": "barycentric",
+    "loss_weighting": "v_space",
+    "eval_seed": 4242,
+    "eval_context_frames": 16,
+    "eval_horizon_frames": 16
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "2fbfe81ce240f02638fb9815c367af88e999b1c7",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_repair_reference.sh",
+    "runner_sha256": "6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458",
+    "component_sha256": {
+      "action_conditioning_evaluator": "73fc00ecc96d4a5fcf26dbd781a21029b8336e1bc56f942c6b6314ebc00966dd",
+      "repair_summarizer": "56348facb53f5d50003831d1f3858c60feedd9f920ed4b212afe744dfdcebb38"
+    },
+    "source_freeze": "The initial implementation at 1c647df007ebb6d388f081ea95ea07475e683c4e passed local validation but CI exposed an eager optional Grain import before remote execution. Commit 2fbfe81ce240f02638fb9815c367af88e999b1c7 fixes only that import boundary after a red regression test; the 160-frame, 64/128, k_max=256, 200k protocol and runner digest remain unchanged. Execution uses the following ledger-only freeze commit in a clean detached worktree."
+  },
+  "data": {
+    "train_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+    "eval_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/eval-final-policy-160",
+    "policy_checkpoint": "/mnt/workspace/open-dreamer-ppo-parity/logs/coinrun-ppo-official-parity-v1/ppo-train/checkpoints/env-steps-025165824.msgpack",
+    "action_policy": "stochastic frozen PPO, temperature=1.0, exploration_epsilon=0.05",
+    "action_space": {
+      "categorical_action_dim": 15,
+      "categorical_noop_action": 4
+    },
+    "episode_safe": true,
+    "fresh_collection_required": true
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "Approximately 8-12 A10-hours including fresh collection, baseline controls, 200k updates and terminal evaluation.",
+    "shutdown_policy": "Reuse only the existing A10. Stop the rejected demo only after the new detached worktree passes all preflight checks; set a 14-hour timer at launch and preserve every prior artifact."
+  },
+  "protocol": {
+    "data": {
+      "train_records": 4096,
+      "eval_records": 512,
+      "record_frames": 160,
+      "train_seed": 50240,
+      "eval_seed": 60240,
+      "records_per_shard": 256,
+      "reward_window_audit": {
+        "short_window_start_positions": 97,
+        "long_window_start_positions": 33,
+        "p_include_reward": 0.5
+      }
+    },
+    "model": {
+      "tokenizer_checkpoint": "/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints/19999",
+      "depth": 4,
+      "d_model": 256,
+      "n_heads": 4,
+      "n_kv_heads": 1,
+      "n_register": 32,
+      "d_bottleneck": 16,
+      "packing_factor": 2,
+      "qk_norm_type": "qknorm",
+      "time_every": 2,
+      "time_layer_offset": 1
+    },
+    "training": {
+      "from_scratch": true,
+      "max_steps": 200000,
+      "batch_size": 16,
+      "short_T": 64,
+      "long_T": 128,
+      "long_ratio": 0.1,
+      "context_length": 128,
+      "k_max": 256,
+      "bootstrap_start": 100000,
+      "bootstrap_fraction": 0.25,
+      "ema_decay": 0.999,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "checkpoint_every_steps": 25000,
+      "periodic_fixed_heldout_every_steps": 10000,
+      "periodic_rollouts": [
+        "online_shortcut",
+        "ema_shortcut"
+      ]
+    },
+    "evaluation": {
+      "fixed_futures": true,
+      "shortcut_videos": 128,
+      "full_256_step_diffusion_videos": 8,
+      "action_conditioning_videos": 64,
+      "action_conditions": [
+        "aligned",
+        "batch_shuffled",
+        "one_step_shifted",
+        "all_noop"
+      ],
+      "same_context_target_and_noise_across_action_conditions": true,
+      "baseline_reevaluated_on_same_fresh_eval_corpus": true
+    },
+    "success_criteria": {
+      "min_mean_frame_psnr_db": 22.0,
+      "min_horizon_16_psnr_db": 20.0,
+      "min_aligned_vs_batch_shuffled_horizon_16_db": 0.25,
+      "min_aligned_vs_all_noop_horizon_16_db": 0.5,
+      "visual_review_required": true
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "Fresh train and held-out records must each be episode-safe, share the exact frozen PPO checkpoint, remain level-disjoint and contain exactly 160 frames."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The training arm must start from scratch and complete exactly 200,000 updates with 64/128-frame windows, k_max=256 and the frozen medium architecture."
+    },
+    {
+      "id": "SC-3",
+      "rule": "EMA shortcut mean-frame PSNR must be at least 22 dB and horizon-16 PSNR at least 20 dB on 128 fixed held-out futures."
+    },
+    {
+      "id": "SC-4",
+      "rule": "At horizon 16, aligned actions must beat batch-shuffled future actions by at least 0.25 dB and all-noop future actions by at least 0.50 dB under identical context, target and noise."
+    },
+    {
+      "id": "SC-5",
+      "rule": "A technically passing run remains awaiting visual review; metrics alone cannot establish interactive usability."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/data",
+    "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/training/final-policy-medium-reference-repair",
+    "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/baseline",
+    "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/repair",
+    "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1/repair-assessment.json"
+  ]
+}

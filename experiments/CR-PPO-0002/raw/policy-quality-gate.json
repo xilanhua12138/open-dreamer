@@ -1,0 +1,15 @@
+{
+  "completed_env_steps": 25165824,
+  "decision": "accepted_for_collection",
+  "episodes": 512,
+  "evaluation_distribution": "full_distribution",
+  "mean_return": 8.671875,
+  "num_levels": 0,
+  "policy": "stochastic",
+  "schema_version": "1.0",
+  "success_rate": 0.8671875,
+  "thresholds": {
+    "min_mean_return": 8.0,
+    "min_success_rate": 0.8
+  }
+}

@@ -106,7 +106,12 @@ def build_iterator(
     # Build operations based on dataset type and data type
     if use_latent_data:
         # Pre-tokenized latent data path
-        operations = [ProcessLatentAndSlice(seq_len=seq_len)]
+        operations = [
+            ProcessLatentAndSlice(
+                seq_len=seq_len,
+                p_include_reward=cfg.p_include_reward,
+            )
+        ]
     elif cfg.name.startswith("minecraft_vpt"):
         operations = [
             EpisodeLengthFilter(

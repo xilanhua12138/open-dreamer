@@ -1,0 +1,283 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-08-01T00:38:04+08:00",
+  "entries": [
+    {
+      "experiment_id": "CR-TOK-0001",
+      "title": "Smallest published CoinRun tokenizer scaling point",
+      "path": "experiments/CR-TOK-0001",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "partial_reproduction",
+      "depends_on": []
+    },
+    {
+      "experiment_id": "CR-TOK-0002",
+      "title": "CoinRun tokenizer v2 unequal-step pilot",
+      "path": "experiments/CR-TOK-0002",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-TOK-0003",
+      "title": "CoinRun tokenizer quality-first fixed-20k scale sweep",
+      "path": "experiments/CR-TOK-0003",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-TOK-0002",
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-TOK-0004",
+      "title": "CoinRun tokenizer 28.7M-label fixed-20k extension",
+      "path": "experiments/CR-TOK-0004",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0003"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0001",
+      "title": "Minimal complete action-conditioned CoinRun world model",
+      "path": "experiments/CR-DYN-0001",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "pipeline_closure",
+      "depends_on": []
+    },
+    {
+      "experiment_id": "CR-DYN-0002",
+      "title": "CoinRun dynamics fixed-FLOPs capacity pilot",
+      "path": "experiments/CR-DYN-0002",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0001",
+        "CR-DYN-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0003",
+      "title": "CoinRun dynamics fixed-20k capacity ablation",
+      "path": "experiments/CR-DYN-0003",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0004",
+      "title": "CoinRun large fixed-20k capacity extension",
+      "path": "experiments/CR-DYN-0004",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0003"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0005",
+      "title": "CoinRun 4/16/32 history-context ablation",
+      "path": "experiments/CR-DYN-0005",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0004"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0006",
+      "title": "CoinRun PPO-stage trajectory ablation for dynamics",
+      "path": "experiments/CR-DYN-0006",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0007",
+      "title": "CoinRun final-policy dynamics fixed-20k scale sweep",
+      "path": "experiments/CR-DYN-0007",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0006",
+        "CR-TOK-0003",
+        "CR-PPO-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0008",
+      "title": "CoinRun PPO-checkpoint mixture ablation for dynamics",
+      "path": "experiments/CR-DYN-0008",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DEMO-0001",
+        "CR-DYN-0006"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0009",
+      "title": "CoinRun selected-mixture dynamics fixed-20k scale sweep",
+      "path": "experiments/CR-DYN-0009",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0008",
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0007"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0010",
+      "title": "CoinRun dynamics reference-recipe repair",
+      "path": "experiments/CR-DYN-0010",
+      "execution_status": "aborted",
+      "scientific_status": "inconclusive",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0009",
+        "CR-DEMO-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0011",
+      "title": "CoinRun dynamics offline-latent reference repair",
+      "path": "experiments/CR-DYN-0011",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0010"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0012",
+      "title": "CoinRun 52.80M dynamics xlarge capacity extension",
+      "path": "experiments/CR-DYN-0012",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0011"
+      ]
+    },
+    {
+      "experiment_id": "CR-DEMO-0001",
+      "title": "Action-conditioned CoinRun browser demo",
+      "path": "experiments/CR-DEMO-0001",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "smoke_test",
+      "depends_on": [
+        "CR-DYN-0004",
+        "CR-DYN-0005"
+      ]
+    },
+    {
+      "experiment_id": "CR-DEMO-0002",
+      "title": "Corrected CoinRun dynamics browser demo",
+      "path": "experiments/CR-DEMO-0002",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DYN-0008",
+        "CR-DYN-0009"
+      ]
+    },
+    {
+      "experiment_id": "CR-DEMO-0003",
+      "title": "Continuous CoinRun world-model browser runtime",
+      "path": "experiments/CR-DEMO-0003",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "smoke_test",
+      "depends_on": [
+        "CR-DYN-0008",
+        "CR-DYN-0009",
+        "CR-DEMO-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-PPO-0001",
+      "title": "Real-CoinRun PPO trajectory collector for dynamics",
+      "path": "experiments/CR-PPO-0001",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
+      "depends_on": [
+        "CR-DEMO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-PPO-0002",
+      "title": "CoinRun PPO official-recipe parity control",
+      "path": "experiments/CR-PPO-0002",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "partial_reproduction",
+      "depends_on": [
+        "CR-PPO-0001"
+      ]
+    },
+    {
+      "experiment_id": "CR-PPO-0003",
+      "title": "CoinRun PPO one-factor bug screen",
+      "path": "experiments/CR-PPO-0003",
+      "execution_status": "running",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-PPO-0001",
+        "CR-PPO-0002"
+      ]
+    },
+    {
+      "experiment_id": "CR-PPO-0004",
+      "title": "CoinRun PPO historical re-evaluation and all-old combined control",
+      "path": "experiments/CR-PPO-0004",
+      "execution_status": "queued",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-PPO-0001",
+        "CR-PPO-0002",
+        "CR-PPO-0003"
+      ]
+    }
+  ]
+}

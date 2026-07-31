@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0003",
+  "retrospective": false,
+  "created_at": "2026-07-30T15:56:00+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun PPO one-factor bug screen",
+  "kind": "confirmatory",
+  "question": "Which individual CR-PPO-0001 recipe difference, if any, reproduces its early policy-quality collapse when reverted alone from the validated CR-PPO-0002 recipe?",
+  "reason": "CR-PPO-0002 recovered 8.671875 mean return at 25.17M steps, but it changed several settings together. Calling every difference a bug would exceed the evidence, so causal one-factor controls are required before naming a faulty training choice.",
+  "hypothesis": "At least one individual reversion among 500 training levels, reward-normalizer gamma 0.999, whole-batch advantage normalization or orthogonal-sqrt2 backbone initialization will reduce the 6,291,456-step final-256 mean return by at least 1.0 or success rate by at least 0.10 versus the same-run reference repeat.",
+  "falsification": "Reject the single-factor hypothesis if every reverted arm remains within 1.0 mean return and 0.10 success rate of the reference repeat; that outcome points to interactions, later-training effects or seed variance rather than one independently dominant setting.",
+  "baseline_id": "CR-PPO-0002",
+  "depends_on": [
+    "CR-PPO-0001",
+    "CR-PPO-0002"
+  ],
+  "controlled_variable": {
+    "name": "one_factor_recipe_reversion",
+    "values": [
+      "reference",
+      "levels500",
+      "reward_gamma0999",
+      "batch_advantage",
+      "orthogonal_init"
+    ]
+  },
+  "constants": {
+    "environment": "Procgen CoinRun",
+    "framework": "JAX/Flax/Optax",
+    "procgen": "0.10.7",
+    "training_seed": 0,
+    "evaluation_seed": 4242,
+    "distribution_mode": "easy",
+    "total_environment_steps_per_arm": 6291456,
+    "num_envs": 64,
+    "rollout_steps": 256,
+    "num_minibatches": 8,
+    "update_epochs": 3,
+    "learning_rate": 0.0005,
+    "gamma": 0.999,
+    "gae_lambda": 0.95,
+    "clip_epsilon": 0.2,
+    "value_clip_epsilon": 0.2,
+    "value_coefficient": 0.5,
+    "entropy_coefficient": 0.01,
+    "max_grad_norm": 0.5,
+    "evaluation_distribution": "full_distribution",
+    "evaluation_policy": "stochastic"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "9cb7581c034c4932ad6a073e044e65defab43789",
+    "branch": "feat/coinrun-ppo-collector",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_ppo_bug_screen.sh",
+    "runner_sha256": "dbe07d7be3585d90636dfcc8c9be42c63088864adbcde3557da47680ce696493",
+    "component_sha256": {
+      "summarizer": "2b5fef912c257d6541b8d95643b867f569d7eeb076bf60f679857b8dbd6718c7"
+    },
+    "source_freeze": "The complete preregistration, runner, summarizer and tests were committed and pushed at 9cb7581c034c4932ad6a073e044e65defab43789 before any arm result. The DSW execution worktree must be clean and detached at that commit."
+  },
+  "data": {
+    "training_environment": "Arm-specific num_levels is the controlled variable only for levels500; all other arms use levels [0,200).",
+    "evaluation_environment": {
+      "start_level": 0,
+      "num_levels": 0,
+      "seed": 4242
+    },
+    "dataset_output": null
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "Five serial arms x 6,291,456 transitions = 31,457,280 transitions, expected roughly 70-100 minutes on the existing A10.",
+    "shutdown_policy": "Reuse the existing bounded instance timer; do not create an instance or change GPU specification."
+  },
+  "protocol": {
+    "arms": {
+      "reference": {"train_levels": 200, "reward_normalization_gamma": 0.99, "advantage_normalization": "minibatch", "backbone_init": "glorot_uniform"},
+      "levels500": {"train_levels": 500, "reward_normalization_gamma": 0.99, "advantage_normalization": "minibatch", "backbone_init": "glorot_uniform"},
+      "reward_gamma0999": {"train_levels": 200, "reward_normalization_gamma": 0.999, "advantage_normalization": "minibatch", "backbone_init": "glorot_uniform"},
+      "batch_advantage": {"train_levels": 200, "reward_normalization_gamma": 0.99, "advantage_normalization": "batch", "backbone_init": "glorot_uniform"},
+      "orthogonal_init": {"train_levels": 200, "reward_normalization_gamma": 0.99, "advantage_normalization": "minibatch", "backbone_init": "orthogonal_sqrt2"}
+    },
+    "training": {
+      "from_scratch": true,
+      "serial": true,
+      "fault_resume_only_within_same_arm": true
+    },
+    "evaluation": {
+      "at_environment_steps": 6291456,
+      "periodic_episodes": 128,
+      "final_episodes": 256,
+      "num_levels": 0,
+      "policy": "stochastic",
+      "seed": 4242
+    },
+    "downstream_scope": {
+      "collect_trajectories": false,
+      "train_dynamics": false,
+      "behavior_cloning": false
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "All five fresh arms complete exactly 6,291,456 transitions with identical evaluation identity and no checkpoint reuse."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The same-run reference repeat is evaluated on 128 periodic and 256 final episodes before any reverted arm is interpreted."
+    },
+    {
+      "id": "SC-3",
+      "rule": "An individual factor is called independently dominant only if its final-256 mean return drops at least 1.0 or success rate drops at least 0.10 versus reference."
+    },
+    {
+      "id": "SC-4",
+      "rule": "No trajectory collection, behavior cloning or dynamics training starts."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1/arms/*/final-validation/env-steps-006291456/metrics.json",
+    "/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1/comparison.json"
+  ]
+}

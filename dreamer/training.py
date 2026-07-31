@@ -23,6 +23,7 @@ from dreamer.configs import DynamicsConfig, OptimalTransportConfig
 from dreamer.generation import DenoiseSchedule
 from dreamer.models import Tokenizer, Dynamics
 from dreamer.actions import Actions
+from dreamer.dynamics_validation import periodic_rollout_names
 from dreamer.sampler import sample_video
 from dreamer.utils import _ensure_dir, normalize_with_dataset_stats, apply_border, normalize_latents, unnormalize_latents
 
@@ -515,16 +516,29 @@ def run_evaluation(
 
     T = val_data.shape[1]
     assert T > 5, f"Sequence length {T} must be > 5"
-    ctx_length = 4
+    ctx_length = cfg.periodic_eval_context_frames
+    if not 0 < ctx_length < T:
+        raise ValueError(
+            f"periodic_eval_context_frames must be in [1, {T - 1}], "
+            f"got {ctx_length}"
+        )
     horizon = T - ctx_length
     k_max = dynamics_online.cfg.k_max
 
-    rollout_specs = [
-        ("online_diffusion", dynamics_online, DenoiseSchedule.init(k_max, k_max)),
-        ("ema_diffusion", dynamics_ema, DenoiseSchedule.init(k_max, k_max)),
-        ("online_shortcut", dynamics_online, DenoiseSchedule.init(4, k_max)),
-        ("ema_shortcut", dynamics_ema, DenoiseSchedule.init(4, k_max)),
-    ]
+    models = {
+        "online_diffusion": dynamics_online,
+        "ema_diffusion": dynamics_ema,
+        "online_shortcut": dynamics_online,
+        "ema_shortcut": dynamics_ema,
+    }
+    rollout_specs = []
+    for name in periodic_rollout_names(
+        include_diffusion=cfg.periodic_eval_include_diffusion,
+    ):
+        num_steps = k_max if name.endswith("diffusion") else 4
+        rollout_specs.append(
+            (name, models[name], DenoiseSchedule.init(num_steps, k_max))
+        )
 
     dataset_std = cfg.dataset.dataset_std[0]
     psnr_windows = (1, 3, 8)
@@ -605,12 +619,8 @@ def run_evaluation(
     if logger is not None:
         num_videos = min(4, ground_truth_frames.shape[0])
 
-        grid_columns = [
-            ground_truth_frames,
-            pred_columns["online_diffusion"],
-            pred_columns["ema_diffusion"],
-            pred_columns["online_shortcut"],
-            pred_columns["ema_shortcut"],
+        grid_columns = [ground_truth_frames] + [
+            pred_columns[tag] for tag, _, _ in rollout_specs
         ]
         stacked_frames = jnp.stack(grid_columns)[:, :num_videos]
         videos = rearrange(stacked_frames, 'S B T H W C -> T (B H) (S W) C', B=num_videos)

@@ -36,6 +36,10 @@ ckpt:
   # preempted jobs cheaper to resume.
   save_interval_steps: 10_000
 
+  # Optional exact zero-based training steps to retain. The final step is
+  # always added by the checkpoint manager even when omitted here.
+  save_on_steps: []
+
   # Used by Orbax to force a final checkpoint near the end of training. Keep
   # this tied to top-level `max_steps`.
   max_steps: ${max_steps}
@@ -49,10 +53,17 @@ logger:
   use_wandb: ${use_wandb}
 
   # Optional W&B entity/team. Null lets wandb use its configured default account.
-  wandb_entity: Null
+  wandb_entity: ${oc.env:WANDB_ENTITY,null}
 
   # W&B project name used only when `use_wandb` is true.
-  wandb_project: tiny_dreamer_4
+  wandb_project: ${oc.env:WANDB_PROJECT,open-dreamer}
+
+  # Optional grouping and tags for related arms in one experiment.
+  wandb_group: Null
+  wandb_tags: []
+
+  # `online` uploads immediately; `offline` writes a local W&B run for later sync.
+  wandb_mode: ${oc.env:WANDB_MODE,online}
 
   # Metric logging interval in training steps. Very small values can slow runs.
   log_every: 100
@@ -63,6 +74,14 @@ logger:
   # Enables extra gradient metrics. Useful for debugging, but it adds device
   # work and host transfers.
   log_gradients: false
+
+  # Runtime telemetry includes disk/RSS and, when available, GPU utilization.
+  # Progress heartbeats are independent from metric logging, so a slow large
+  # model still exposes recent completed updates and ETA.
+  telemetry_progress_every_seconds: 30
+
+  # System probes are rate-limited independently from progress heartbeats.
+  telemetry_system_every_seconds: 60
 
 # Activation/compute dtype for model execution and batches. `bfloat16` is the
 # expected GPU setting; use `float32` mainly for debugging or unsupported devices.

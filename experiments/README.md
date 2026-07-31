@@ -1,0 +1,217 @@
+# Experiment ledger
+
+This directory is the durable source of truth for local OpenDreamer experiments. The authoritative machine-readable index is `index.json`; each experiment has a preregistration-style `manifest.json`, observed `results.json`, append-only `events.jsonl`, and a human-readable `README.md`.
+
+The 2026-07-28 records are retrospective backfills from retained Hydra configs, metrics, logs, comparison artifacts, remote paths, and SHA256 hashes. They are explicitly marked `retrospective: true`; later experiments must be registered before GPU time begins.
+
+## Cross-chain retrospective
+
+Read [CoinRun world-model 实验全链复盘](../docs/coinrun-world-model-retrospective.md)
+for the causal chain from Tokenizer scale through PPO data, Dynamics repair and
+the continuous Live Demo. It separates model/data failures from runtime,
+infrastructure and verifier defects, and records the current claim boundaries.
+
+## Current experiments
+
+| ID | Question | Execution | Scientific result | Claim |
+|---|---|---|---|---|
+| `CR-TOK-0001` | Can the smallest published CoinRun tokenizer scaling point run end-to-end on one A10? | completed | supports hypothesis | partial reproduction |
+| `CR-TOK-0002` | What did the unequal-step tokenizer pilot establish before the obsolete runner exited? | aborted | inconclusive | internal result |
+| `CR-TOK-0003` | At fixed 20k updates, how do quality and convergence change across all five tokenizer scales? | completed | supports hypothesis | internal result |
+| `CR-TOK-0004` | At fixed 20k updates, does the 28.7M-label extension improve over 16.6M? | completed | supports hypothesis | internal result |
+| `CR-DYN-0001` | Can a small action-conditioned CoinRun world-model pipeline close end-to-end? | completed | supports hypothesis | pipeline closure |
+| `CR-DYN-0002` | Under `C=1e15`, how does capacity trade against optimizer steps? | aborted | inconclusive | internal result |
+| `CR-DYN-0003` | At the same 20k-step curriculum, does held-out rollout quality improve with capacity? | completed | supports hypothesis | internal result |
+| `CR-DYN-0004` | Does the fixed-20k capacity trend extend to a larger model? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0005` | On one checkpoint and identical futures, how do 4/16/32 history frames affect rollout quality? | completed | supports hypothesis | internal result |
+| `CR-DYN-0006` | At fixed medium dynamics, how does PPO collection stage affect rollout quality? | aborted | inconclusive | none |
+| `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
+| `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
+| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | completed | supports hypothesis | internal result |
+| `CR-DYN-0012` | Does a 52.80M dynamics model improve the completed 200k offline-latent recipe? | planned | not evaluated | none |
+| `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
+| `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
+| `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | completed | supports hypothesis | smoke test |
+| `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
+| `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
+| `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
+| `CR-PPO-0004` | Do the old settings collapse only when combined under an identical evaluator? | queued | not evaluated | none |
+
+## Important reading of the chain
+
+`CR-DYN-0002` is intentionally not deleted. Its medium model received only 474 total steps, with bootstrap beginning at step 237, and its PSNR scored below the small model while SSIM scored above it. The corrected `CR-DYN-0003` fixed every model at 20,000 optimizer steps and found monotonic improvement with capacity. The first run is evidence about an extremely small compute budget, not evidence that larger models are worse.
+
+The 12,902,784-parameter large extension completed but scored below medium, so the prior monotonic capacity trend stopped under this fixed-20k recipe. Medium was then evaluated on byte-identical futures with 4/16/32 history frames; context 16 scored best. The browser demo initially passed health and one real inference step, but a second step exposed float32/bfloat16 context-state drift. After preserving the bfloat16 context dtype, health plus two consecutive steps passed through SSH at about 0.67 seconds per cached step.
+
+The subsequent user evaluation still rejected the demo as usable: tokenizer output was unclear and action response was incorrect. A source/runtime audit found a concrete protocol defect: Procgen CoinRun exposes 15 actions, while the repository config declares 16, and the generic action shifter prepends action 8 although Procgen no-op is action 4. Because this shifter is used during dynamics training, the current checkpoint is retained only as pipeline-smoke evidence. The next run must fix and test the action contract before spending more compute on model scale.
+
+`CR-TOK-0002` restarted the representation study but exposed a second confound. Its FLOPs allocations translated to `62,675 / 9,358 / 2,938 / 2,550 / 2,656` optimizer updates, and the obsolete initial runner exited after only the first three arms. Those retained results are optimization-budget diagnostics, not a fair quality curve; the experiment is closed as aborted rather than silently filled under a changed meaning.
+
+`CR-TOK-0003` is the corrected quality-first experiment. It trains the complete local `0.17M / 1.1M / 3.7M / 8.6M / 16.6M` ladder from scratch for exactly 20,000 optimizer updates per arm, with scaling helpers disabled. Every arm is evaluated after 2,500, 5,000, 10,000 and 20,000 completed updates. The final ranking remains descriptive, and dynamics stays blocked until the aligned final grid receives explicit visual acceptance and a later joint-interface smoke test passes.
+
+All five arms are now durably recorded. Final EMA clean / edge / temporal-change PSNR increased from `12.0610 / 11.9328 / 11.4600 dB` at 0.17M to `36.1691 / 26.7739 / 27.4284 dB` at 16.6M. The descriptive ranking is `16.6M > 8.6M > 3.7M > 1.1M > 0.17M`, with no quality gate or eligible filter. This supports the fixed-20k capacity-quality hypothesis but does not establish visual acceptability or dynamics controllability.
+
+`CR-TOK-0004` adds the missing published `28.7M` label after `CR-TOK-0003`. The local depth-6, `d_model=384` implementation has exactly 25,564,032 parameters. Its first launch from frozen source `3833b34` failed before any optimizer update because the validation helper did not materialize omitted dataclass defaults. The exact failure is retained; a red regression test and code-only fix were applied as execution source `b3eb2af` without changing the protocol. Attempt 02 then reached 1,179 recorder-confirmed updates before a JAX CUDA stream-capture invalidation; its structured evidence is also retained. Attempt 03 recovered from this experiment's own step-0 checkpoint and completed the unchanged protocol. Under an exactly aligned 512-clip final evaluation, n28.7m improved EMA clean / edge / temporal-change PSNR over n16.6m by `+0.6965 / +0.2921 / +0.2308 dB`. Visual acceptance remains pending, and dynamics remains blocked.
+
+`CR-PPO-0001` completed the missing real-environment trajectory collector described qualitatively by OpenDreamer but absent from its released code. Its final preregistered deterministic policy missed the 50% threshold at `29.6875%`, even though the `22,020,096`-step milestone briefly reached `51.5625%`. The final frozen checkpoint still produced 4,096 train and 512 eval records with `55.6904% / 65.7534%` completed-episode success and valid split/pair audits. A larger post-hoc stochastic full-distribution evaluation raised the final estimate to `4.9609375` mean return, which showed a measurement bias but remained well below the public easy-200 curve.
+
+`CR-PPO-0002` was therefore preregistered before its GPU run. It preserved the 25,165,824-transition budget and architecture widths while aligning 200 training levels, reward-normalizer gamma `0.99`, per-minibatch advantage normalization, Glorot IMPALA backbone initialization and stochastic `num_levels=0` evaluation. The final independent 512-episode evaluation reached `8.671875` mean return and `86.71875%` success, versus the old checkpoint's `4.9609375 / 49.609375%` under the same metric. This supports the combined parity hypothesis but does not identify a single causal bug; one-seed JAX, Procgen-version and framework confounders keep the claim at partial reproduction. No replacement trajectories or dynamics were started.
+
+`CR-PPO-0003` is the preregistered causal screen requested after that result. It repeats the validated recipe to 6,291,456 transitions and then reverts exactly one training factor in each serial arm: 500 levels, reward-normalizer gamma `0.999`, whole-batch advantage normalization or orthogonal initialization. A factor is independently dominant only if final-256 mean return drops at least 1.0 or success rate drops at least 0.10 versus the same-run reference. No arm may collect trajectories or start dynamics.
+
+`CR-PPO-0004` is the required follow-up if those single reverts remain healthy. It first re-evaluates the retained historical 6.29M checkpoint with the same stochastic full-distribution 256-episode protocol, then trains one fresh arm with all four old settings combined. This distinguishes original evaluation bias from a reproducible nonlinear interaction and from another historical source/runtime or run-variance cause.
+
+`CR-DYN-0006` and `CR-DYN-0007` preserve a rejected preregistration rather than
+silently rewriting it. They proposed isolated PPO-checkpoint corpora followed
+by a final-only scale sweep, but the user clarified before any collection or
+GPU execution that the intended variable was the within-corpus mixture ratio.
+Both IDs are therefore aborted with no scientific result.
+
+`CR-DYN-0008` is the corrected fixed-record mixture experiment. It always runs
+all three 2,048-record arms: final-only `0/0/0/2048`, uniform
+`512/512/512/512`, and recency-weighted `256/256/512/1024` over the
+`1.05M/6.29M/12.58M/25.17M` PPO checkpoints. Mixtures reuse byte-identical
+source shards selected by stable nested prefixes. The 16.6M EMA tokenizer,
+3.93M medium dynamics model, 20,000 updates and final-policy held-out futures
+stay fixed. Only after every arm finishes does a frozen lexicographic rule
+select mean-frame PSNR, then mean SSIM, then horizon-16 PSNR.
+
+`CR-DYN-0009` is a preregistered sequential scale sweep on that selected
+mixture. Tiny, small and large train from scratch while the byte-identical
+selected-medium arm is reused. This separates the mixture question from the
+capacity question and keeps both experiments auditable.
+
+`CR-DEMO-0002` is preregistered behind the complete CR-DYN-0008/0009 chain.
+It uses a separate frozen demo worktree, starts only after training releases
+the A10, selects among completed scale checkpoints by held-out mean-frame PSNR
+then SSIM, and requires remote health/step plus a subsequent local-tunnel step.
+User visual acceptance remains a separate final criterion.
+
+The clean remote `CR-DYN-0008/0009` execution source remains frozen at commit
+`8711cf8`. After the PPO, inventory and temporary ProxyClient blockers cleared,
+the exclusive poller launched exactly one serial pipeline as PID `929` at
+01:48:23 on 2026-07-31 and set a 12-hour shutdown timer. All three CR-DYN-0008
+arms completed their exact 20k budgets. The frozen ordering was
+`final_only > recency_weighted > uniform`, at mean-frame PSNR
+`17.073096 / 17.013735 / 16.567942 dB` and mean SSIM
+`0.713450 / 0.701311 / 0.697699`. This rejects the preregistered
+recency-weighted hypothesis and freezes final-only for CR-DYN-0009.
+
+The selected-mixture scale sweep then completed without another pipeline. The
+155,840-parameter tiny, 545,920-parameter small and 12,902,784-parameter large
+arms each trained from scratch to exactly 20k updates; medium was the
+byte-identical CR-DYN-0008 arm. Mean-frame PSNR / SSIM was
+`12.669427/0.553509`, `13.396642/0.580908`, `17.073096/0.713450` and
+`15.723735/0.674813` from tiny through large. Large therefore fell below
+medium, rejecting the preregistered monotonic criterion and selecting medium
+for the dependent demo. This is only a relative ordering in a poor grid.
+
+CR-DEMO-0002 loaded `final_only-medium` and passed remote `/health` plus one
+real action-4 generated step. The first local port-forward failed and the DSW
+timer interrupted the instance; that full attempt remains archived. Recovery
+then preserved the stale evidence, launched a fresh remote process, and used a
+dedicated launchd SSH tunnel. Remote action 4 returned step 1 and local action
+7 returned consecutive step 2 at 764.5 ms. `http://127.0.0.1:7860` is now
+technically sound as an inference service. Direct user review then rejected
+temporal coherence and action response, so the usable-demo hypothesis is
+rejected. `17.073096 dB / 0.713450` must not be described as a usable world
+model.
+
+The retained [CR-DYN-0009 postmortem](CR-DYN-0009/POSTMORTEM.md) identifies
+three infrastructure/protocol gaps for the next run. First, 64-frame PPO
+records paired with a 64-frame training window make `p_include_reward=0.5`
+inert because every record has only start index zero; upstream CoinRun data
+uses 160-frame chunks. Second, the pilot compressed the public dynamics
+reference from 200k updates and `k_max=256` to 20k and `k_max=8`. Third,
+selection never tested whether aligned actions beat shuffled, shifted or
+all-no-op controls. Existing source tracing did not reveal an action off-by-one
+error, but action use remains unmeasured.
+
+The five-minute training poller was removed after the GPU experiments
+completed; its event log and source remain as evidence. Subsequent demo
+operations are manual. Only a dedicated launchd SSH tunnel job remains for the
+current review window.
+
+`CR-DEMO-0003` preserves the rejected CR-DEMO-0002 runner byte-for-byte and
+implements a separate continuous runtime. It prefills the 16-frame history
+once, reuses dynamics and decoder KV caches, generates whenever an SSE client
+is subscribed, and accepts complete held-input state instead of one blocking
+inference request per button event. Remote and local checks passed autonomous
+no-op advancement, held-right persistence, release, pause and reset at about
+22–25 ms steady latency. The complete 720px stage and sidebar fit at 1440x900
+without page scrolling. This supports runtime correctness only and does not
+override the prior rejection of visual coherence or learned action response.
+
+The first shared-session verifier used nanosecond revisions while the browser
+uses microseconds. Because the server accepts only monotonically increasing
+process-global input revisions, the verifier permanently outranked later
+browser inputs: `/api/input` returned 200 but silently retained the previous
+action. The verifier now uses `time.time_ns() // 1000`, the polluted demo
+process was restarted, and no-op `302/303/304`, held-right `307/308` and
+release `311` were observed before the user confirmed that interaction worked.
+This was verifier state pollution, not evidence that the checkpoint ignored
+actions.
+
+`CR-DYN-0010` addresses the failed model before any further demo work. The
+prior 64-frame records and 64-frame window had only one possible crop, so the
+configured reward-biased sampler was inert. The repair is preregistered as an
+exploratory bundle: fresh episode-safe 160-frame final-PPO records, mixed
+64/128-frame training, `k_max=256`, 200,000 updates, fixed held-out periodic
+visuals and future-action corruption controls. It keeps the medium architecture
+and 16.6M EMA tokenizer fixed. Passing metrics still requires direct visual
+review and does not isolate a single causal factor. Fresh collection has now
+completed with 4,096 train and 512 held-out records. Split, pair and action
+audits passed, all 15 Procgen actions were observed, and the new records expose
+97 legal 64-frame starts and 33 legal 128-frame starts. Before training, the
+rejected checkpoint scored 18.402460 dB
+mean-frame PSNR and 0.720044 SSIM on the fixed repair futures. Its aligned
+actions beat shuffled/all-noop controls on this metric subset, but that does
+not override the prior direct visual rejection. The raw-video training arm then
+reached its first fixed validation at step 10,000. Online/EMA shortcut PSNR was
+`26.07/24.94 dB @1`, `22.41/21.69 dB @3` and `19.69/18.73 dB @8`.
+Because the frozen 16.6M tokenizer was being re-encoded on every update, the
+run projected roughly 13 more hours. It was intentionally stopped after
+11,320 completed updates with the 10k video and logs retained; it is aborted,
+not failed evidence for the full quality hypothesis.
+
+`CR-DYN-0011` is preregistered before its latent data exists. It reuses the
+byte-identical CR-DYN-0010 raw train/eval trees and changes only the dynamics
+training input representation: every 160-frame record is deterministically
+encoded once, then dynamics reads latent ArrayRecords. The new path preserves
+actions, rewards, terminals, record order and reward-biased crop semantics,
+and requires a full 4,096/512-record raw-to-latent audit before any optimizer
+update. Model, batch, 64/128 schedule, latent normalization, optimizer, 200k
+budget, `k_max=256` and terminal raw-RGB evaluation remain fixed.
+
+The offline train/eval corpora and all 4,608 pair audits passed. An existing
+DSW shutdown timer interrupted the first attempt after metric update 62,601;
+the explicitly authorized recovery restored step 50k under a new attempt ID,
+preserved both histories and replayed updates 50,001–62,601 without counting
+them as unique extra budget. The recovered run completed the exact 200k
+timeline and terminal evaluations. Median 1k–10k throughput improved from
+4.0157 to 6.5986 updates/s (1.6432x). Shortcut/full-diffusion mean-frame PSNR
+was 24.0660/24.0530 dB, and aligned actions beat shuffled/all-noop controls by
+7.8061/6.4806 dB at horizon 16. All numeric gates passed; visual acceptance
+remains pending. This terminal checkpoint is the formal Medium reference for
+NanoDreamer parity, while XLarge remains gated behind the full Nano chain.
+
+`CR-DYN-0012` is preregistered before CR-DYN-0011 terminal metrics and before
+any xlarge GPU execution. It changes only dynamics capacity from 3,931,136 to
+52,801,152 parameters (depth 9, width 640, 10 heads) while preserving the
+tokenizer, PPO checkpoint, byte-identical raw/latent datasets, batch 16,
+64/128 schedule, 200k updates, optimizer and terminal evaluators. It is gated
+on successful nano-dreamer validation and a real batch-16 A10 fit preflight;
+OOM is retained as a failed preflight rather than silently changing batch or
+architecture.
+
+## Creating or closing an experiment
+
+Read the complete rules in `../CLAUDE.md`, copy `./_template`, allocate the next ID, and validate:
+
+```bash
+uv run --no-project python scripts/validate_experiments.py
+```
+
+Do not edit only this table. Update the experiment directory and `index.json` in the same commit.

@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0012",
+  "retrospective": false,
+  "created_at": "2026-07-31T23:08:00+08:00",
+  "owner": "xilanhua12138",
+  "title": "CoinRun 52.80M dynamics xlarge capacity extension",
+  "kind": "confirmatory",
+  "question": "At the complete CR-DYN-0011 offline-latent recipe, does increasing only dynamics capacity from 3,931,136 to 52,801,152 parameters improve held-out rollout quality and stability?",
+  "reason": "CR-DYN-0011 uses only about 4.4 GiB of the available 23 GiB A10 memory during steady-state training. The user requested one approximately 50M dynamics model after nano-dreamer reproduces the completed best compatible chain. Existing scale evidence stops at 12.90M and was trained for only 20k updates under the rejected short-record protocol.",
+  "hypothesis": "A 52.80M dynamics transformer trained for the same 200k updates on the same audited offline latents will model longer-range CoinRun evolution more accurately than the 3.93M medium baseline, improving shortcut and full-diffusion rollouts without weakening action conditioning.",
+  "falsification": "Reject the capacity hypothesis if the run cannot fit the unchanged batch-16 protocol on one A10, if any terminal evaluator is missing, if mean-frame or horizon-16 shortcut PSNR improves by less than 0.5 dB over CR-DYN-0011, if action controls miss the preregistered absolute thresholds, or if direct visual review does not show greater temporal stability.",
+  "baseline_id": "CR-DYN-0011",
+  "depends_on": [
+    "CR-TOK-0003",
+    "CR-PPO-0002",
+    "CR-DYN-0011"
+  ],
+  "controlled_variable": {
+    "name": "dynamics_model_capacity",
+    "values": [
+      {
+        "label": "medium",
+        "parameters": 3931136,
+        "depth": 4,
+        "d_model": 256
+      },
+      {
+        "label": "xlarge",
+        "parameters": 52801152,
+        "depth": 9,
+        "d_model": 640
+      }
+    ]
+  },
+  "constants": {
+    "tokenizer": "CR-TOK-0003 n16.6m EMA checkpoint at 20,000 updates",
+    "ppo": "CR-PPO-0002 final checkpoint at 25,165,824 transitions",
+    "raw_train_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
+    "raw_eval_tree_sha256": "01f668cf688eb67d180bc7705d287d9a06d90c89eb8c140d56407485f633ada5",
+    "latent_train_tree_sha256": "07e886d9aed0dfec5a273d12afdbb21f81c8df51c9cd2f7f60f73ddf68c97e2d",
+    "latent_eval_tree_sha256": "7fba5cd209336fa445daa6e223f36f950d3012647f1914e2be3e0f9c227f736f",
+    "train_records": 4096,
+    "eval_records": 512,
+    "record_frames": 160,
+    "latent_shape": [
+      160,
+      16,
+      16
+    ],
+    "batch_size": 16,
+    "short_T": 64,
+    "long_T": 128,
+    "long_ratio": 0.1,
+    "reward_biased_sampling_probability": 0.5,
+    "optimizer": "Muon",
+    "learning_rate": 0.0003,
+    "max_steps": 200000,
+    "k_max": 256,
+    "bootstrap_start": 100000,
+    "eval_seed": 4242,
+    "terminal_evaluation_target": "original_rgb"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "6b05e623abff5b5568a317053524f43fbb353468",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/run_coinrun_dynamics_xlarge_offline_latents.sh",
+    "runner_sha256": "6965f864c57af8768f511b56462db7e7a5d7e84ad33532e2a6c31f9d884337fb",
+    "shared_runner": "scripts/experiments/coinrun/run_coinrun_dynamics_offline_latents.sh",
+    "shared_runner_sha256": "3f3d1d5076540c243a736968b15c358adbba4e106e43e4aa64a91be8d0cf9e2e"
+  },
+  "data": {
+    "raw_train_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",
+    "raw_eval_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/eval-final-policy-160",
+    "latent_train_uri": "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/train-final-policy-160-n16p6m",
+    "latent_eval_uri": "/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/eval-final-policy-160-n16p6m",
+    "reuse_policy": "Read-only reuse of byte-identical CR-DYN-0011 raw and latent datasets after nano-dreamer validation succeeds.",
+    "full_pair_audit_required": true
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "One batch-16 compile/one-update fit preflight, followed by exactly 200,000 updates and the unchanged terminal evaluation suite if the preflight fits.",
+    "shutdown_policy": "Use only the existing A10 after CR-DYN-0011 and nano validation release it. Set a bounded shutdown timer for the measured ETA; stop after all terminal evidence is synchronized."
+  },
+  "protocol": {
+    "training": {
+      "architecture": {
+        "depth": 9,
+        "d_model": 640,
+        "n_heads": 10,
+        "n_kv_heads": 1,
+        "n_register": 32
+      },
+      "parameters": 52801152,
+      "from_scratch": true,
+      "max_steps": 200000,
+      "batch_size": 16,
+      "short_T": 64,
+      "long_T": 128,
+      "long_ratio": 0.1,
+      "context_length": 128,
+      "k_max": 256,
+      "bootstrap_start": 100000,
+      "bootstrap_fraction": 0.25,
+      "optimizer": "muon",
+      "learning_rate": 0.0003,
+      "schedule": "wsd",
+      "warmup_ratio": 0.05,
+      "decay_ratio": 0.1,
+      "checkpoint_every_steps": 25000,
+      "periodic_fixed_heldout_every_steps": 10000
+    },
+    "evaluation": {
+      "periodic_target": "tokenizer_decoded_ground_truth",
+      "terminal_target": "original_rgb",
+      "shortcut_videos": 128,
+      "full_256_step_diffusion_videos": 8,
+      "action_conditioning_videos": 64,
+      "context_frames": 16,
+      "horizon_frames": 16,
+      "same_raw_eval_tree_as_CR_DYN_0011": true
+    },
+    "launch_gate": {
+      "requires_CR_DYN_0011_terminal": true,
+      "requires_nano_validation_status": "validated",
+      "requires_GPU_idle": true,
+      "requires_batch16_fit_preflight": true,
+      "oom_policy": "Record failed preflight and do not silently change batch, accumulation, architecture or precision."
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "The exact 52,801,152-parameter model must compile and complete one optimizer update at batch 16 on the existing A10 before the formal from-scratch run starts."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The formal run must complete exactly 200,000 optimizer updates from scratch and produce checkpoint 199999 plus shortcut, full-256-step-diffusion and action-conditioning terminal evaluations."
+    },
+    {
+      "id": "SC-3",
+      "rule": "Shortcut mean-frame PSNR and horizon-16 PSNR must each exceed CR-DYN-0011 by at least 0.5 dB on byte-identical held-out futures."
+    },
+    {
+      "id": "SC-4",
+      "rule": "Aligned actions must beat batch-shuffled actions by at least 0.25 dB and all-noop actions by at least 0.5 dB at horizon 16."
+    },
+    {
+      "id": "SC-5",
+      "rule": "Direct visual review remains mandatory; metric success alone cannot establish a usable or temporally stable world model."
+    }
+  ],
+  "planned_outputs": [
+    "/mnt/workspace/open-dreamer-dynamics-xlarge/logs/coinrun-dynamics-xlarge-v1/preflight",
+    "/mnt/workspace/open-dreamer-dynamics-xlarge/logs/coinrun-dynamics-xlarge-v1/training/final-policy-xlarge-offline-latents",
+    "/mnt/workspace/open-dreamer-dynamics-xlarge/logs/coinrun-dynamics-xlarge-v1/repair/final-policy-xlarge-offline-latents",
+    "/mnt/workspace/open-dreamer-dynamics-xlarge/logs/coinrun-dynamics-xlarge-v1/repair-assessment.json"
+  ]
+}

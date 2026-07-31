@@ -1,0 +1,16 @@
+{
+  "experiment_id": "CR-DYN-0008",
+  "ranked_mixtures": [
+    "final_only",
+    "recency_weighted",
+    "uniform"
+  ],
+  "schema_version": "1.0",
+  "selected_metrics": {
+    "horizon_16_psnr_db": 17.073096061747968,
+    "mean_frame_psnr_db": 17.073096061747968,
+    "mean_ssim": 0.7134503743891403
+  },
+  "selected_mixture": "final_only",
+  "selection_rule": "descending mean_frame_psnr_db, then descending mean_ssim, then descending horizon-16 PSNR, then mixture name"
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0011",
+  "observed_at": "2026-07-31T20:31:20+08:00",
+  "purpose": "User-requested qualitative preview while the 200k training run remains active",
+  "checkpoint_step": 100000,
+  "checkpoint_root": "/mnt/workspace/open-dreamer-dynamics-offline-latents/logs/coinrun-dynamics-offline-latents-v1/training/final-policy-medium-offline-latents/checkpoints",
+  "runtime": {
+    "source_commit": "f1dee334b78c0d5a5986dedc5eb58d422020b878",
+    "protocol": "continuous-sse-v1",
+    "model_name": "cr-dyn-0011-medium-100k",
+    "remote_pid": 8075,
+    "remote_url": "http://127.0.0.1:7860",
+    "local_tunnel_url": "http://127.0.0.1:7860",
+    "context_frames": 16,
+    "denoise_steps": 4
+  },
+  "verification": {
+    "remote_health_ok": true,
+    "local_health_ok": true,
+    "page_ok": true,
+    "right_input": {
+      "step": 1046,
+      "input_action_id": 7,
+      "observed_action_id": 7,
+      "latency_ms": 75.5
+    },
+    "release_input": {
+      "step": 1059,
+      "input_action_id": 4,
+      "observed_action_id": 4,
+      "latency_ms": 61.2
+    },
+    "error": null
+  },
+  "concurrent_training": {
+    "pipeline_pid": 944,
+    "pipeline_alive": true,
+    "completed_updates": 119027,
+    "max_updates": 200000,
+    "steps_per_second": 5.036880884186151,
+    "eta_seconds": 16076.020430465958,
+    "gpu_memory_used_mib_total": 4949,
+    "gpu_memory_total_mib": 23028,
+    "training_process_memory_mib": 4420,
+    "demo_process_memory_mib": 520
+  },
+  "claim_boundary": "This preview proves only that the 100k checkpoint loads and the repaired continuous input/runtime path works concurrently with training. It is not the 200k terminal evaluation and does not establish visual or action quality."
+}

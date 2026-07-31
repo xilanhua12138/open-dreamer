@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-PPO-0003",
+  "record_revision": 3,
+  "execution_status": "running",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": "2026-07-30T16:04:08+08:00",
+  "ended_at": null,
+  "summary": "Five serial one-factor arms started from the clean frozen source 9cb7581 on the existing A10; the reference arm is running.",
+  "observations": [
+    {
+      "at": "2026-07-30T16:04:08+08:00",
+      "stage": "reference",
+      "status": "running",
+      "evidence": "remote://dsw-ljvgtooejpvpxmhhc6/mnt/workspace/open-dreamer-ppo-bug-screen/logs/coinrun-ppo-bug-screen-v1"
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Which individual setting is causal.",
+      "That a weaker hyperparameter is necessarily a software bug."
+    ],
+    "decision": [
+      "Run five serial one-factor arms and do not collect trajectories or start dynamics."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-30T15:56:00+08:00",
+      "reason": "Preregistered the one-factor screen before any arm result."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-30T16:01:00+08:00",
+      "reason": "Recorded the pushed clean execution commit before creating the DSW worktree."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-30T16:04:08+08:00",
+      "reason": "Recorded the idempotent start of the five-arm serial run on the existing A10."
+    }
+  ]
+}

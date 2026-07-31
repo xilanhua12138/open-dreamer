@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0002",
+  "verified_at": "2026-07-31T10:43:34+08:00",
+  "url": "http://127.0.0.1:7860",
+  "selected_model": "final_only-medium",
+  "remote_step": {
+    "step": 1,
+    "action_id": 4,
+    "action": "停 / No-op",
+    "latency_ms": 11489.4,
+    "warmup_ms": 32227.6
+  },
+  "local_health": {
+    "ok": true,
+    "model": "final_only-medium",
+    "source_sha256": "1c54597fd00a099ec6f5a7345f85af33b1e025ec1db043fd52639bf1126c5318"
+  },
+  "local_subsequent_step": {
+    "step": 2,
+    "action_id": 7,
+    "action": "右",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "latency_ms": 764.5,
+    "warmup_ms": 32227.6,
+    "returned_png_data_url": true,
+    "source_sha256": "57cd93bc21dc9aacd0647fa2a731dd69b7277ddd1fa8ef51cf41ae5239230001"
+  },
+  "access": {
+    "kind": "launchd-managed SSH tunnel",
+    "label": "ai.open-dreamer.dsw-demo-tunnel",
+    "pid_at_verification": 76828,
+    "local_port": 7860,
+    "remote_target": "127.0.0.1:7860"
+  },
+  "instance": {
+    "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+    "gpu": "NVIDIA A10",
+    "shutdown_due_time_utc": "2026-07-31T08:40:38Z",
+    "shutdown_due_time_asia_shanghai": "2026-07-31T16:40:38+08:00"
+  }
+}

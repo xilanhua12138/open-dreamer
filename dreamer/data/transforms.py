@@ -18,6 +18,7 @@ import grain
 import numpy as np
 
 from ..actions import Actions, parse_action_dicts
+from ..coinrun_latent_dataset import choose_coinrun_window_start
 from .serialization import deserialize_msgpack_record
 
 try:
@@ -188,21 +189,14 @@ class ProcessEpisodeAndSlice(grain.transforms.RandomMap):
                 f"requested sequence length {self.seq_len}."
             )
 
-        max_start_idx = current_episode_len - self.seq_len
         rewards_tensor = np.array(data["rewards"])
-
-        # Optional reward-biased slicing
-        start_idx = None
-        if self.p_include_reward > 0.0 and rng.random() < self.p_include_reward:
-            reward_ts = np.flatnonzero(rewards_tensor > 0)
-            if reward_ts.size > 0:
-                t = int(rng.choice(reward_ts))
-                start_min = max(0, t - (self.seq_len - 1))
-                start_max = min(t, max_start_idx)
-                start_idx = int(rng.integers(start_min, start_max + 1))
-
-        if start_idx is None:
-            start_idx = int(rng.integers(0, max_start_idx + 1))
+        start_idx = choose_coinrun_window_start(
+            episode_len=current_episode_len,
+            seq_len=self.seq_len,
+            rewards=rewards_tensor,
+            p_include_reward=self.p_include_reward,
+            rng=rng,
+        )
 
         # Slice episode
         seq = episode_tensor[start_idx : start_idx + self.seq_len]
@@ -351,13 +345,14 @@ class ProcessMinecraftEpisodeAndSlice(grain.transforms.RandomMap):
 class ProcessLatentAndSlice(grain.transforms.RandomMap):
     """Random slice pre-tokenized latent episodes."""
 
-    def __init__(self, seq_len: int):
+    def __init__(self, seq_len: int, *, p_include_reward: float = 0.0):
         """Initialize latent processor.
 
         Args:
             seq_len: Target sequence length
         """
         self.seq_len = seq_len
+        self.p_include_reward = float(p_include_reward)
 
     def random_map(self, element: bytes, rng: np.random.Generator) -> dict[str, Any]:
         """Process and randomly slice latent episode.
@@ -374,14 +369,23 @@ class ProcessLatentAndSlice(grain.transforms.RandomMap):
         actions = data["actions"]  # dict with action arrays
 
         episode_len = latents.shape[0]
-        max_start = episode_len - self.seq_len
-        start = int(rng.integers(0, max_start + 1))
+        rewards = data.get("rewards")
+        start = choose_coinrun_window_start(
+            episode_len=episode_len,
+            seq_len=self.seq_len,
+            rewards=rewards,
+            p_include_reward=self.p_include_reward,
+            rng=rng,
+        )
         end = start + self.seq_len
 
-        return {
+        result = {
             "latents": latents[start:end].astype(np.float32),
             "actions": Actions.from_dict(actions)[start:end],
         }
+        if rewards is not None:
+            result["rewards"] = np.asarray(rewards)[start:end]
+        return result
 
 
 class CastDtype(grain.transforms.Map):

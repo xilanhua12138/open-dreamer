@@ -1,0 +1,42 @@
+{
+  "action_counts": {
+    "0": 1634,
+    "1": 797,
+    "2": 586,
+    "3": 2849,
+    "4": 1720,
+    "5": 1727,
+    "6": 7793,
+    "7": 9027,
+    "8": 2415,
+    "9": 1726,
+    "10": 1545,
+    "11": 1778,
+    "12": 2472,
+    "13": 2338,
+    "14": 2361
+  },
+  "completed_env_steps": 25165824,
+  "distribution_mode": "easy",
+  "environment_transitions": 40768,
+  "episodes": 512,
+  "evaluation_distribution": "full_distribution",
+  "evaluation_level_range": null,
+  "mean_episode_length": 77.28125,
+  "mean_return": 8.671875,
+  "median_return": 10.0,
+  "num_levels": 0,
+  "policy": "stochastic",
+  "return_p05": 0.0,
+  "return_p95": 10.0,
+  "schema_version": "1.0",
+  "seed": 4242,
+  "start_level": 0,
+  "success_rate": 0.8671875,
+  "successes": 444,
+  "train_level_range": [
+    0,
+    200
+  ],
+  "vector_steps": 2548
+}

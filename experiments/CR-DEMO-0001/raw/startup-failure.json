@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-07-29T08:41:16+08:00",
+  "stage": "CoinRunWorld.reset",
+  "exception": "TypeError",
+  "message": "'ThreadPrefetchIterDataset' object is not an iterator",
+  "cause": "build_iterator returned an iterable dataset, but reset called next on it directly",
+  "recovery": {
+    "commit": "58758e581945715445f42856c53130e08d978ec6",
+    "change": "Wrap the returned dataset with iter before storing the demo dataloader",
+    "training_restarted": false,
+    "checkpoints_changed": false
+  }
+}

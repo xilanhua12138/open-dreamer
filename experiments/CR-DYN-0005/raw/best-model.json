@@ -1,0 +1,34 @@
+{
+  "best": {
+    "name": "medium",
+    "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+    "mean_frame_psnr_db": 16.016930541728687,
+    "mean_ssim": 0.5419038439903843
+  },
+  "candidates": [
+    {
+      "name": "medium",
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/medium/checkpoints",
+      "mean_frame_psnr_db": 16.016930541728687,
+      "mean_ssim": 0.5419038439903843
+    },
+    {
+      "name": "large",
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/large/checkpoints",
+      "mean_frame_psnr_db": 15.635981656215801,
+      "mean_ssim": 0.5308498203280128
+    },
+    {
+      "name": "small",
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/small/checkpoints",
+      "mean_frame_psnr_db": 14.167381343650332,
+      "mean_ssim": 0.4650682084675207
+    },
+    {
+      "name": "tiny",
+      "checkpoint": "/mnt/workspace/open-dreamer/logs/coinrun-dynamics-fixed20k-20260728/runs/tiny/checkpoints",
+      "mean_frame_psnr_db": 12.767064547742384,
+      "mean_ssim": 0.33728771524399326
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "comparison_type": "descriptive_fixed_20k_extension",
+  "baseline_name": "n16.6m",
+  "candidate_name": "n28.7m",
+  "evaluation_identity": {
+    "dataset": "/mnt/workspace/datasets/coinrun-structured-v2-20260729/eval",
+    "seed": 4242,
+    "batch_size": 32,
+    "frames": 16,
+    "batches": 16,
+    "num_clips": 512,
+    "completed_updates": 20000
+  },
+  "baseline_metrics": {
+    "ema_clean": 36.16913819313049,
+    "ema_masked": 33.615649700164795,
+    "ema_clean_edge": 26.77392288969308,
+    "ema_clean_temporal_change": 27.428436051026853
+  },
+  "candidate_metrics": {
+    "ema_clean": 36.86565899848938,
+    "ema_masked": 34.317572832107544,
+    "ema_clean_edge": 27.066065545803774,
+    "ema_clean_temporal_change": 27.659229659292034
+  },
+  "candidate_minus_baseline_psnr_db": {
+    "ema_clean": 0.6965208053588867,
+    "ema_masked": 0.701923131942749,
+    "ema_clean_edge": 0.2921426561106948,
+    "ema_clean_temporal_change": 0.2307936082651807
+  },
+  "descriptive_score_definition": [
+    "ema_clean",
+    "ema_clean_edge",
+    "ema_clean_temporal_change"
+  ],
+  "baseline_descriptive_score": 90.37149713385043,
+  "candidate_descriptive_score": 91.59095420358518,
+  "descriptive_score_delta": 1.2194570697347586,
+  "quality_claim": "awaiting_visual_review",
+  "dynamics_authorized": false
+}

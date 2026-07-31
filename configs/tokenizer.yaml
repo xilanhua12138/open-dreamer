@@ -260,6 +260,23 @@ lpips_frac: 0.5
 # Save reconstruction grids every N steps. Set 0 to disable visualization.
 visualize_every: 1000
 
+# Fixed held-out validation. This is separate from `visualize_every`, which uses
+# the current training batch. Enable it for formal runs and point it at a
+# disjoint immutable validation dataset.
+validation:
+  enabled: false
+  dataset_path: ""
+  every_steps: 2500
+  batch_size: 8
+  batches: 2
+  frames: 16
+  seed: 4242
+  max_visual_samples: 4
+  fps: 8
+  num_workers: 2
+  prefetch_buffer_size: 2
+  device_prefetch_buffer_size: 1
+
 # Present for consistency with other configs, but train_tokenizer.py currently
 # forces data parallelism in code.
 parallel_strategy: fsdp

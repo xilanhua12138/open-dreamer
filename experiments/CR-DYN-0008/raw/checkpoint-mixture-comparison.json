@@ -1,0 +1,82 @@
+{
+  "controlled_variable": "PPO checkpoint mixture ratio",
+  "experiment_id": "CR-DYN-0008",
+  "rows": [
+    {
+      "mean_frame_psnr_db": 17.073096061747968,
+      "mean_ssim": 0.7134503743891403,
+      "mean_video_psnr_db": 16.165150602593123,
+      "metrics_path": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/final_only-medium/metrics.json",
+      "mixture": "final_only",
+      "psnr_by_horizon_db": {
+        "1": 22.593901716677472,
+        "16": 17.073096061747968,
+        "3": 20.605716311546818,
+        "8": 18.681996890994178
+      },
+      "records_by_stage": {
+        "ppo01p05m": 0,
+        "ppo06p29m": 0,
+        "ppo12p58m": 0,
+        "ppo25p17m": 2048
+      },
+      "ssim_by_horizon": {
+        "1": 0.8267309495434061,
+        "16": 0.7134503743891403,
+        "3": 0.7910452492908426,
+        "8": 0.7538030136246154
+      }
+    },
+    {
+      "mean_frame_psnr_db": 16.567942384109152,
+      "mean_ssim": 0.6976992046029975,
+      "mean_video_psnr_db": 15.627570213031465,
+      "metrics_path": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/uniform-medium/metrics.json",
+      "mixture": "uniform",
+      "psnr_by_horizon_db": {
+        "1": 21.918747361984423,
+        "16": 16.567942384109152,
+        "3": 19.861178206675618,
+        "8": 17.93773259679807
+      },
+      "records_by_stage": {
+        "ppo01p05m": 512,
+        "ppo06p29m": 512,
+        "ppo12p58m": 512,
+        "ppo25p17m": 512
+      },
+      "ssim_by_horizon": {
+        "1": 0.8116683821892996,
+        "16": 0.6976992046029975,
+        "3": 0.7744418527492072,
+        "8": 0.7358598814971868
+      }
+    },
+    {
+      "mean_frame_psnr_db": 17.013735421200252,
+      "mean_ssim": 0.7013113222786589,
+      "mean_video_psnr_db": 15.878059002457658,
+      "metrics_path": "/mnt/workspace/open-dreamer-dynamics-checkpoint-mixtures/logs/coinrun-dynamics-checkpoint-mixtures-v1/mixture-ablation/eval/recency_weighted-medium/metrics.json",
+      "mixture": "recency_weighted",
+      "psnr_by_horizon_db": {
+        "1": 22.891438129488556,
+        "16": 17.013735421200252,
+        "3": 21.02047579353081,
+        "8": 18.880781261799303
+      },
+      "records_by_stage": {
+        "ppo01p05m": 256,
+        "ppo06p29m": 256,
+        "ppo12p58m": 512,
+        "ppo25p17m": 1024
+      },
+      "ssim_by_horizon": {
+        "1": 0.8279976126945289,
+        "16": 0.7013113222786589,
+        "3": 0.791054834651543,
+        "8": 0.7475035662575844
+      }
+    }
+  ],
+  "schema_version": "1.0"
+}
