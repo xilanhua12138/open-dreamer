@@ -173,7 +173,7 @@
       "experiment_id": "CR-DYN-0011",
       "title": "CoinRun dynamics offline-latent reference repair",
       "path": "experiments/CR-DYN-0011",
-      "execution_status": "failed",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

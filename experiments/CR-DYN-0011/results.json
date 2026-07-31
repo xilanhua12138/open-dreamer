@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 4,
-  "execution_status": "failed",
+  "record_revision": 5,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T12:56:44+08:00",
-  "ended_at": "2026-07-31T13:05:03+08:00",
-  "summary": "The first attempt was interrupted by an external DSW stop. The same instance resumed and atomically published all 4,096 train latent records, but a runner bug then treated the preprocessing child as a training run and rejected the missing runtime-identity/run-state files. No dynamics optimizer update started. The exact failure is covered by a red regression and the runner is being repaired before eval tokenization.",
+  "ended_at": null,
+  "summary": "The zero-update runner failure was repaired and frozen. Train/eval offline tokenization completed, all 4,096 train plus 512 held-out records passed full action/reward/terminal and raw-tree audits, and the unchanged 3.93M dynamics arm started from scratch on audited latent records.",
   "observations": [
     {
       "type": "train_offline_tokenization_complete",
@@ -24,7 +24,31 @@
       "latent_tree_sha256": "07e886d9aed0dfec5a273d12afdbb21f81c8df51c9cd2f7f60f73ddf68c97e2d",
       "raw_tree_sha256": "57607091587a923e35f771ddc417513ab723c7cf12d9fda955f3d469fe8245e4",
       "tokenizer_checkpoint_tree_sha256": "1bb5fdabf434a1e828e43a8a208a4b0516871a108e450424a4f48838ad3fbf6f",
-      "full_pair_audit_complete": false
+      "full_pair_audit_complete": true
+    },
+    {
+      "type": "offline_latent_pair_audits_complete",
+      "at": "2026-07-31T13:11:36+08:00",
+      "train_audited_records": 4096,
+      "eval_audited_records": 512,
+      "train_latent_tree_sha256": "07e886d9aed0dfec5a273d12afdbb21f81c8df51c9cd2f7f60f73ddf68c97e2d",
+      "eval_latent_tree_sha256": "7fba5cd209336fa445daa6e223f36f950d3012647f1914e2be3e0f9c227f736f",
+      "all_actions_aligned": true,
+      "all_rewards_aligned": true,
+      "all_terminals_aligned": true,
+      "same_raw_train_tree_as_CR_DYN_0010": true,
+      "same_raw_eval_tree_as_CR_DYN_0010": true
+    },
+    {
+      "type": "offline_latent_dynamics_training_started",
+      "at": "2026-07-31T13:11:38+08:00",
+      "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+      "attempt_id": "4f9ab924-6ace-4f18-9e47-8b3ce45586a9",
+      "execution_commit": "ed5ee9d82721ab9e868f900123a44b83315ffdea",
+      "model_parameters": 3931136,
+      "max_updates": 200000,
+      "checkpoint_resume": false,
+      "status": "TRAINING_MEDIUM_200K_FROM_OFFLINE_LATENTS"
     }
   ],
   "comparisons": [],
@@ -55,14 +79,18 @@
       "message": "recorded command succeeded without runtime-identity.json and run-state.json",
       "dynamics_optimizer_updates": 0,
       "train_latent_dataset_published": true,
-      "resolved_by_pending_source_fix": true
+      "resolved_by_source_commit": "44d955c9ba5c58725ac4dd9304fd10432499555b"
     }
   ],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "All 4,096 train and 512 held-out latent records preserve exact categorical actions, rewards, terminals, record indices and source raw-tree identities.",
+      "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea."
+    ],
+    "interpretation": [
+      "The offline representation has passed its protocol parity gate; dynamics throughput and quality remain pending."
+    ],
     "not_established": [
-      "Whether offline latent records preserve all raw CoinRun transition fields.",
       "Whether offline encoding improves dynamics training throughput.",
       "Whether the unchanged 200k dynamics protocol reaches the quality thresholds."
     ],
@@ -77,6 +105,27 @@
       "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/train-final-policy-160-n16p6m/metadata.json",
       "retention": "remote_workspace",
       "sha256": "26f2fc7bb82026383a85ba86c853a92b787a7c503e371903e26e533bd0dd4798"
+    },
+    {
+      "name": "complete offline eval latent metadata",
+      "kind": "json",
+      "uri": "dsw://cn-shanghai/dsw-ljvgtooejpvpxmhhc6/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1/eval-final-policy-160-n16p6m/metadata.json",
+      "retention": "remote_workspace",
+      "sha256": "b104358ee8beab071acc98a47dec130ca005561ce2711034f2149ff2b8878217"
+    },
+    {
+      "name": "full offline train latent pair audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/train-latent-audit.json",
+      "retention": "git",
+      "sha256": "78630ab0224483a8100f514c17e4b83a5cac7e8c0efa3269f8f4d8c41f4980a0"
+    },
+    {
+      "name": "full offline eval latent pair audit",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/eval-latent-audit.json",
+      "retention": "git",
+      "sha256": "cf2ca44fdc50e7cec12d2aa85bfb197d22a04f2cd509806ab085ff3ea39d432b"
     }
   ],
   "revision_history": [
@@ -99,6 +148,11 @@
       "revision": 4,
       "at": "2026-07-31T13:09:17+08:00",
       "reason": "Frozen the tested zero-update runner repair and updated immutable source identity before recovery."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-31T13:11:38+08:00",
+      "reason": "Recorded complete train/eval offline tokenization, full valid pair audits and the from-scratch transition into dynamics-only training."
     }
   ]
 }

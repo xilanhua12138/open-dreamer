@@ -39,19 +39,24 @@ dynamics recipe instead consumes pre-tokenized latent ArrayRecords.
 
 ### Observed
 
-Not started.
+- Deterministic offline encoding produced 4,096 train and 512 held-out
+  160-frame records with latent shape `160 × 16 × 16`.
+- Full pair audits passed for every record: exact categorical actions, rewards,
+  terminals, record order and raw-tree identities are preserved.
+- After a zero-update preprocessing-wrapper repair, the unchanged 3.93M
+  dynamics arm started from scratch at 2026-07-31 13:11:38 Asia/Shanghai.
 
 ### Interpretation
 
-None.
+The input-representation parity gate has passed. Throughput and model quality
+must still be measured on the live 200k run.
 
 ### Not established
 
-- Offline latent parity.
 - Throughput improvement.
 - Dynamics quality or usability.
 
 ### Decision
 
-Freeze the implementation, publish a clean detached execution worktree, encode
-and audit the retained raw corpus, then start the latent-only dynamics run.
+Continue the one frozen latent-only dynamics run. Do not start another arm
+before its 200k terminal evaluations and visual review evidence are available.
