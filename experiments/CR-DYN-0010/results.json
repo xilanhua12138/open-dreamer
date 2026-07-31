@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 3,
+  "record_revision": 4,
   "execution_status": "queued",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
@@ -19,8 +19,29 @@
     }
   ],
   "comparisons": [],
-  "deviations": [],
-  "failures": [],
+  "deviations": [
+    {
+      "at": "2026-07-31T11:36:21+08:00",
+      "type": "pre_execution_source_fix",
+      "from_commit": "1c647df007ebb6d388f081ea95ea07475e683c4e",
+      "to_commit": "2fbfe81ce240f02638fb9815c367af88e999b1c7",
+      "reason": "The validation helper imported the optional Grain dataloader at module import time, while the lightweight ledger CI intentionally omits Grain.",
+      "protocol_changed": false,
+      "runner_sha256_changed": false,
+      "verification": "A new subprocess regression test failed before the fix; the exact CI dependency set then passed all 159 tests, Python compile checks, shell syntax checks and git diff checks."
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-07-31T11:31:58+08:00",
+      "stage": "pre_execution_ci",
+      "type": "ModuleNotFoundError",
+      "message": "No module named 'grain' while importing dreamer.dynamics_validation.",
+      "optimizer_updates": 0,
+      "data_records_collected": 0,
+      "resolved_by": "2fbfe81ce240f02638fb9815c367af88e999b1c7"
+    }
+  ],
   "conclusion": {
     "observed": [],
     "interpretation": [],
@@ -58,6 +79,11 @@
       "revision": 3,
       "at": "2026-07-31T11:29:47+08:00",
       "reason": "Recorded the initial A10 inventory blocker and queued idempotent Codex heartbeat ownership."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-31T11:36:21+08:00",
+      "reason": "Recorded the pre-execution lightweight-CI import failure, red regression and protocol-neutral source fix."
     }
   ]
 }
