@@ -48,12 +48,22 @@ class FakeRunner:
         return response
 
 
+class FakeProcessLauncher:
+    def __init__(self, pid=24680):
+        self.pid = pid
+        self.calls = []
+
+    def __call__(self, args, log_path):
+        self.calls.append((list(args), log_path))
+        return self.pid
+
+
 def ok_json(payload):
     return poller_module.CommandResult(0, json.dumps(payload), "")
 
 
 class PaiDswDynamicsPollerTest(unittest.TestCase):
-    def make_poller(self, fake_runner):
+    def make_poller(self, fake_runner, *, process_launcher=None):
         temp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(temp_dir.cleanup)
         temp_path = Path(temp_dir.name)
@@ -83,6 +93,7 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
         return poller_module.Poller(
             config,
             command_runner=fake_runner,
+            process_launcher=process_launcher or FakeProcessLauncher(),
             sleeper=lambda _: None,
             monotonic=lambda: 0,
         )
@@ -376,6 +387,7 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
         self.assertEqual(ready["step_action_id"], 4)
 
     def test_ready_remote_demo_opens_missing_local_tunnel(self):
+        launcher = FakeProcessLauncher()
         fake = FakeRunner(
             [
                 (
@@ -406,10 +418,6 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
                     poller_module.CommandResult(1, "", ""),
                 ),
                 (
-                    "ssh -f -N",
-                    poller_module.CommandResult(0, "", ""),
-                ),
-                (
                     "/health",
                     poller_module.CommandResult(
                         0, '{"ok": true, "model": "uniform-medium"}', ""
@@ -427,13 +435,20 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
             ]
         )
 
-        outcome = self.make_poller(fake).run_cycle()
+        monitor = self.make_poller(fake, process_launcher=launcher)
+        outcome = monitor.run_cycle()
 
         self.assertEqual(outcome, "demo_ready")
-        tunnel_call = next(
-            call for call in fake.calls if "-L" in call[0]
-        )
-        self.assertIn("7860:127.0.0.1:7860", tunnel_call[0])
+        self.assertEqual(len(launcher.calls), 1)
+        tunnel_args, tunnel_log = launcher.calls[0]
+        self.assertEqual(tunnel_args[0], "ssh")
+        self.assertIn("-N", tunnel_args)
+        self.assertIn("-T", tunnel_args)
+        self.assertNotIn("-f", tunnel_args)
+        self.assertIn("7860:127.0.0.1:7860", tunnel_args)
+        self.assertEqual(tunnel_log.name, "ssh-tunnel.log")
+        tunnel_pid = monitor.config.state_dir / "ssh-tunnel.pid"
+        self.assertEqual(tunnel_pid.read_text(encoding="utf-8"), "24680\n")
 
     def test_missing_sts_token_blocks_before_proxyclient_or_ssh(self):
         fake = FakeRunner(
@@ -526,6 +541,17 @@ class PaiDswDynamicsPollerTest(unittest.TestCase):
             script.index('blocked "dirty_worktree"'),
         )
         self.assertIn("unexpected_runtime_dirty_path", script)
+
+    def test_remote_script_archives_stale_demo_attempt_before_relaunch(self):
+        script = poller_module.remote_launch_script()
+
+        self.assertIn('stale_root="$RUN_ROOT/stale-demo-attempts', script)
+        self.assertIn('mv "$DEMO_PID_FILE" "$stale_root/live-demo.pid"', script)
+        self.assertIn(
+            'mv "$DEMO_READY_FILE" "$stale_root/LIVE_DEMO_READY.json"',
+            script,
+        )
+        self.assertNotIn('blocked "stale_demo_pid:', script)
 
 
 if __name__ == "__main__":

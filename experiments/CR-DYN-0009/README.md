@@ -43,6 +43,10 @@ The reused 3,931,392-parameter `final_only-medium` anchor remained best at
 mean SSIM. The complete descending order was
 `medium > large > small > tiny`.
 
+This is a relative ordering inside a poor grid. Direct review of the dependent
+demo rejected temporal coherence and action response; 17.073096 dB/0.713450
+must not be described as a usable world model.
+
 ## Interpretation
 
 Small exceeds tiny by 0.727215 dB mean-frame PSNR and 0.027399 mean SSIM, and
@@ -57,9 +61,14 @@ scaling hypothesis is rejected under this fixed-20k recipe.
 - Whether the large model would recover with a different optimization budget.
 - Whether additional seeds reproduce the medium-over-large reversal.
 - Whether any scale is good enough for interactive control.
+- Whether aligned actions beat shuffled, shifted and all-no-op action controls.
 
 ## Decision
 
-Select `final_only-medium` for CR-DEMO-0002 using the frozen held-out ordering.
-Do not generalize the result into “larger models are worse”: it only rejects
-monotonic improvement for this one-seed, fixed-20k protocol.
+Record `final_only-medium` as the descriptive winner using the frozen held-out
+ordering, but do not reuse it for a usability claim. Follow
+[`POSTMORTEM.md`](POSTMORTEM.md): first diagnose action use and sampler versus
+checkpoint quality; then recollect longer episode-safe records before a
+materially longer `k_max=256` reference run. Do not generalize the result into
+“larger models are worse”: it only rejects monotonic improvement for this
+one-seed, fixed-20k protocol.

@@ -22,7 +22,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
-| `CR-DEMO-0002` | Can the corrected selected world model sustain action-conditioned browser inference? | blocked | not evaluated | none |
+| `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
@@ -95,19 +95,33 @@ byte-identical CR-DYN-0008 arm. Mean-frame PSNR / SSIM was
 `12.669427/0.553509`, `13.396642/0.580908`, `17.073096/0.713450` and
 `15.723735/0.674813` from tiny through large. Large therefore fell below
 medium, rejecting the preregistered monotonic criterion and selecting medium
-for the dependent demo.
+for the dependent demo. This is only a relative ordering in a poor grid.
 
 CR-DEMO-0002 loaded `final_only-medium` and passed remote `/health` plus one
-real action-4 generated step. The SSH port-forward did not pass local health
-and the required subsequent step. A DSW timer then stopped the instance; the
-exclusive poller restarted the same A10 but blocked safely on the persisted
-stale demo PID. The local URL is not advertised as usable, and user visual
-acceptance remains pending.
+real action-4 generated step. The first local port-forward failed and the DSW
+timer interrupted the instance; that full attempt remains archived. Recovery
+then preserved the stale evidence, launched a fresh remote process, and used a
+dedicated launchd SSH tunnel. Remote action 4 returned step 1 and local action
+7 returned consecutive step 2 at 764.5 ms. `http://127.0.0.1:7860` is now
+technically sound as an inference service. Direct user review then rejected
+temporal coherence and action response, so the usable-demo hypothesis is
+rejected. `17.073096 dB / 0.713450` must not be described as a usable world
+model.
 
-Launch and monitoring ownership remains exclusively with the five-minute
-poller. It recognizes the owned PID before inspecting GPU occupancy, refreshes
-temporary ProxyClient credentials without logging secrets, and must not launch
-a duplicate process.
+The retained [CR-DYN-0009 postmortem](CR-DYN-0009/POSTMORTEM.md) identifies
+three infrastructure/protocol gaps for the next run. First, 64-frame PPO
+records paired with a 64-frame training window make `p_include_reward=0.5`
+inert because every record has only start index zero; upstream CoinRun data
+uses 160-frame chunks. Second, the pilot compressed the public dynamics
+reference from 200k updates and `k_max=256` to 20k and `k_max=8`. Third,
+selection never tested whether aligned actions beat shuffled, shifted or
+all-no-op controls. Existing source tracing did not reveal an action off-by-one
+error, but action use remains unmeasured.
+
+The five-minute training poller was removed after the GPU experiments
+completed; its event log and source remain as evidence. Subsequent demo
+operations are manual. Only a dedicated launchd SSH tunnel job remains for the
+current review window.
 
 ## Creating or closing an experiment
 

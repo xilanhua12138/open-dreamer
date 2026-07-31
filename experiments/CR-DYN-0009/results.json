@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0009",
-  "record_revision": 4,
+  "record_revision": 5,
   "execution_status": "completed",
   "scientific_status": "rejects_hypothesis",
   "claim_level": "internal_result",
   "started_at": "2026-07-31T04:14:05+08:00",
   "ended_at": "2026-07-31T06:42:59+08:00",
-  "summary": "All four final_only scale points completed the frozen comparison. Tiny, small and large each trained from scratch for exactly 20,000 updates; medium reused the byte-identical CR-DYN-0008 arm. Quality rose through medium, but large fell below medium: mean-frame PSNR 12.6694/13.3966/17.0731/15.7237 dB and mean SSIM 0.55351/0.58091/0.71345/0.67481. The preregistered monotonic scaling hypothesis is rejected and medium is the held-out-selected checkpoint.",
+  "summary": "All four final_only scale points completed the frozen comparison. Tiny, small and large each trained from scratch for exactly 20,000 updates; medium reused the byte-identical CR-DYN-0008 arm. Quality rose through medium, but large fell below medium: mean-frame PSNR 12.6694/13.3966/17.0731/15.7237 dB and mean SSIM 0.55351/0.58091/0.71345/0.67481. The preregistered monotonic scaling hypothesis is rejected. Medium is only the descriptive winner of this poor grid; subsequent direct demo review rejected its temporal quality and action response.",
   "observations": [
     {
       "type": "dependency_satisfied",
@@ -110,6 +110,15 @@
       "status": "COMPLETE CHECKPOINT_MIXTURE_AND_DYNAMICS_SCALE_ABLATIONS",
       "selected_scale": "medium",
       "scale_comparison_sha256": "4cdb1a48c01735f468e7347fddb638765801847bcc85b1527ac4e65b5256a961"
+    },
+    {
+      "type": "posthoc_quality_rejection",
+      "at": "2026-07-31T10:54:05+08:00",
+      "selected_scale": "medium",
+      "mean_frame_psnr_db": 17.073096061747968,
+      "mean_ssim": 0.7134503743891403,
+      "usable_world_model": false,
+      "reason": "Direct browser review rejected temporal coherence and action response."
     }
   ],
   "comparisons": [
@@ -165,17 +174,22 @@
     "interpretation": [
       "Quality improves monotonically from tiny through medium, but the large arm reverses the trend under the same 20,000-update recipe.",
       "Because the preregistered rule required medium <= large on both primary metrics, the monotonic scaling hypothesis is rejected.",
-      "Medium is the descriptive held-out winner and is therefore the correct checkpoint for CR-DEMO-0002 under the frozen selection rule."
+      "Medium is the descriptive held-out winner and was therefore the correct checkpoint to test in CR-DEMO-0002 under the frozen selection rule.",
+      "The dependent demo rejected usability, so the scale ordering must not be conflated with an absolute quality claim."
     ],
     "not_established": [
       "Whether the large model is under-optimized at 20,000 updates or intrinsically worse under this architecture and data recipe.",
       "Whether additional seeds reproduce the medium-over-large reversal.",
-      "Whether any resulting model is interactively controllable."
+      "Whether any resulting model is interactively controllable.",
+      "Whether aligned actions outperform shuffled, shifted or no-op controls.",
+      "Whether 160- or 256-frame episode-safe records, a longer schedule and k_max=256 recover quality."
     ],
     "decision": [
       "Use the exact final_only corpus selected by CR-DYN-0008.",
-      "Select final_only-medium for CR-DEMO-0002 because it leads the complete held-out scale grid.",
-      "Do not infer that capacity is generally harmful; the evidence only rejects monotonic improvement under this fixed-20k one-seed protocol."
+      "Record final_only-medium only as the descriptive winner of the complete held-out scale grid.",
+      "Do not infer that capacity is generally harmful; the evidence only rejects monotonic improvement under this fixed-20k one-seed protocol.",
+      "Do not reuse the checkpoint for a usability claim. Run action-corruption and sampler/checkpoint diagnostics before retraining.",
+      "Use episode-safe records longer than the 64-frame training window so reward-biased slicing is operational."
     ]
   },
   "artifacts": [
@@ -352,6 +366,11 @@
       "revision": 4,
       "at": "2026-07-31T07:17:43+08:00",
       "reason": "Recorded the large arm terminal evidence, closed the complete scale grid, rejected the preregistered monotonic rule and selected medium for the dependent demo."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-31T10:54:05+08:00",
+      "reason": "Recorded the dependent demo quality rejection and clarified that medium is only the descriptive winner of an unusable fixed-20k grid."
     }
   ]
 }

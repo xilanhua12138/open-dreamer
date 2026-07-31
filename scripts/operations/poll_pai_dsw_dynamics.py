@@ -76,6 +76,7 @@ class Config:
 
 
 CommandRunner = Callable[[Sequence[str], str | None, int], CommandResult]
+ProcessLauncher = Callable[[Sequence[str], Path], int]
 
 
 def default_command_runner(
@@ -96,17 +97,33 @@ def default_command_runner(
     )
 
 
+def default_process_launcher(args: Sequence[str], log_path: Path) -> int:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("a", encoding="utf-8") as stream:
+        process = subprocess.Popen(
+            list(args),
+            stdin=subprocess.DEVNULL,
+            stdout=stream,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+            close_fds=True,
+        )
+    return process.pid
+
+
 class Poller:
     def __init__(
         self,
         config: Config,
         *,
         command_runner: CommandRunner = default_command_runner,
+        process_launcher: ProcessLauncher = default_process_launcher,
         sleeper: Callable[[float], None] = time.sleep,
         monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         self.config = config
         self.command_runner = command_runner
+        self.process_launcher = process_launcher
         self.sleeper = sleeper
         self.monotonic = monotonic
         self.config.state_dir.mkdir(parents=True, exist_ok=True)
@@ -390,21 +407,33 @@ class Poller:
                 raise PollerError(
                     "local port 7860 is occupied but demo health validation failed"
                 )
-            self.run_command(
+            tunnel_pid = self.process_launcher(
                 [
                     "ssh",
-                    "-f",
                     "-N",
+                    "-T",
                     "-o",
                     "BatchMode=yes",
                     "-o",
                     "ExitOnForwardFailure=yes",
+                    "-o",
+                    "ServerAliveInterval=15",
+                    "-o",
+                    "ServerAliveCountMax=3",
                     "-L",
                     "7860:127.0.0.1:7860",
                     SSH_ALIAS,
                 ],
-                timeout_seconds=30,
+                self.config.state_dir / "ssh-tunnel.log",
             )
+            tunnel_pid_path = self.config.state_dir / "ssh-tunnel.pid"
+            tunnel_pid_tmp = tunnel_pid_path.with_suffix(".pid.tmp")
+            tunnel_pid_tmp.write_text(
+                f"{tunnel_pid}\n",
+                encoding="utf-8",
+            )
+            tunnel_pid_tmp.replace(tunnel_pid_path)
+            self.emit("local_tunnel_started", pid=tunnel_pid)
             for _ in range(12):
                 self.sleeper(5)
                 validation = self.validate_local_demo(perform_step=True)
@@ -643,7 +672,24 @@ PY
     fi
     return
   fi
-  test ! -f "$DEMO_PID_FILE" || blocked "stale_demo_pid:$demo_pid"
+  if test -f "$DEMO_PID_FILE"; then
+    stale_root="$RUN_ROOT/stale-demo-attempts/$(date -u +%Y%m%dT%H%M%SZ)"
+    mkdir -p "$stale_root"
+    mv "$DEMO_PID_FILE" "$stale_root/live-demo.pid"
+    if test -f "$DEMO_READY_FILE"; then
+      mv "$DEMO_READY_FILE" "$stale_root/LIVE_DEMO_READY.json"
+    fi
+    if test -f "$RUN_ROOT/live-demo-health.json"; then
+      mv "$RUN_ROOT/live-demo-health.json" \
+        "$stale_root/live-demo-health.json"
+    fi
+    if test -f "$RUN_ROOT/live-demo-step.json"; then
+      mv "$RUN_ROOT/live-demo-step.json" "$stale_root/live-demo-step.json"
+    fi
+    if test -f "$DEMO_LOG_FILE"; then
+      mv "$DEMO_LOG_FILE" "$stale_root/live-demo.log"
+    fi
+  fi
 
   "$DEMO_PYTHON" \
     "$DEMO_ROOT/scripts/experiments/coinrun/select_best_coinrun_checkpoint.py" \

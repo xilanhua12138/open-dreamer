@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-31T07:17:43+08:00",
+  "updated_at": "2026-07-31T10:54:05+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -171,9 +171,9 @@
       "experiment_id": "CR-DEMO-0002",
       "title": "Corrected CoinRun dynamics browser demo",
       "path": "experiments/CR-DEMO-0002",
-      "execution_status": "blocked",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "rejects_hypothesis",
+      "claim_level": "internal_result",
       "depends_on": [
         "CR-DYN-0008",
         "CR-DYN-0009"

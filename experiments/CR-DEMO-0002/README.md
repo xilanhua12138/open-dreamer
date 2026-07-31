@@ -36,21 +36,34 @@ timer stopped the instance. The poller restarted the same A10 without creating
 or changing resources, then safely blocked on persisted stale demo PID
 `74923`.
 
+The recovery preserved that entire failed attempt under
+`stale-demo-attempts/20260731T023945Z`, then started a fresh remote demo as PID
+`968`. Remote no-op returned step 1. A dedicated launchd-managed SSH tunnel
+then passed local health, and local action `7` returned the consecutive step 2
+at 764.5 ms after the 32.2-second first-load warmup. The verified review URL is
+`http://127.0.0.1:7860`.
+
 ### Interpretation
 
-Remote checkpoint loading and one generated step work. The browser access path
-and sustained two-step path do not yet work, so this is an infrastructure
-blocker rather than a completed interactive evaluation.
+Checkpoint loading, the browser access path and two consecutive generated
+steps now work. Cached-step latency is interactive at 764.5 ms, while the
+first-load path includes a 32.2-second warmup. This is technical readiness,
+not evidence that visuals or action semantics are acceptable.
+
+The subsequent direct user review rejected the result: generated motion was
+not temporally credible and selecting actions did not produce credible
+responses. The demo therefore proves only runtime closure, not a usable world
+model.
 
 ### Not established
 
-- Local-tunnel health and a subsequent real generated step.
-- Sustained two-step inference.
-- User-perceived visual clarity and action responsiveness.
+- Whether shortcut sampling, insufficient optimization, short record structure
+  or learned action ignorance is the dominant failure.
 
 ### Decision
 
-Do not advertise `http://127.0.0.1:7860` as usable. Leave restart ownership
-with the exclusive poller and resolve its stale-PID lifecycle blocker before
-repeating the complete remote-health/step plus local-health/subsequent-step
-contract.
+Do not present `final_only-medium` or `http://127.0.0.1:7860` as a usable
+world-model demo. Keep the current process only as a rejected diagnostic
+artifact during the user-controlled instance window. The training poller has
+been removed; only the dedicated SSH tunnel launchd job remains. Diagnose
+action use and shortcut/checkpoint quality before another training run.
