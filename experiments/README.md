@@ -29,7 +29,7 @@ infrastructure and verifier defects, and records the current claim boundaries.
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
-| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | running | not evaluated | none |
+| `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | blocked | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | completed | supports hypothesis | smoke test |
@@ -183,6 +183,14 @@ actions, rewards, terminals, record order and reward-biased crop semantics,
 and requires a full 4,096/512-record raw-to-latent audit before any optimizer
 update. Model, batch, 64/128 schedule, latent normalization, optimizer, 200k
 budget, `k_max=256` and terminal raw-RGB evaluation remain fixed.
+
+The offline train/eval corpora and all 4,608 pair audits passed, and the
+from-scratch dynamics arm emitted fixed visuals through 60k plus finite
+metrics through completed update 62,601. An existing DSW shutdown timer then
+stopped the A10. The same instance returned to `Running`, but the stale PID was
+dead and the GPU idle; the run is recorded as infrastructure-blocked with a
+step-50k checkpoint rather than silently restarted or mislabeled as a model
+failure.
 
 ## Creating or closing an experiment
 

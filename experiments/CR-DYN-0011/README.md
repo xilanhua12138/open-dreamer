@@ -45,18 +45,30 @@ dynamics recipe instead consumes pre-tokenized latent ArrayRecords.
   terminals, record order and raw-tree identities are preserved.
 - After a zero-update preprocessing-wrapper repair, the unchanged 3.93M
   dynamics arm started from scratch at 2026-07-31 13:11:38 Asia/Shanghai.
+- Before an external instance stop, the run emitted structured metrics through
+  62,601 completed updates and fixed validation videos through 60,001
+  completed updates. The latest durable checkpoint is step 50,000.
+- The last pre-stop telemetry reported 5.7366 updates/s, finite loss and an ETA
+  of 23,974 seconds. The 60k train metric remained finite at flow MSE
+  0.0380859375.
+- The same A10 returned to `Running` at 2026-07-31 16:48:40 Asia/Shanghai, but
+  the old PID was dead and the GPU was idle. The run is therefore blocked
+  pending an explicitly authorized fault resume; it was not silently restarted.
 
 ### Interpretation
 
-The input-representation parity gate has passed. Throughput and model quality
-must still be measured on the live 200k run.
+The input-representation parity gate has passed and the interrupted run showed
+healthy finite optimization through 60k. A complete 200k run and terminal
+evaluation are still required before judging the throughput acceptance rule or
+model quality.
 
 ### Not established
 
-- Throughput improvement.
+- The preregistered throughput speedup relative to CR-DYN-0010.
 - Dynamics quality or usability.
 
 ### Decision
 
-Continue the one frozen latent-only dynamics run. Do not start another arm
+Preserve the step-50k checkpoint and all 10k–60k evidence. Resume only the same
+frozen latent-only run when explicitly authorized; do not start another arm
 before its 200k terminal evaluations and visual review evidence are available.

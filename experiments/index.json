@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-31T11:21:06+08:00",
+  "updated_at": "2026-07-31T17:02:29+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -173,7 +173,7 @@
       "experiment_id": "CR-DYN-0011",
       "title": "CoinRun dynamics offline-latent reference repair",
       "path": "experiments/CR-DYN-0011",
-      "execution_status": "running",
+      "execution_status": "blocked",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

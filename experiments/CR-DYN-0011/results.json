@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 5,
-  "execution_status": "running",
+  "record_revision": 6,
+  "execution_status": "blocked",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T12:56:44+08:00",
   "ended_at": null,
-  "summary": "The zero-update runner failure was repaired and frozen. Train/eval offline tokenization completed, all 4,096 train plus 512 held-out records passed full action/reward/terminal and raw-tree audits, and the unchanged 3.93M dynamics arm started from scratch on audited latent records.",
+  "summary": "The zero-update runner failure was repaired and frozen. Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm then emitted finite metrics through 62,601 updates and fixed visuals through 60,001 before an external DSW stop killed the process. The same A10 is Running again, but training remains blocked pending an explicitly authorized fault resume from the retained step-50k checkpoint.",
   "observations": [
     {
       "type": "train_offline_tokenization_complete",
@@ -49,6 +49,24 @@
       "max_updates": 200000,
       "checkpoint_resume": false,
       "status": "TRAINING_MEDIUM_200K_FROM_OFFLINE_LATENTS"
+    },
+    {
+      "type": "dynamics_training_interrupted",
+      "observed_at": "2026-07-31T17:02:29+08:00",
+      "last_run_state_completed_updates": 62471,
+      "last_metric_completed_updates": 62601,
+      "last_validation_completed_updates": 60001,
+      "latest_checkpoint_step": 50000,
+      "last_steps_per_second": 5.736570968967682,
+      "last_eta_seconds": 23974.078023957383,
+      "last_flow_mse": 0.0380859375,
+      "last_grad_norm": 2.805586814880371,
+      "loss_finite": true,
+      "instance_status_after_reallocation": "Running",
+      "pipeline_pid": 1794,
+      "pipeline_pid_alive": false,
+      "gpu_memory_used_mib_after_reallocation": 1,
+      "training_restarted": false
     }
   ],
   "comparisons": [],
@@ -80,22 +98,35 @@
       "dynamics_optimizer_updates": 0,
       "train_latent_dataset_published": true,
       "resolved_by_source_commit": "44d955c9ba5c58725ac4dd9304fd10432499555b"
+    },
+    {
+      "at": "2026-07-31T16:06:20+08:00",
+      "stage": "offline_latent_dynamics_training",
+      "type": "infrastructure_interruption",
+      "message": "The existing DSW shutdown timer became due and stopped the A10. The run had emitted metrics through completed update 62,601, a 60k fixed validation and a step-50k checkpoint.",
+      "resolved": false,
+      "recoverable_checkpoint_step": 50000,
+      "last_metric_completed_updates": 62601,
+      "protocol_changed": false
     }
   ],
   "conclusion": {
     "observed": [
       "All 4,096 train and 512 held-out latent records preserve exact categorical actions, rewards, terminals, record indices and source raw-tree identities.",
-      "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea."
+      "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea.",
+      "Before the infrastructure interruption, the run emitted finite metrics through 62,601 completed updates, fixed validation videos through 60,001 updates and a durable step-50k checkpoint.",
+      "After the same A10 returned to Running, pipeline PID 1794 was dead and the GPU was idle; no automatic training restart occurred."
     ],
     "interpretation": [
-      "The offline representation has passed its protocol parity gate; dynamics throughput and quality remain pending."
+      "The offline representation passed its protocol parity gate and the interrupted optimization remained finite through the retained 60k evidence; terminal throughput and quality remain pending."
     ],
     "not_established": [
       "Whether offline encoding improves dynamics training throughput.",
-      "Whether the unchanged 200k dynamics protocol reaches the quality thresholds."
+      "Whether the unchanged 200k dynamics protocol reaches the quality thresholds.",
+      "Whether a resume from the retained checkpoint will preserve the preregistered terminal comparison."
     ],
     "decision": [
-      "Freeze and audit a deterministic offline latent copy of the retained CR-DYN-0010 corpus, then train the same medium protocol from scratch."
+      "Preserve the interrupted run and resume only the same frozen protocol from its retained checkpoint when explicitly authorized."
     ]
   },
   "artifacts": [
@@ -126,6 +157,27 @@
       "uri": "experiments/CR-DYN-0011/raw/eval-latent-audit.json",
       "retention": "git",
       "sha256": "cf2ca44fdc50e7cec12d2aa85bfb197d22a04f2cd509806ab085ff3ea39d432b"
+    },
+    {
+      "name": "interruption run state",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/interruption-run-state.json",
+      "retention": "git",
+      "sha256": "2db669ddfd18af23bdfd1faaf0b6d2ebe853f55344449d6a72907a298baa9ccf"
+    },
+    {
+      "name": "last metric before interruption",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/interruption-latest-metric.json",
+      "retention": "git",
+      "sha256": "6a94d7ae30ec39101b952753fe779219885db14f2db6107e2ff4ffbe33cc6530"
+    },
+    {
+      "name": "60k fixed validation video",
+      "kind": "mp4",
+      "uri": "local-task://cr-dyn-0011-sync/interrupted-at-62640/viz/step_060000/rollouts_grid.mp4",
+      "retention": "local_task",
+      "sha256": "1eeb0f43ca673869addf3f022f009a70418cc049c15cfd5ab6f9896f822223e2"
     }
   ],
   "revision_history": [
@@ -153,6 +205,11 @@
       "revision": 5,
       "at": "2026-07-31T13:11:38+08:00",
       "reason": "Recorded complete train/eval offline tokenization, full valid pair audits and the from-scratch transition into dynamics-only training."
+    },
+    {
+      "revision": 6,
+      "at": "2026-07-31T17:02:29+08:00",
+      "reason": "Recorded the external timer interruption, retained 50k checkpoint, 60k validation, finite 62,601-update metric and blocked recovery state without restarting the pipeline."
     }
   ]
 }
