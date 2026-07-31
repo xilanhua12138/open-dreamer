@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 7,
+  "record_revision": 8,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T12:56:44+08:00",
   "ended_at": null,
-  "summary": "Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm emitted finite metrics through 62,601 updates before an external DSW stop. After explicit user authorization, the same frozen runner restored the retained step-50k checkpoint as a new attempt and resumed healthy training. Updates 50,001 through 62,601 are intentionally replayed because no newer durable checkpoint exists.",
+  "summary": "Train/eval offline tokenization and all pair audits passed. The unchanged 3.93M dynamics arm emitted finite metrics through 62,601 updates before an external DSW stop. After explicit user authorization, the same frozen runner restored the retained step-50k checkpoint as a new attempt, replayed the unavoidable overlap and has now reached 110,597/200,000 finite updates with fixed validation through 110k and a step-100k checkpoint.",
   "observations": [
     {
       "type": "train_offline_tokenization_complete",
@@ -90,6 +90,27 @@
       "gpu_memory_total_mib": 23028,
       "gpu_utilization_percent_observed": 87,
       "shutdown_due_at": "2026-08-01T07:16:20+08:00"
+    },
+    {
+      "type": "dynamics_fault_resume_110k_milestone",
+      "observed_at": "2026-07-31T20:06:03+08:00",
+      "pipeline_pid": 944,
+      "pipeline_pid_alive": true,
+      "run_id": "af4bd764-35da-4625-a0fc-7c7b8dcb0a38",
+      "attempt_id": "9e81f38c-090d-4b59-b11c-669103fa190e",
+      "last_run_state_completed_updates": 110597,
+      "max_updates": 200000,
+      "last_metric_completed_updates": 110301,
+      "latest_validation_completed_updates": 110001,
+      "latest_checkpoint_step": 100000,
+      "steps_per_second": 5.592484894440563,
+      "eta_seconds": 16047.785857985356,
+      "flow_mse": 0.041015625,
+      "grad_norm": 1.342061161994934,
+      "loss_finite": true,
+      "gpu_memory_used_mib": 4426,
+      "gpu_memory_total_mib": 23028,
+      "gpu_utilization_percent_observed": 83
     }
   ],
   "comparisons": [],
@@ -153,10 +174,11 @@
       "The dynamics run started from scratch from clean detached source ed5ee9d82721ab9e868f900123a44b83315ffdea.",
       "Before the infrastructure interruption, the run emitted finite metrics through 62,601 completed updates, fixed validation videos through 60,001 updates and a durable step-50k checkpoint.",
       "After the same A10 returned to Running, pipeline PID 1794 was dead and the GPU was idle; no automatic training restart occurred.",
-      "After explicit user authorization, pipeline PID 944 restored step 50,000 under a new attempt ID. The first retained recovery metric at completed update 50,401 remained finite, and telemetry reported 6.3252 updates/s."
+      "After explicit user authorization, pipeline PID 944 restored step 50,000 under a new attempt ID. The first retained recovery metric at completed update 50,401 remained finite, and telemetry reported 6.3252 updates/s.",
+      "The recovery surpassed the prior 62,601-update high-water mark and reached 110,597/200,000 updates. Fixed validation exists through 110k, checkpoints through step 100k and the latest retained flow MSE remains finite at 0.041015625."
     ],
     "interpretation": [
-      "The offline representation passed its protocol parity gate. The authorized resume is healthy, but terminal throughput and quality remain pending and the replayed 50,001–62,601 interval must not be counted as unique optimizer progress."
+      "The offline representation passed its protocol parity gate and the authorized resume is healthy beyond the interrupted high-water mark. Terminal quality remains pending, the replayed 50,001–62,601 interval must not be counted as unique optimizer progress, and fluctuating periodic shortcut scores must not be interpreted post hoc."
     ],
     "not_established": [
       "Whether offline encoding improves dynamics training throughput.",
@@ -230,6 +252,27 @@
       "uri": "experiments/CR-DYN-0011/raw/recovery-first-metric.json",
       "retention": "git",
       "sha256": "8be957c33452e74223991c12c05ada94df982cf014b73f6a84d3c278a116a67e"
+    },
+    {
+      "name": "running 110k monitor snapshot",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/running-110k-monitor-snapshot.json",
+      "retention": "git",
+      "sha256": "7d5c4b8abc61740f1e5deea6b3977fe8203f27d0be66ecf35677d843e9d90af0"
+    },
+    {
+      "name": "70k through 110k fixed validation videos",
+      "kind": "mp4_collection",
+      "uri": "local-task://cr-dyn-0011-sync/running-at-110301/viz",
+      "retention": "local_task",
+      "count": 5,
+      "sha256s": [
+        "65ee55f30d3f94de58cbe074fcd49328029c6d04cbed026bb5ed27918db4f682",
+        "7a53dd6a5ef0093daf7d39e7da4305b404edf97b75dc3f8a0b623c408ec2caa3",
+        "37a62ae183661b4b22a6f318c235370735aa3f3616bfb8afcbd1f199e6ff343c",
+        "936bccf2b531237a98c41d90d84aa9ac2285ff38626af37b2e1cb658d3ccdcee",
+        "515243f9d4258153c64a33fe1e156564e710edebd19587aeb5e64977daa324ba"
+      ]
     }
   ],
   "revision_history": [
@@ -267,6 +310,11 @@
       "revision": 7,
       "at": "2026-07-31T17:19:31+08:00",
       "reason": "Recorded the explicitly authorized fault resume, new attempt identity, step-50k restore, replayed-update interval, healthy first recovery metric and refreshed shutdown protection."
+    },
+    {
+      "revision": 8,
+      "at": "2026-07-31T20:06:03+08:00",
+      "reason": "Recorded healthy progress beyond the interrupted high-water mark through 110k fixed validation, the step-100k checkpoint, synchronized milestone visuals and current finite optimization telemetry."
     }
   ]
 }

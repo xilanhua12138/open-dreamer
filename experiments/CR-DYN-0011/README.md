@@ -64,13 +64,22 @@ dynamics recipe instead consumes pre-tokenized latent ArrayRecords.
   replay updates 50,001–62,601. The new attempt ID keeps the overlapping
   metric segments distinguishable; the replay is not counted as additional
   unique optimizer progress.
+- The recovery has now passed the interrupted high-water mark and reached
+  110,597/200,000 completed updates. The latest retained training metric is
+  finite (`flow_mse=0.041015625`, `grad_norm=1.3421`), and progress telemetry
+  reported 5.5925 updates/s with about 16,048 seconds remaining.
+- Fixed-validation videos for 70k, 80k, 90k, 100k and 110k were synchronized
+  to the local task archive. Checkpoints now exist through step 100,000. The
+  periodic shortcut scores fluctuate substantially, so they are preserved as
+  intermediate observations rather than treated as a quality conclusion.
 
 ### Interpretation
 
-The input-representation parity gate has passed and the interrupted run showed
-healthy finite optimization through 60k. The authorized recovery is also
-healthy, but a complete 200k run and terminal evaluation are still required
-before judging the throughput acceptance rule or model quality.
+The input-representation parity gate has passed, the authorized recovery has
+surpassed the interrupted high-water mark, and optimization remains finite
+through 110k. A complete 200k run and terminal evaluation are still required
+before judging model quality; the periodic validation variance reinforces why
+no single intermediate PSNR should be selected post hoc.
 
 ### Not established
 
