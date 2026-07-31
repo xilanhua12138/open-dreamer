@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "observed_at": "2026-07-31T11:26:47+08:00",
+  "provider": "Alibaba Cloud PAI-DSW",
+  "region": "cn-shanghai",
+  "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+  "requested_resource": "1 x NVIDIA A10",
+  "status": "Failed",
+  "reason": "Sales of this resource are temporarily suspended in the specified zone.",
+  "experiment_started": false,
+  "replacement_instance_created": false,
+  "specification_changed": false,
+  "next_action": "The Codex heartbeat retries the same instance at most once per cycle and performs the frozen launch preflight when it reaches Running."
+}

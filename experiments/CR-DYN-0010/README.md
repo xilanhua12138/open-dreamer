@@ -42,4 +42,8 @@ the repair.
 Source implementation `1c647df007ebb6d388f081ea95ea07475e683c4e`
 and runner SHA256
 `6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458`
-are frozen. Remote preflight and execution remain pending.
+are frozen. The first same-instance start attempt was blocked by temporary A10
+inventory shortage before remote preflight or data collection. The Codex
+heartbeat `opendreamer-dynamics-repair-monitor` now owns idempotent retry,
+preflight, the single launch and subsequent evidence updates. No replacement
+instance or specification change is allowed.

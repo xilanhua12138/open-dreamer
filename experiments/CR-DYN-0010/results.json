@@ -1,14 +1,23 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 2,
-  "execution_status": "planned",
+  "record_revision": 3,
+  "execution_status": "queued",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": null,
   "ended_at": null,
-  "summary": "Preregistered before fresh data collection or GPU training.",
-  "observations": [],
+  "summary": "The tested source is frozen and pushed. The first same-instance start attempt was blocked by temporary A10 inventory shortage before remote preflight, collection or training; a Codex heartbeat now owns idempotent retry and launch.",
+  "observations": [
+    {
+      "type": "capacity_blocked",
+      "at": "2026-07-31T11:26:47+08:00",
+      "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+      "status": "Failed",
+      "reason": "Sales of this resource are temporarily suspended in the specified zone.",
+      "experiment_started": false
+    }
+  ],
   "comparisons": [],
   "deviations": [],
   "failures": [],
@@ -25,7 +34,15 @@
       "Collect fresh 160-frame records, train one medium repair arm from scratch and apply every preregistered control before starting another scale sweep."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "initial same-instance launch blocker",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/launch-blocker.json",
+      "retention": "git",
+      "sha256": "68e98761672c7a2eb58edcd40e898a362cbc79b901527d10cd40f075e22e05cc"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
@@ -36,6 +53,11 @@
       "revision": 2,
       "at": "2026-07-31T11:26:20+08:00",
       "reason": "Recorded the tested implementation commit and immutable runner digest before remote execution."
+    },
+    {
+      "revision": 3,
+      "at": "2026-07-31T11:29:47+08:00",
+      "reason": "Recorded the initial A10 inventory blocker and queued idempotent Codex heartbeat ownership."
     }
   ]
 }
