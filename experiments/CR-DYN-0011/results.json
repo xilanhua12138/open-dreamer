@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 3,
+  "record_revision": 4,
   "execution_status": "failed",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
@@ -94,6 +94,11 @@
       "revision": 3,
       "at": "2026-07-31T13:06:49+08:00",
       "reason": "Recorded the external stop, complete train latent publication, zero-update wrapper failure and precise pre-training runner repair."
+    },
+    {
+      "revision": 4,
+      "at": "2026-07-31T13:09:17+08:00",
+      "reason": "Frozen the tested zero-update runner repair and updated immutable source identity before recovery."
     }
   ]
 }
