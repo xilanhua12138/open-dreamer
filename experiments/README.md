@@ -30,6 +30,7 @@ infrastructure and verifier defects, and records the current claim boundaries.
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | aborted | inconclusive | none |
 | `CR-DYN-0011` | Can offline tokenizer encoding preserve the repair protocol while removing repeated encoder work? | running | not evaluated | none |
+| `CR-DYN-0012` | Does a 52.80M dynamics model improve the completed 200k offline-latent recipe? | planned | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | completed | supports hypothesis | smoke test |
@@ -193,6 +194,15 @@ runner restored the newest durable step-50k checkpoint as a new attempt. This
 necessarily replays updates 50,001–62,601; the separate attempt ID preserves
 both metric histories, and the replay is not unique additional optimizer
 progress. Recovery metrics are finite and training is active.
+
+`CR-DYN-0012` is preregistered before CR-DYN-0011 terminal metrics and before
+any xlarge GPU execution. It changes only dynamics capacity from 3,931,136 to
+52,801,152 parameters (depth 9, width 640, 10 heads) while preserving the
+tokenizer, PPO checkpoint, byte-identical raw/latent datasets, batch 16,
+64/128 schedule, 200k updates, optimizer and terminal evaluators. It is gated
+on successful nano-dreamer validation and a real batch-16 A10 fit preflight;
+OOM is retained as a failed preflight rather than silently changing batch or
+architecture.
 
 ## Creating or closing an experiment
 

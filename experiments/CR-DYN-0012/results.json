@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0012",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered; blocked on CR-DYN-0011 terminal evaluation and nano-dreamer validation.",
+  "observations": [
+    {
+      "type": "parameter_probe",
+      "architecture": {
+        "depth": 9,
+        "d_model": 640,
+        "n_heads": 10,
+        "n_kv_heads": 1,
+        "n_register": 32
+      },
+      "parameters": 52801152
+    }
+  ],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [
+      "CPU construction with the frozen model class counted 52,801,152 parameters."
+    ],
+    "interpretation": [],
+    "not_established": [
+      "The model has not yet been compiled at batch 16 on the A10.",
+      "No optimizer update or held-out evaluation has run.",
+      "Larger dynamics capacity is not yet known to improve quality."
+    ],
+    "decision": [
+      "Wait for CR-DYN-0011 and nano-dreamer validation, then run the preregistered fit preflight before formal training."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": []
+}

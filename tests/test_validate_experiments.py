@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +12,88 @@ from scripts import validate_experiments as ledger
 
 
 class ExperimentLedgerValidatorTests(unittest.TestCase):
+    def test_runner_hash_uses_frozen_source_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "-q", root], check=True)
+            runner = root / "runner.sh"
+            runner.write_text("echo original\n", encoding="utf-8")
+            subprocess.run(["git", "add", "runner.sh"], cwd=root, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=ledger-test",
+                    "-c",
+                    "user.email=ledger@example.invalid",
+                    "commit",
+                    "-qm",
+                    "freeze runner",
+                ],
+                cwd=root,
+                check=True,
+            )
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            runner.write_text("echo evolved\n", encoding="utf-8")
+
+            frozen = ledger.runner_sha256(root, "runner.sh", commit)
+            current = ledger.runner_sha256(root, "runner.sh", None)
+
+            self.assertEqual(
+                frozen,
+                hashlib.sha256(b"echo original\n").hexdigest(),
+            )
+            self.assertEqual(
+                current,
+                hashlib.sha256(b"echo evolved\n").hexdigest(),
+            )
+
+    def test_runner_hash_uses_retained_copy_when_old_commit_predates_runner(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            subprocess.run(["git", "init", "-q", root], check=True)
+            anchor = root / "README.md"
+            anchor.write_text("before ledger\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=root, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=ledger-test",
+                    "-c",
+                    "user.email=ledger@example.invalid",
+                    "commit",
+                    "-qm",
+                    "source revision predates retained runner",
+                ],
+                cwd=root,
+                check=True,
+            )
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            runner = root / "runner.sh"
+            runner.write_text("echo retained\n", encoding="utf-8")
+
+            digest = ledger.runner_sha256(root, "runner.sh", commit)
+
+            self.assertEqual(
+                digest,
+                hashlib.sha256(b"echo retained\n").hexdigest(),
+            )
+
     def test_load_json_accepts_unique_object(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

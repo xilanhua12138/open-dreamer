@@ -183,6 +183,19 @@
       ]
     },
     {
+      "experiment_id": "CR-DYN-0012",
+      "title": "CoinRun 52.80M dynamics xlarge capacity extension",
+      "path": "experiments/CR-DYN-0012",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0011"
+      ]
+    },
+    {
       "experiment_id": "CR-DEMO-0001",
       "title": "Action-conditioned CoinRun browser demo",
       "path": "experiments/CR-DEMO-0001",

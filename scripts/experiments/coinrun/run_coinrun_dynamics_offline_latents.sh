@@ -3,6 +3,14 @@ set -Eeuo pipefail
 
 readonly ROOT="${OPEN_DREAMER_ROOT:-/mnt/workspace/open-dreamer-dynamics-offline-latents}"
 readonly RUN_ROOT="${OPEN_DREAMER_RUN_ROOT:-${ROOT}/logs/coinrun-dynamics-offline-latents-v1}"
+readonly EXPERIMENT_ID="${OPEN_DREAMER_EXPERIMENT_ID:-CR-DYN-0011}"
+readonly MODEL_LABEL="${OPEN_DREAMER_MODEL_LABEL:-medium}"
+readonly TRAIN_ARM="${OPEN_DREAMER_TRAIN_ARM:-final-policy-medium-offline-latents}"
+readonly DYNAMICS_DEPTH="${OPEN_DREAMER_DYNAMICS_DEPTH:-4}"
+readonly DYNAMICS_D_MODEL="${OPEN_DREAMER_DYNAMICS_D_MODEL:-256}"
+readonly DYNAMICS_N_HEADS="${OPEN_DREAMER_DYNAMICS_N_HEADS:-4}"
+readonly DYNAMICS_N_KV_HEADS="${OPEN_DREAMER_DYNAMICS_N_KV_HEADS:-1}"
+readonly DYNAMICS_N_REGISTER="${OPEN_DREAMER_DYNAMICS_N_REGISTER:-32}"
 readonly RAW_ROOT="${OPEN_DREAMER_RAW_ROOT:-/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1}"
 readonly DATA_ROOT="${OPEN_DREAMER_DATA_ROOT:-/mnt/workspace/datasets/coinrun-dynamics-offline-latents-v1}"
 readonly TOKENIZER="${OPEN_DREAMER_TOKENIZER:-/mnt/workspace/open-dreamer-tokenizer-quality-first/logs/coinrun-tokenizer-quality-first-20k-20260729/runs/n16p6m/checkpoints}"
@@ -17,9 +25,9 @@ readonly LATENT_TRAIN="${DATA_ROOT}/train-final-policy-160-n16p6m"
 readonly LATENT_EVAL="${DATA_ROOT}/eval-final-policy-160-n16p6m"
 readonly TRAIN_AUDIT="${RUN_ROOT}/data/train-latent-audit.json"
 readonly EVAL_AUDIT="${RUN_ROOT}/data/eval-latent-audit.json"
-readonly TRAIN_RUN="${RUN_ROOT}/training/final-policy-medium-offline-latents"
+readonly TRAIN_RUN="${RUN_ROOT}/training/${TRAIN_ARM}"
 readonly FINAL_CHECKPOINT="${TRAIN_RUN}/checkpoints/199999/_CHECKPOINT_METADATA"
-readonly REPAIR_EVAL="${RUN_ROOT}/repair/final-policy-medium-offline-latents"
+readonly REPAIR_EVAL="${RUN_ROOT}/repair/${TRAIN_ARM}"
 readonly USE_WANDB="${OPEN_DREAMER_USE_WANDB:-false}"
 readonly MAX_STEPS=200000
 
@@ -46,7 +54,7 @@ test -s "${RAW_EVAL}/metadata.json"
 test -s "${LATENT_STATS}"
 test -s "${BASELINE_EVAL}/shortcut-metrics.json"
 test -s "${BASELINE_EVAL}/action-conditioning/action-conditioning.json"
-test -f "${ROOT}/experiments/CR-DYN-0011/manifest.json"
+test -f "${ROOT}/experiments/${EXPERIMENT_ID}/manifest.json"
 export PYTHONPATH="${ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
 export XLA_PYTHON_CLIENT_PREALLOCATE="false"
 export PYTHONUNBUFFERED="1"
@@ -151,12 +159,12 @@ if [[ ! -f "${FINAL_CHECKPOINT}" ]]; then
       'import json,sys; print(json.load(open(sys.argv[1]))["std"])' \
       "${LATENT_STATS}"
   )"
-  stage "TRAINING_MEDIUM_200K_FROM_OFFLINE_LATENTS"
+  stage "TRAINING_${MODEL_LABEL^^}_200K_FROM_OFFLINE_LATENTS"
   "${DYNAMICS_PYTHON}" scripts/experiments/run_recorded.py \
-    --experiment-id CR-DYN-0011 \
-    --run-name coinrun-dynamics-medium-offline-latents \
+    --experiment-id "${EXPERIMENT_ID}" \
+    --run-name "coinrun-dynamics-${MODEL_LABEL}-offline-latents" \
     --run-dir "${TRAIN_RUN}" \
-    --experiment-dir "${ROOT}/experiments/CR-DYN-0011" \
+    --experiment-dir "${ROOT}/experiments/${EXPERIMENT_ID}" \
     -- \
     "${DYNAMICS_PYTHON}" scripts/train_dynamics.py \
       dataset=coinrun_latent \
@@ -178,12 +186,12 @@ if [[ ! -f "${FINAL_CHECKPOINT}" ]]; then
       "dataset.latent_std=${latent_std}" \
       tokenizer_ckpt="${TOKENIZER}" \
       dynamics.d_bottleneck=16 \
-      dynamics.depth=4 \
-      dynamics.d_model=256 \
-      dynamics.n_heads=4 \
-      dynamics.n_kv_heads=1 \
+      dynamics.depth="${DYNAMICS_DEPTH}" \
+      dynamics.d_model="${DYNAMICS_D_MODEL}" \
+      dynamics.n_heads="${DYNAMICS_N_HEADS}" \
+      dynamics.n_kv_heads="${DYNAMICS_N_KV_HEADS}" \
       dynamics.packing_factor=2 \
-      dynamics.n_register=32 \
+      dynamics.n_register="${DYNAMICS_N_REGISTER}" \
       dynamics.qk_norm_type=qknorm \
       dynamics.time_every=2 \
       dynamics.time_layer_offset=1 \
@@ -204,7 +212,7 @@ if [[ ! -f "${FINAL_CHECKPOINT}" ]]; then
       ckpt.save_interval_steps=25000 \
       logger.log_every=50 \
       use_wandb="${USE_WANDB}" \
-      logger.wandb_group=CR-DYN-0011 \
+      logger.wandb_group="${EXPERIMENT_ID}" \
       optimizer.optimizer_type=muon \
       optimizer.mup_scaling=false \
       lr_schedule.schedule_type=wsd \
@@ -212,7 +220,7 @@ if [[ ! -f "${FINAL_CHECKPOINT}" ]]; then
       lr_schedule.warmup_ratio=0.05 \
       lr_schedule.decay_ratio=0.1 \
       write_video_every=10000 \
-      run_name=coinrun-dynamics-medium-offline-latents \
+      run_name="coinrun-dynamics-${MODEL_LABEL}-offline-latents" \
       hydra.run.dir="${TRAIN_RUN}"
 fi
 test -f "${FINAL_CHECKPOINT}"
@@ -254,8 +262,8 @@ fi
 stage "WRITING_OFFLINE_LATENT_REPAIR_ASSESSMENT"
 "${DYNAMICS_PYTHON}" \
   scripts/experiments/coinrun/summarize_coinrun_dynamics_repair.py \
-  --experiment-id CR-DYN-0011 \
-  --repair-arm final-policy-medium-offline-latents \
+  --experiment-id "${EXPERIMENT_ID}" \
+  --repair-arm "${TRAIN_ARM}" \
   --baseline-shortcut "${BASELINE_EVAL}/shortcut-metrics.json" \
   --baseline-actions \
     "${BASELINE_EVAL}/action-conditioning/action-conditioning.json" \

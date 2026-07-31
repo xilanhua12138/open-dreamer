@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -56,6 +57,27 @@ SECRET_PATTERNS = {
 
 class DuplicateKey(ValueError):
     pass
+
+
+def runner_sha256(root: Path, runner: str, commit: str | None) -> str:
+    """Hash the runner bytes from the source revision named by the manifest."""
+    if commit is None:
+        payload = (root / runner).read_bytes()
+    else:
+        frozen = subprocess.run(
+            ["git", "show", f"{commit}:{runner}"],
+            cwd=root,
+            capture_output=True,
+        )
+        # Early retrospective records can name the true execution commit from
+        # before the runner was imported into the ledger. Their current
+        # retained copy remains authoritative and is still hash-checked.
+        payload = (
+            frozen.stdout
+            if frozen.returncode == 0
+            else (root / runner).read_bytes()
+        )
+    return hashlib.sha256(payload).hexdigest()
 
 
 def no_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -280,7 +302,7 @@ def validate_experiment(
         runner_digest = source.get("runner_sha256")
         if runner is not None:
             runner_path = ROOT / str(runner)
-            if not runner_path.is_file():
+            if commit is None and not runner_path.is_file():
                 errors.append(
                     f"{manifest_path.relative_to(ROOT)}: source runner does not exist"
                 )
@@ -289,8 +311,15 @@ def validate_experiment(
                     f"{manifest_path.relative_to(ROOT)}: source runner needs sha256"
                 )
             else:
-                actual = hashlib.sha256(runner_path.read_bytes()).hexdigest()
-                if actual != runner_digest:
+                try:
+                    actual = runner_sha256(ROOT, str(runner), commit)
+                except (OSError, subprocess.CalledProcessError) as exc:
+                    errors.append(
+                        f"{manifest_path.relative_to(ROOT)}: cannot read source "
+                        f"runner at commit {commit}: {exc}"
+                    )
+                    actual = None
+                if actual is not None and actual != runner_digest:
                     errors.append(
                         f"{manifest_path.relative_to(ROOT)}: source runner sha256 "
                         f"mismatch, recorded {runner_digest}, actual {actual}"
