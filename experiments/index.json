@@ -197,9 +197,9 @@
       "experiment_id": "CR-DEMO-0003",
       "title": "Continuous CoinRun world-model browser runtime",
       "path": "experiments/CR-DEMO-0003",
-      "execution_status": "planned",
-      "scientific_status": "not_evaluated",
-      "claim_level": "none",
+      "execution_status": "completed",
+      "scientific_status": "supports_hypothesis",
+      "claim_level": "smoke_test",
       "depends_on": [
         "CR-DYN-0008",
         "CR-DYN-0009",

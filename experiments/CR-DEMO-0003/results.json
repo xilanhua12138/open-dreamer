@@ -1,34 +1,142 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DEMO-0003",
-  "record_revision": 1,
-  "execution_status": "planned",
-  "scientific_status": "not_evaluated",
-  "claim_level": "none",
-  "started_at": null,
-  "ended_at": null,
-  "summary": "Preregistered before the continuous runtime is executed on the A10.",
-  "observations": [],
-  "comparisons": [],
+  "record_revision": 2,
+  "execution_status": "completed",
+  "scientific_status": "supports_hypothesis",
+  "claim_level": "smoke_test",
+  "started_at": "2026-07-31T11:33:48+08:00",
+  "ended_at": "2026-07-31T11:38:21+08:00",
+  "summary": "The separate continuous runtime loaded final_only-medium, reused persistent dynamics and decoder caches, advanced without per-frame client inference calls, honored held-right and release state, survived pause/reset, and fit the full desktop interface inside 1440x900. Stable cached generation took 21.4–32.1 ms remotely and 21.6–25.4 ms through the local tunnel. This repairs runtime and layout defects only; it does not overturn the prior rejection of the checkpoint's visual or action quality.",
+  "observations": [
+    {
+      "type": "remote_continuous_runtime_verified",
+      "at": "2026-07-31T11:38:21+08:00",
+      "protocol": "continuous-sse-v1",
+      "model": "final_only-medium",
+      "noop_steps": [
+        20,
+        21,
+        22
+      ],
+      "right_steps": [
+        24,
+        25
+      ],
+      "release_step": 27,
+      "steady_latency_ms_min": 21.6,
+      "steady_latency_ms_max": 25.3,
+      "pause_passed": true,
+      "reset_passed": true
+    },
+    {
+      "type": "local_tunnel_runtime_verified",
+      "at": "2026-07-31T11:37:47+08:00",
+      "url": "http://127.0.0.1:7860",
+      "protocol": "continuous-sse-v1",
+      "noop_steps": [
+        4,
+        5,
+        6
+      ],
+      "right_steps": [
+        11,
+        12
+      ],
+      "release_step": 19,
+      "steady_latency_ms_min": 21.6,
+      "steady_latency_ms_max": 25.4
+    },
+    {
+      "type": "desktop_layout_verified",
+      "at": "2026-07-31T11:37:47+08:00",
+      "viewport": "1440x900",
+      "document_scroll": false,
+      "stage": "720x720",
+      "stage_bottom_px": 841,
+      "sidebar_bottom_px": 886,
+      "observed_fps": 46.28
+    }
+  ],
+  "comparisons": [
+    {
+      "baseline_id": "CR-DEMO-0002",
+      "changed": "blocking per-frame HTTP and repeated context prefill were replaced by a continuous SSE loop, persistent KV caches and latest complete held-input state",
+      "result": "The world advanced autonomously while subscribed, held-right affected multiple generated frames, release restored no-op, and stable cached frame latency fell to about 22–25 ms."
+    }
+  ],
   "deviations": [],
   "failures": [],
   "conclusion": {
-    "observed": [],
-    "interpretation": [],
+    "observed": [
+      "Both remote and local-tunnel health reported protocol continuous-sse-v1 with no runtime error.",
+      "Three no-op frames advanced without any per-frame inference request from the client.",
+      "One held-right state update was observed on at least two later generated frames and a higher-revision empty state returned the observed action to no-op.",
+      "Pause and reset completed without the prior cache dtype failure.",
+      "At 1440x900 the 720x720 stage and the complete control sidebar fit without document scrolling."
+    ],
+    "interpretation": [
+      "The persistent-cache model loop and held-state transport implement the intended real-time interaction semantics.",
+      "The initial JIT compilation remains a one-time startup cost; steady cached generation is fast enough for a continuously rendered browser stream.",
+      "The oversized-page defect is fixed at the preregistered desktop viewport."
+    ],
     "not_established": [
       "Visual coherence of the selected dynamics checkpoint.",
-      "Whether action conditioning was learned strongly enough to be useful."
+      "Whether action conditioning was learned strongly enough to be useful.",
+      "Whether the selected checkpoint is visually coherent enough for a usable game-like experience."
     ],
     "decision": [
-      "Run the fixed runtime checks before presenting the new URL for user review."
+      "Keep CR-DEMO-0002's user rejection in force for model quality.",
+      "Use this continuous runtime and responsive layout as the demo shell for a future checkpoint that passes visual and action-quality review."
     ]
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "remote continuous-runtime verification",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0003/raw/remote-runtime-verification.json",
+      "remote_uri": "/mnt/workspace/open-dreamer-continuous-demo/logs/coinrun-continuous-demo-v1/remote-runtime-verification.json",
+      "retention": "git summary, local task root and DSW persistent storage",
+      "source_sha256": "8081c914fa83345f0ab2f42848ee15af835e84bd1d864125fd77160f60ff0bec"
+    },
+    {
+      "name": "local tunnel continuous-runtime verification",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0003/raw/local-runtime-verification.json",
+      "retention": "git summary"
+    },
+    {
+      "name": "desktop layout verification",
+      "kind": "json",
+      "uri": "experiments/CR-DEMO-0003/raw/layout-verification.json",
+      "retention": "git summary"
+    },
+    {
+      "name": "live desktop screenshot",
+      "kind": "png",
+      "uri": "local-task://20260731-opendreamer-continuous-demo/live-1440x900.png",
+      "bytes": 76084,
+      "retention": "local task root",
+      "sha256": "894f5117f035736ff8bdad57ca3dfed81d83ef02b59caed32f46e7c2321eb20a"
+    },
+    {
+      "name": "continuous demo log",
+      "kind": "log",
+      "uri": "remote:///mnt/workspace/open-dreamer-continuous-demo/logs/coinrun-continuous-demo-v1/demo.log",
+      "bytes_at_completion": 1420,
+      "retention": "DSW persistent storage"
+    }
+  ],
   "revision_history": [
     {
       "revision": 1,
       "at": "2026-07-31T11:14:54+08:00",
       "reason": "Preregistered the continuous persistent-cache runtime before remote execution."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-31T11:38:21+08:00",
+      "reason": "Recorded complete remote and local continuous-runtime, held-state, pause/reset and desktop-layout verification."
     }
   ]
 }

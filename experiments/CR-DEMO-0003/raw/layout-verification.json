@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0003",
+  "verified_at": "2026-07-31T11:37:47+08:00",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "document": {
+    "scroll_width": 1440,
+    "scroll_height": 900,
+    "horizontal_scroll": false,
+    "vertical_scroll": false
+  },
+  "stage": {
+    "width": 720,
+    "height": 720,
+    "top": 121,
+    "bottom": 841,
+    "fully_visible": true
+  },
+  "sidebar": {
+    "top": 76,
+    "bottom": 886,
+    "fully_visible": true
+  },
+  "runtime": {
+    "status_text": "持续生成",
+    "observed_step": 8,
+    "observed_fps": 46.28
+  },
+  "screenshot": {
+    "uri": "local-task://20260731-opendreamer-continuous-demo/live-1440x900.png",
+    "bytes": 76084,
+    "sha256": "894f5117f035736ff8bdad57ca3dfed81d83ef02b59caed32f46e7c2321eb20a"
+  }
+}
