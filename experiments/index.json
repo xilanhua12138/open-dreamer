@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-31T10:54:05+08:00",
+  "updated_at": "2026-07-31T11:14:54+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -177,6 +177,19 @@
       "depends_on": [
         "CR-DYN-0008",
         "CR-DYN-0009"
+      ]
+    },
+    {
+      "experiment_id": "CR-DEMO-0003",
+      "title": "Continuous CoinRun world-model browser runtime",
+      "path": "experiments/CR-DEMO-0003",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-DYN-0008",
+        "CR-DYN-0009",
+        "CR-DEMO-0002"
       ]
     },
     {

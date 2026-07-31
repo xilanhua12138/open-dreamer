@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0003",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before the continuous runtime is executed on the A10.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Visual coherence of the selected dynamics checkpoint.",
+      "Whether action conditioning was learned strongly enough to be useful."
+    ],
+    "decision": [
+      "Run the fixed runtime checks before presenting the new URL for user review."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-31T11:14:54+08:00",
+      "reason": "Preregistered the continuous persistent-cache runtime before remote execution."
+    }
+  ]
+}

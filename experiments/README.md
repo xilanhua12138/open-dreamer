@@ -23,6 +23,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
+| `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | planned | not evaluated | none |
 | `CR-PPO-0001` | Can PPO in real CoinRun produce auditable goal-directed trajectories for dynamics? | completed | rejects hypothesis | internal result |
 | `CR-PPO-0002` | Does an official-recipe easy-200 parity control recover the public CoinRun curve? | completed | supports hypothesis | partial reproduction |
 | `CR-PPO-0003` | Which individual old-recipe difference reproduces the policy-quality collapse? | running | not evaluated | none |
@@ -122,6 +123,14 @@ The five-minute training poller was removed after the GPU experiments
 completed; its event log and source remain as evidence. Subsequent demo
 operations are manual. Only a dedicated launchd SSH tunnel job remains for the
 current review window.
+
+`CR-DEMO-0003` preserves the rejected CR-DEMO-0002 runner byte-for-byte and
+preregisters a separate continuous runtime. It will prefill the 16-frame
+history once, reuse dynamics and decoder KV caches, generate whenever an SSE
+client is subscribed, and accept complete held-input state instead of one
+blocking inference request per button event. Its desktop layout is capped to
+the initial viewport. These changes test runtime correctness only; they do not
+override the prior rejection of visual coherence or learned action response.
 
 ## Creating or closing an experiment
 

@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DEMO-0003",
+  "retrospective": false,
+  "created_at": "2026-07-31T11:14:54+08:00",
+  "owner": "xilanhua12138",
+  "title": "Continuous CoinRun world-model browser runtime",
+  "kind": "confirmatory",
+  "question": "Does a persistent-cache continuous runtime correctly advance the selected CoinRun world model while held input changes the action used by subsequent generated frames?",
+  "reason": "CR-DEMO-0002 proved checkpoint loading but used one blocking HTTP request per frame, rebuilt both model caches on every request and rendered the square frame too large for the initial viewport. That protocol cannot establish a real-time world-model interaction.",
+  "hypothesis": "Prefilling the dynamics and decoder caches once, generating continuously while a client is subscribed and treating user input as latest held state will remove repeated context work, prevent dropped release events and keep the complete interface visible in the initial desktop viewport.",
+  "falsification": "Reject the runtime hypothesis if the server does not advance for at least three no-op frames without repeated client step calls, a held right input is not reflected in at least two subsequent generated frames, release does not return to no-op, cache reuse fails, the stream disconnects, or the complete desktop interface exceeds 1440x900.",
+  "baseline_id": "CR-DEMO-0002",
+  "depends_on": [
+    "CR-DYN-0008",
+    "CR-DYN-0009",
+    "CR-DEMO-0002"
+  ],
+  "controlled_variable": {
+    "name": "interactive_runtime_protocol",
+    "values": [
+      "blocking_per-frame HTTP with repeated context prefill",
+      "continuous SSE with persistent caches and held-input state"
+    ]
+  },
+  "constants": {
+    "checkpoint": "CR-DYN-0009 held-out-selected final_only-medium",
+    "tokenizer": "16.6M EMA fixed-20k",
+    "context_frames": 16,
+    "denoise_steps": 4,
+    "evaluation_dataset": "/mnt/workspace/datasets/coinrun-ppo-checkpoint-mixtures-v1/eval-final-policy",
+    "seed": 20260728,
+    "bind": "127.0.0.1:7860",
+    "access": "existing SSH local port forward"
+  },
+  "source": {
+    "repository": "https://github.com/xilanhua12138/open-dreamer",
+    "commit": "f1dee334b78c0d5a5986dedc5eb58d422020b878",
+    "branch": "feat/coinrun-dynamics-stage-scale",
+    "dirty": false,
+    "patch_sha256": null,
+    "runner": "scripts/experiments/coinrun/live_coinrun_continuous_demo.py",
+    "runner_sha256": "992afa388bd800f47318f89c443276c3c01d6eafaa27784c5ee079bfff8df821"
+  },
+  "data": {
+    "environment": "learned Procgen CoinRun easy dynamics",
+    "initial_context_source": "fixed held-out final-policy trajectory",
+    "level_range": [
+      10000,
+      10500
+    ],
+    "held_input_names": [
+      "left",
+      "right",
+      "jump"
+    ],
+    "action_mapping": {
+      "left": 1,
+      "left_jump": 2,
+      "noop": 4,
+      "jump": 5,
+      "right": 7,
+      "right_jump": 8
+    }
+  },
+  "compute": {
+    "provider": "Alibaba Cloud PAI-DSW",
+    "region": "cn-shanghai",
+    "accelerator": "NVIDIA A10",
+    "accelerator_count": 1,
+    "accelerator_memory_gb": 23,
+    "estimated_budget": "interactive inference only; no training",
+    "shutdown_policy": "Reuse only the existing instance and existing tunnel; do not create or resize compute."
+  },
+  "protocol": {
+    "model": {
+      "cache_prefill": "Encode and prefill the 16-frame history exactly once on reset.",
+      "generation": "Use the repository next_frame path with persistent dynamics and decoder KV caches.",
+      "idle_action": 4,
+      "scheduling": "Generate as fast as the selected model permits while at least one SSE subscriber is present."
+    },
+    "training": {
+      "performed": false
+    },
+    "evaluation": {
+      "static": "Run targeted unit tests, experiment validator, full unit tests, shell syntax checks and git diff check.",
+      "layout": "At 1440x900, body scroll size must equal the viewport and stage plus all controls must be visible.",
+      "remote_stream": "Observe at least three strictly increasing SSE frame versions with no client step endpoint.",
+      "input_hold": "POST a complete right held state once and observe action 7 on at least two subsequent generated frames.",
+      "input_release": "POST an empty held state with a higher revision and observe action 4 on a subsequent frame.",
+      "reset": "Queue reset while the model loop is active and observe a new context at step 0 without cache or dtype error.",
+      "local_tunnel": "Repeat health, stream, hold and release checks through http://127.0.0.1:7860.",
+      "qualitative": "User review remains separate and is required before claiming the world model itself is usable."
+    }
+  },
+  "success_criteria": [
+    {
+      "id": "SC-1",
+      "rule": "The old CR-DEMO-0002 runner remains byte-identical and the new runtime has its own source hash."
+    },
+    {
+      "id": "SC-2",
+      "rule": "The remote and local-tunnel servers both report protocol continuous-sse-v1 without a runtime error."
+    },
+    {
+      "id": "SC-3",
+      "rule": "At least three no-op frames advance without repeated client inference requests."
+    },
+    {
+      "id": "SC-4",
+      "rule": "One held-right update affects at least two subsequent frames and a later empty update returns the next observed action to no-op."
+    },
+    {
+      "id": "SC-5",
+      "rule": "At 1440x900 the complete stage, controls, metrics, pause and reset controls fit without page scrolling."
+    },
+    {
+      "id": "SC-6",
+      "rule": "No claim of visual coherence or action quality is made before direct user review."
+    }
+  ],
+  "planned_outputs": [
+    "experiments/CR-DEMO-0003/raw/runtime-verification.json",
+    "experiments/CR-DEMO-0003/raw/layout-verification.json",
+    "tmp_agent_output/20260731-opendreamer-continuous-demo/layout-1440x900.png",
+    "/mnt/workspace/open-dreamer-continuous-demo/logs/coinrun-continuous-demo-v1/demo.log"
+  ]
+}
