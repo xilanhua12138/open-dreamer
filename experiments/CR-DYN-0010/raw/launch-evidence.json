@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0010",
+  "launched_at": "2026-07-31T11:39:55+08:00",
+  "instance_id": "dsw-ljvgtooejpvpxmhhc6",
+  "accelerator": "NVIDIA A10",
+  "remote_worktree": "/mnt/workspace/open-dreamer-dynamics-repair-reference",
+  "execution_commit": "692e2bd64dd984bdf28d33156efb6739059bc94e",
+  "implementation_commit": "2fbfe81ce240f02638fb9815c367af88e999b1c7",
+  "git_status_clean": true,
+  "runner_sha256": "6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458",
+  "preflight": {
+    "action_evaluator_help": "passed",
+    "hydra_composition": "passed",
+    "ppo_checkpoint": "passed",
+    "tokenizer_checkpoint": "passed",
+    "baseline_checkpoint": "passed",
+    "gpu_idle_before_handoff": true
+  },
+  "rejected_demo_handoff": {
+    "stopped_pid": 925,
+    "archive": "/mnt/workspace/open-dreamer-continuous-demo/logs/coinrun-continuous-demo-v1/stopped-for-cr-dyn-0010-20260731T113940+0800",
+    "checkpoint_deleted": false
+  },
+  "pipeline": {
+    "pid": 3170,
+    "status": "COLLECTING_TRAIN_FINAL_POLICY_160_FRAME_RECORDS",
+    "run_root": "/mnt/workspace/open-dreamer-dynamics-repair-reference/logs/coinrun-dynamics-repair-reference-v1"
+  },
+  "shutdown_timer": {
+    "remaining_time_in_ms_at_creation": 50400000,
+    "due_at": "2026-08-01T01:40:14+08:00"
+  }
+}

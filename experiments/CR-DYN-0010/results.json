@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 4,
-  "execution_status": "queued",
+  "record_revision": 5,
+  "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
-  "started_at": null,
+  "started_at": "2026-07-31T11:39:55+08:00",
   "ended_at": null,
-  "summary": "The tested source is frozen and pushed. The first same-instance start attempt was blocked by temporary A10 inventory shortage before remote preflight, collection or training; a Codex heartbeat now owns idempotent retry and launch.",
+  "summary": "The same A10 returned to Running, every frozen preflight passed, the rejected demo was stopped with evidence preserved, and exactly one CR-DYN-0010 pipeline started. It is collecting fresh 160-frame train records before training.",
   "observations": [
     {
       "type": "capacity_blocked",
@@ -16,6 +16,15 @@
       "status": "Failed",
       "reason": "Sales of this resource are temporarily suspended in the specified zone.",
       "experiment_started": false
+    },
+    {
+      "type": "pipeline_started",
+      "at": "2026-07-31T11:39:55+08:00",
+      "pipeline_pid": 3170,
+      "execution_commit": "692e2bd64dd984bdf28d33156efb6739059bc94e",
+      "runner_sha256": "6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458",
+      "status": "COLLECTING_TRAIN_FINAL_POLICY_160_FRAME_RECORDS",
+      "shutdown_due_at": "2026-08-01T01:40:14+08:00"
     }
   ],
   "comparisons": [],
@@ -62,6 +71,13 @@
       "uri": "experiments/CR-DYN-0010/raw/launch-blocker.json",
       "retention": "git",
       "sha256": "68e98761672c7a2eb58edcd40e898a362cbc79b901527d10cd40f075e22e05cc"
+    },
+    {
+      "name": "frozen remote launch evidence",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/launch-evidence.json",
+      "retention": "git",
+      "sha256": "80bc3faa521a943eb476a084059756f84ff124b3b03cb0784316657587859415"
     }
   ],
   "revision_history": [
@@ -84,6 +100,11 @@
       "revision": 4,
       "at": "2026-07-31T11:36:21+08:00",
       "reason": "Recorded the pre-execution lightweight-CI import failure, red regression and protocol-neutral source fix."
+    },
+    {
+      "revision": 5,
+      "at": "2026-07-31T11:40:23+08:00",
+      "reason": "Recorded the successful frozen preflight, preserved demo handoff, single pipeline launch and 14-hour shutdown timer."
     }
   ]
 }

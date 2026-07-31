@@ -159,7 +159,7 @@
       "experiment_id": "CR-DYN-0010",
       "title": "CoinRun dynamics reference-recipe repair",
       "path": "experiments/CR-DYN-0010",
-      "execution_status": "queued",
+      "execution_status": "running",
       "scientific_status": "not_evaluated",
       "claim_level": "none",
       "depends_on": [

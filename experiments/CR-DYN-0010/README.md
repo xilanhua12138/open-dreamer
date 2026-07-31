@@ -44,8 +44,9 @@ and runner SHA256
 `6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458`
 are frozen. This source includes a pre-execution, protocol-neutral lazy import
 fix after the lightweight CI reproduced a missing optional Grain dependency.
-The first same-instance start attempt was blocked by temporary A10
-inventory shortage before remote preflight or data collection. The Codex
-heartbeat `opendreamer-dynamics-repair-monitor` now owns idempotent retry,
-preflight, the single launch and subsequent evidence updates. No replacement
-instance or specification change is allowed.
+After the first same-instance start attempt was blocked by temporary inventory,
+the same A10 returned to Running. Frozen remote preflight passed and exactly one
+pipeline started at 2026-07-31 11:39:55 Asia/Shanghai. It is collecting the
+fresh 160-frame train corpus. The Codex heartbeat
+`opendreamer-dynamics-repair-monitor` owns subsequent structured monitoring and
+evidence updates. No replacement instance or specification change is allowed.
