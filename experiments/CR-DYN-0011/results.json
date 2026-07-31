@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0011",
-  "record_revision": 8,
+  "record_revision": 9,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
@@ -111,6 +111,21 @@
       "gpu_memory_used_mib": 4426,
       "gpu_memory_total_mib": 23028,
       "gpu_utilization_percent_observed": 83
+    },
+    {
+      "type": "step_100k_live_demo_preview",
+      "observed_at": "2026-07-31T20:31:20+08:00",
+      "checkpoint_step": 100000,
+      "runtime_protocol": "continuous-sse-v1",
+      "remote_health_ok": true,
+      "local_health_ok": true,
+      "right_action_observed": 7,
+      "release_action_observed": 4,
+      "demo_pid": 8075,
+      "training_pipeline_pid": 944,
+      "training_pipeline_alive": true,
+      "training_completed_updates_after_demo_start": 119027,
+      "claim": "qualitative_preview_only"
     }
   ],
   "comparisons": [],
@@ -273,6 +288,13 @@
         "936bccf2b531237a98c41d90d84aa9ac2285ff38626af37b2e1cb658d3ccdcee",
         "515243f9d4258153c64a33fe1e156564e710edebd19587aeb5e64977daa324ba"
       ]
+    },
+    {
+      "name": "step-100k live demo preview",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0011/raw/100k-live-demo-preview.json",
+      "retention": "git",
+      "sha256": "60d7ce7039f6eee071309be75861cd81e2d938e7090117b38e3ee16e6d1ae822"
     }
   ],
   "revision_history": [
@@ -315,6 +337,11 @@
       "revision": 8,
       "at": "2026-07-31T20:06:03+08:00",
       "reason": "Recorded healthy progress beyond the interrupted high-water mark through 110k fixed validation, the step-100k checkpoint, synchronized milestone visuals and current finite optimization telemetry."
+    },
+    {
+      "revision": 9,
+      "at": "2026-07-31T20:31:20+08:00",
+      "reason": "Recorded the user-requested step-100k continuous live preview, remote/local runtime and held-right/release verification, and evidence that the main 200k training pipeline remained alive."
     }
   ]
 }
