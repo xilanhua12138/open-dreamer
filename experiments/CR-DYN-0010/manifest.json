@@ -49,7 +49,7 @@
   },
   "source": {
     "repository": "https://github.com/xilanhua12138/open-dreamer",
-    "commit": null,
+    "commit": "1c647df007ebb6d388f081ea95ea07475e683c4e",
     "branch": "feat/coinrun-dynamics-stage-scale",
     "dirty": false,
     "patch_sha256": null,
@@ -59,7 +59,7 @@
       "action_conditioning_evaluator": "73fc00ecc96d4a5fcf26dbd781a21029b8336e1bc56f942c6b6314ebc00966dd",
       "repair_summarizer": "56348facb53f5d50003831d1f3858c60feedd9f920ed4b212afe744dfdcebb38"
     },
-    "source_freeze": "The implementation commit will be filled after tests pass and before any remote collection or training starts. The remote worktree must be detached and clean, and the runner digest must match."
+    "source_freeze": "Implementation is frozen at 1c647df007ebb6d388f081ea95ea07475e683c4e after 158 tests, ledger validation, shell syntax checks and diff checks passed. Execution uses the following ledger-only freeze commit in a clean detached worktree; the runner digest must remain 6315df3e4a401455ce2c5c3875855752c487177d5b2e5b3c7ed5194dcb935458."
   },
   "data": {
     "train_uri": "/mnt/workspace/datasets/coinrun-dynamics-repair-reference-v1/train-final-policy-160",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 1,
+  "record_revision": 2,
   "execution_status": "planned",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
@@ -31,6 +31,11 @@
       "revision": 1,
       "at": "2026-07-31T11:21:06+08:00",
       "reason": "Preregistered the reference-recipe repair before execution."
+    },
+    {
+      "revision": 2,
+      "at": "2026-07-31T11:26:20+08:00",
+      "reason": "Recorded the tested implementation commit and immutable runner digest before remote execution."
     }
   ]
 }
