@@ -52,6 +52,13 @@ held-out and pair audits are valid, both corpora expose all 15 Procgen actions,
 and action 4 is recorded as no-op. The repaired sampler now has 97 legal
 64-frame starts and 33 legal 128-frame starts instead of one inert crop. The
 same live pipeline advanced to fixed-future evaluation of the rejected medium
-baseline before beginning the 200k repair training. The Codex heartbeat
+baseline. That retained checkpoint scored 18.402460 dB mean-frame PSNR,
+0.720044 mean SSIM and 18.402460 dB at horizon 16. On the 64-video action
+subset, aligned actions beat shuffled and all-noop controls by 2.776499 and
+2.640131 dB at horizon 16. This controlled metric does not override the prior
+direct visual rejection of its temporal/action behavior. Fresh latent
+statistics were then computed from 256 videos × 128 frames, and the one
+3.93M-parameter repair arm began its preregistered 200,000 updates from scratch
+at 2026-07-31 11:48:55 Asia/Shanghai. The Codex heartbeat
 `opendreamer-dynamics-repair-monitor` owns subsequent structured monitoring and
 evidence updates. No replacement instance or specification change is allowed.

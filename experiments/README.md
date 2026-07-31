@@ -146,8 +146,11 @@ review and does not isolate a single causal factor. Fresh collection has now
 completed with 4,096 train and 512 held-out records. Split, pair and action
 audits passed, all 15 Procgen actions were observed, and the new records expose
 97 legal 64-frame starts and 33 legal 128-frame starts. The live pipeline is
-reevaluating the rejected medium checkpoint on these fixed futures before the
-200k repair run.
+now training the single 3.93M-parameter repair arm from scratch for 200k
+updates. Before training, the rejected checkpoint scored 18.402460 dB
+mean-frame PSNR and 0.720044 SSIM on the fixed repair futures. Its aligned
+actions beat shuffled/all-noop controls on this metric subset, but that does
+not override the prior direct visual rejection.
 
 ## Creating or closing an experiment
 

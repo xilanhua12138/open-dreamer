@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "experiment_id": "CR-DYN-0010",
-  "record_revision": 6,
+  "record_revision": 7,
   "execution_status": "running",
   "scientific_status": "not_evaluated",
   "claim_level": "none",
   "started_at": "2026-07-31T11:39:55+08:00",
   "ended_at": null,
-  "summary": "The fresh 4,096-train/512-eval 160-frame corpora and split/pair/action audits completed successfully. Reward-biased 64/128-frame sampling is operational, and the same live pipeline is reevaluating the rejected medium baseline on fixed repair futures before training.",
+  "summary": "Fresh 160-frame collection and audits passed. The rejected medium baseline was scored on fixed repair futures, latent statistics were recomputed, and the same live pipeline started the single 200,000-update medium repair run from scratch.",
   "observations": [
     {
       "type": "capacity_blocked",
@@ -41,6 +41,33 @@
       "long_start_positions": 33,
       "reward_bias_operational": true,
       "next_status": "EVALUATING_REJECTED_BASELINE_ON_FIXED_REPAIR_FUTURES"
+    },
+    {
+      "type": "rejected_baseline_fixed_future_evaluation",
+      "at": "2026-07-31T11:48:55+08:00",
+      "num_videos": 128,
+      "context_frames": 16,
+      "predicted_frames": 16,
+      "denoise_steps": 4,
+      "mean_frame_psnr_db": 18.402459719482287,
+      "mean_video_psnr_db": 17.03155657194408,
+      "mean_ssim": 0.7200441043937175,
+      "horizon_16_psnr_db": 18.402459719482287,
+      "action_control_num_videos": 64,
+      "aligned_vs_batch_shuffled_horizon_16_psnr_db": 2.776499071053202,
+      "aligned_vs_one_step_shifted_horizon_16_psnr_db": 0.7871919875498747,
+      "aligned_vs_all_noop_horizon_16_psnr_db": 2.6401313881890367,
+      "interpretation_boundary": "The metric controls show action-conditioned divergence on these sampled futures but do not establish visually credible action response; direct review already rejected the baseline."
+    },
+    {
+      "type": "repair_training_started",
+      "at": "2026-07-31T11:48:55+08:00",
+      "run_id": "535e5bcb-6157-4e03-8d1a-5c2ec0eec697",
+      "attempt_id": "87feca6f-36a7-48fc-8b5a-5cbe258c0ad0",
+      "model_parameters": 3931136,
+      "max_updates": 200000,
+      "checkpoint_resume": false,
+      "status": "TRAINING_REFERENCE_REPAIR_MEDIUM_200K"
     }
   ],
   "comparisons": [],
@@ -122,6 +149,27 @@
       "uri": "experiments/CR-DYN-0010/raw/reward-windowing-audit.json",
       "retention": "git",
       "sha256": "f108cdf85e23fd0eac33b2fa99c43bd5f9af00c014c244c027fffa5ceb19a1d9"
+    },
+    {
+      "name": "rejected baseline fixed-future shortcut metrics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/rejected-baseline-fixed-futures-shortcut-metrics.json",
+      "retention": "git",
+      "sha256": "0c155ee8222d0fe10dd0f8467d87fbf9de781c65b0808b6c1f12f6781ded852d"
+    },
+    {
+      "name": "rejected baseline fixed-future action controls",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/rejected-baseline-fixed-futures-action-conditioning.json",
+      "retention": "git",
+      "sha256": "a64f5a335214400a33aebc7189417e80290b0d1b75800eb874f7bc3af539421c"
+    },
+    {
+      "name": "fresh reference-repair latent statistics",
+      "kind": "json",
+      "uri": "experiments/CR-DYN-0010/raw/reference-repair-latent-stats.json",
+      "retention": "git",
+      "sha256": "ec0e3ef15ad908ef338a86a2f327834784bf87144194cf215a7debacd896d1e7"
     }
   ],
   "revision_history": [
@@ -154,6 +202,11 @@
       "revision": 6,
       "at": "2026-07-31T11:45:09+08:00",
       "reason": "Recorded completed fresh train/eval collection, valid pair/action audits, operational reward windowing and transition to fixed-future baseline evaluation."
+    },
+    {
+      "revision": 7,
+      "at": "2026-07-31T11:48:55+08:00",
+      "reason": "Recorded the fixed-future rejected-baseline metrics and action controls, fresh latent statistics and start-from-scratch transition into the single 200k repair training run."
     }
   ]
 }
