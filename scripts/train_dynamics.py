@@ -27,6 +27,7 @@ from tqdm import tqdm
 from dreamer.configs import DynamicsConfig, OptimalTransportConfig
 from dreamer.data import build_dual_iterator
 from dreamer.logging import build_logger
+from dreamer.dynamics_validation import build_fixed_validation_batch
 from dreamer.models import Dynamics, Tokenizer
 from dreamer.actions import Actions, shift_actions
 from dreamer.parallel import build_parallel, MeshRules
@@ -255,6 +256,21 @@ def run(cfg: DynamicsConfig):
         )
 
         dataloader = build_dual_iterator(cfg.dataset, device=data_sharding, dtype=cfg.dtype)
+        fixed_validation_batch = None
+        if cfg.dataset.validation_array_record_path:
+            fixed_validation_batch = build_fixed_validation_batch(
+                cfg.dataset,
+                validation_array_record_path=(
+                    cfg.dataset.validation_array_record_path
+                ),
+                validation_seed=cfg.dataset.validation_seed,
+                validation_batch_size=cfg.dataset.validation_batch_size,
+                validation_sequence_length=(
+                    cfg.dataset.validation_sequence_length
+                ),
+                device=data_sharding,
+                dtype=cfg.dtype,
+            )
         with build_checkpoint_manager(cfg.ckpt, ckpt_dir, item_names=DynamicsCheckpointBundle.get_item_names()) as checkpoint_manager:
             # Resume from checkpoint
             start_step, bundle, rng = bundle.restore(checkpoint_manager, rng)
@@ -286,8 +302,23 @@ def run(cfg: DynamicsConfig):
                 # compute (model is sharded), but only process 0 does I/O.
                 do_eval = (cfg.write_video_every>0 and step>0 and (step % cfg.write_video_every == 0)) or step == cfg.max_steps - 1
                 if do_eval:
-                    val_data = input_tensor[:4]
-                    val_actions = actions[:4]
+                    if fixed_validation_batch is None:
+                        val_data = input_tensor[:4]
+                        val_actions = actions[:4]
+                    else:
+                        val_data = fixed_validation_batch.get(
+                            "latents",
+                            fixed_validation_batch.get("videos"),
+                        )
+                        if val_data is None:
+                            raise ValueError(
+                                "fixed validation batch has neither videos nor latents"
+                            )
+                        val_actions = shift_actions(
+                            fixed_validation_batch["actions"],
+                            cfg.dataset.categorical_action_dim,
+                            cfg.dataset.categorical_noop_action,
+                        )
                     run_evaluation(
                         cfg, step, bundle.tokenizer,
                         dynamics_online=bundle.dynamics,

@@ -222,3 +222,8 @@ optimizer:
 # Save rollout/evaluation videos every N steps. 0 disables periodic video eval;
 # the final step still triggers evaluation in the training loop.
 write_video_every: 0
+
+# Periodic validation defaults retain historical four-way evaluation. Large
+# k_max runs may disable full diffusion here and run it once in terminal eval.
+periodic_eval_context_frames: 4
+periodic_eval_include_diffusion: true

@@ -49,6 +49,10 @@ class DatasetConfig:
     continuous_action_dim: int = 0
     mouse_repr: str = "categorical"  # "categorical" (mu-law bins, default) or "continuous" ([dx, dy])
     array_record_path: str = "datasets/coinrun_episodes/train"
+    validation_array_record_path: str | None = None
+    validation_seed: int = 4242
+    validation_batch_size: int = 4
+    validation_sequence_length: int = 32
 
     # For minecraft_vpt: number of shards to use (each shard = 1 episode)
     index_max: int = 0
@@ -361,6 +365,8 @@ class DynamicsConfig(BaseExperimentConfig):
 
     # Eval media toggle
     write_video_every: int = 10_000  # set large to reduce IO, or 0 to disable entirely
+    periodic_eval_context_frames: int = 4
+    periodic_eval_include_diffusion: bool = True
 
     # EMA model
     ema_decay: float = 0.999

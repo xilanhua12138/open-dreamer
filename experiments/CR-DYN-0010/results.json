@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "CR-DYN-0010",
+  "record_revision": 1,
+  "execution_status": "planned",
+  "scientific_status": "not_evaluated",
+  "claim_level": "none",
+  "started_at": null,
+  "ended_at": null,
+  "summary": "Preregistered before fresh data collection or GPU training.",
+  "observations": [],
+  "comparisons": [],
+  "deviations": [],
+  "failures": [],
+  "conclusion": {
+    "observed": [],
+    "interpretation": [],
+    "not_established": [
+      "Whether the reference-like repair bundle improves absolute rollout quality.",
+      "Whether the repaired dynamics measurably uses future actions.",
+      "Which individual change in the exploratory bundle is causal.",
+      "Whether direct interactive visual review will accept the result."
+    ],
+    "decision": [
+      "Collect fresh 160-frame records, train one medium repair arm from scratch and apply every preregistered control before starting another scale sweep."
+    ]
+  },
+  "artifacts": [],
+  "revision_history": [
+    {
+      "revision": 1,
+      "at": "2026-07-31T11:21:06+08:00",
+      "reason": "Preregistered the reference-recipe repair before execution."
+    }
+  ]
+}

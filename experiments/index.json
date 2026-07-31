@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-07-31T11:14:54+08:00",
+  "updated_at": "2026-07-31T11:21:06+08:00",
   "entries": [
     {
       "experiment_id": "CR-TOK-0001",
@@ -153,6 +153,20 @@
         "CR-TOK-0003",
         "CR-PPO-0002",
         "CR-DYN-0007"
+      ]
+    },
+    {
+      "experiment_id": "CR-DYN-0010",
+      "title": "CoinRun dynamics reference-recipe repair",
+      "path": "experiments/CR-DYN-0010",
+      "execution_status": "planned",
+      "scientific_status": "not_evaluated",
+      "claim_level": "none",
+      "depends_on": [
+        "CR-TOK-0003",
+        "CR-PPO-0002",
+        "CR-DYN-0009",
+        "CR-DEMO-0002"
       ]
     },
     {

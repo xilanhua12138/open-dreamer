@@ -21,6 +21,7 @@ The 2026-07-28 records are retrospective backfills from retained Hydra configs, 
 | `CR-DYN-0007` | On final-policy data, how does corrected dynamics quality scale from 0.16M to 12.90M? | aborted | inconclusive | none |
 | `CR-DYN-0008` | At fixed total data, which PPO-checkpoint mixture gives the best final-policy rollout quality? | completed | rejects hypothesis | internal result |
 | `CR-DYN-0009` | On the selected mixture, how does corrected dynamics quality scale from 0.16M to 12.90M? | completed | rejects hypothesis | internal result |
+| `CR-DYN-0010` | Does a reference-like long-record and 200k-update recipe repair absolute quality and action use? | planned | not evaluated | none |
 | `CR-DEMO-0001` | Can a user drive the selected CoinRun world model through a low-latency browser demo? | completed | rejects hypothesis | smoke test |
 | `CR-DEMO-0002` | Can the corrected selected world model sustain usable action-conditioned browser inference? | completed | rejects hypothesis | internal result |
 | `CR-DEMO-0003` | Can persistent-cache continuous inference behave like a real-time held-input world? | planned | not evaluated | none |
@@ -131,6 +132,15 @@ client is subscribed, and accept complete held-input state instead of one
 blocking inference request per button event. Its desktop layout is capped to
 the initial viewport. These changes test runtime correctness only; they do not
 override the prior rejection of visual coherence or learned action response.
+
+`CR-DYN-0010` addresses the failed model before any further demo work. The
+prior 64-frame records and 64-frame window had only one possible crop, so the
+configured reward-biased sampler was inert. The repair is preregistered as an
+exploratory bundle: fresh episode-safe 160-frame final-PPO records, mixed
+64/128-frame training, `k_max=256`, 200,000 updates, fixed held-out periodic
+visuals and future-action corruption controls. It keeps the medium architecture
+and 16.6M EMA tokenizer fixed. Passing metrics still requires direct visual
+review and does not isolate a single causal factor.
 
 ## Creating or closing an experiment
 

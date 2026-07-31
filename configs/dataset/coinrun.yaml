@@ -15,6 +15,13 @@ data_type: video
 # does not require `index_max` contiguous shard generation.
 array_record_path: datasets/coinrun_episodes/train
 
+# Optional fixed held-out batch used for periodic dynamics visualization.
+# When null, training retains the historical current-training-batch behavior.
+validation_array_record_path: null
+validation_seed: 4242
+validation_batch_size: 4
+validation_sequence_length: 32
+
 # Optional cap on records exposed to the sampler. `-1` means all records.
 num_max_samples: -1
 
